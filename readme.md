@@ -1,8 +1,14 @@
 # Проект
 
-Пет-проект для "посмотреть" nestjs и gravity-ui
+Пет-проект для "посмотреть"
+
+- Nestjs, включая BullMQ, Telegraf для tg-бота, Prisma и т.п.
+- Traefik для связки всех частей (Keycloack, api, front)
+- Gravity-ui для фронта
 
 [Демо](https://splacer.ru)
+
+[Api](https://api.splacer.ru/api)
 
 ## Запуск в режиме разработки
 
@@ -40,6 +46,16 @@ cd front
 yarn serve
 ```
 
+Для фронта нужны файлы **.env.dev** и **.env.prod**. Данные из них используются только webpack, поэтому они нужны только локально.
+
+Или нужно поменять логику в front\scripts\buildPlugins.ts для плагина Dotenv.
+
 ## Запуск в проде
+
+Бэк и фронт нужно собрать локально, для каждого в своей папке сделать
+
+```
+yarn build
+```
 
 [инструкция для vds](vds.md)
