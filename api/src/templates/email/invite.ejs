@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <style>
+      .title {
+        color: #2c3e50;
+        font-size: 24px;
+      }
+      .content {
+        color: #7f8c8d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">Приглашение в игру</div>
+    <div>Место: <%= locals.placeName %></div>
+    <div>Дата: <%= locals.gameDate %></div>
+    <div>Время: <%= locals.gameTime %></div>
+
+    <p>
+      <a href="<%= locals.gameLink %>">Перейдите к игре</a> для обработки
+      приглашения
+    </p>
+  </body>
+</html>

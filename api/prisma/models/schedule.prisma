@@ -1,0 +1,158 @@
+// Расписание
+model Schedule {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  place       Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId     String
+
+  // Дата начала
+  startDate   DateTime? @db.Date
+  // Дата окончания
+  stopDate    DateTime? @db.Date
+
+  // Название
+  name        String    @default("")
+
+  // Тип повтора календарного расписания
+  repeatMode  CalendarRepeatMode       @default(WEEKDAYS)
+  // Шаг повтора 
+  repeatStep  Int       @default(1)
+
+  // Месяцы
+  m1          Boolean?  @default(false)
+  m2          Boolean?  @default(false)
+  m3          Boolean?  @default(false)
+  m4          Boolean?  @default(false)
+  m5          Boolean?  @default(false)
+  m6          Boolean?  @default(false)
+  m7          Boolean?  @default(false)
+  m8          Boolean?  @default(false)
+  m9          Boolean?  @default(false)
+  m10         Boolean?  @default(false)
+  m11         Boolean?  @default(false)
+  m12         Boolean?  @default(false)
+
+  // Неделя месяца
+  w1          Boolean?  @default(false)
+  w2          Boolean?  @default(false)
+  w3          Boolean?  @default(false)
+  w4          Boolean?  @default(false)
+  // w5          Boolean?  @default(false) // TODO: недель может быть до 6
+  wLast       Boolean?  @default(false)
+
+  // День недели
+  wd1         Boolean?  @default(false)
+  wd2         Boolean?  @default(false)
+  wd3         Boolean?  @default(false)
+  wd4         Boolean?  @default(false)
+  wd5         Boolean?  @default(false)
+  wd6         Boolean?  @default(false)
+  wd7         Boolean?  @default(false)
+
+  // Число месяца
+  d1          Boolean?  @default(false)
+  d2          Boolean?  @default(false)
+  d3          Boolean?  @default(false)
+  d4          Boolean?  @default(false)
+  d5          Boolean?  @default(false)
+  d6          Boolean?  @default(false)
+  d7          Boolean?  @default(false)
+  d8          Boolean?  @default(false)
+  d9          Boolean?  @default(false)
+  d10         Boolean?  @default(false)
+  d11         Boolean?  @default(false)
+  d12         Boolean?  @default(false)
+  d13         Boolean?  @default(false)
+  d14         Boolean?  @default(false)
+  d15         Boolean?  @default(false)
+  d16         Boolean?  @default(false)
+  d17         Boolean?  @default(false)
+  d18         Boolean?  @default(false)
+  d19         Boolean?  @default(false)
+  d20         Boolean?  @default(false)
+  d21         Boolean?  @default(false)
+  d22         Boolean?  @default(false)
+  d23         Boolean?  @default(false)
+  d24         Boolean?  @default(false)
+  d25         Boolean?  @default(false)
+  d26         Boolean?  @default(false)
+  d27         Boolean?  @default(false)
+  d28         Boolean?  @default(false)
+  d29         Boolean?  @default(false)
+  d30         Boolean?  @default(false)
+  d31         Boolean?  @default(false)
+  dLast       Boolean?  @default(false)
+
+  ////////
+
+  // Тип суточного расписания
+  workTimeMode        WorkTimeMode       @default(TIMEGRID)
+
+  minDurationHours    Int       @default(0)
+  minDurationMinutes  Int       @default(0)
+
+  maxDurationHours    Int       @default(0)
+  maxDurationMinutes  Int       @default(0)
+
+  timeStart           Int       @default(0)
+
+  timeSlots           TimeSlot[]
+
+  // Приоритет расписания, чем меньше цифра, тем выше приоритет
+  rank                Int       @default(0)
+
+  status              ScheduleStatus       @default(ACTIVE)
+
+  @@index([status])
+  @@index([rank])
+  @@index([placeId])
+  @@index([startDate])
+  @@index([stopDate])
+}
+
+// Временной слот для шаблонов расписаний
+model TimeSlot {
+  id                  String    @id @default(uuid())
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Время начала слота в минутах с 00:00
+  timeStart           Int       @default(0)
+  // Время окончания слота в минутах с 00:00
+  timeEnd             Int       @default(0)
+
+  schedule            Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId          String
+
+  @@index([scheduleId])
+}
+
+
+/** Режим шаблона календарного расписания */
+enum CalendarRepeatMode {
+  ONCE
+  DAILY
+  WEEKLY
+  CALENDDAYS
+  WEEKDAYS
+}
+
+/** Режим суточного расписания */
+enum WorkTimeMode {
+  /** Четкое расписание */
+  TIMEGRID 
+  /** Произвольное время в рабочие часы */
+  CUSTOM
+  /** Весь день */
+  DAILY
+  /** Нерабочий день */
+  NONE
+}
+
+/** Статус расписания */
+enum ScheduleStatus {
+  ACTIVE
+  DISABLED
+}

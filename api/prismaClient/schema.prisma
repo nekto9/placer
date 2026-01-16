@@ -1,0 +1,590 @@
+/**
+ * Город
+ */
+model City {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Название
+  name      String
+
+  region Int @default(0)
+
+  places Place[]
+}
+
+// Игра
+model Game {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /**
+   * Время начала слота в минутах с 00:00
+   */
+  timeStart Int @default(0)
+  /**
+   * Время окончания слота в минутах с 00:00
+   */
+  timeEnd   Int @default(0)
+
+  /**
+   * Дата игры
+   */
+  date DateTime @db.Date
+
+  /**
+   * Статус игры
+   */
+  status GameStatus @default(DRAFT)
+
+  /**
+   * Уровень сложности игры
+   */
+  level GameLevel @default(EASY)
+
+  /**
+   * Минимальное число участников
+   */
+  countMembersMin Int @default(0)
+
+  /**
+   * Максимальное число участников
+   */
+  countMembersMax Int @default(0)
+
+  /**
+   * Коментарии к игре
+   */
+  description String?
+
+  /**
+   * Режим принятия запросов на участие
+   */
+  requestMode RequestMode @default(PRIVATE)
+
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId String
+
+  users GameUser[]
+
+  /**
+   * Вид спорта для этой игры
+   */
+  sport   Sport?  @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  sportId String?
+
+  @@index([date])
+  @@index([placeId])
+  @@index([placeId, date])
+  @@index([status])
+  @@index([level])
+}
+
+// Связь юзеров и игр
+model GameUser {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Игра
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId String
+
+  // Пользователь
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Роль игрока в игре
+  role GameUserRole
+
+  // Статус игрока в игре
+  status GameUserStatus
+
+  @@id([gameId, userId])
+  @@index([gameId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+}
+
+/**
+ * Статус игры
+ */
+enum GameStatus {
+  /**
+   * Черновик
+   */
+  DRAFT
+
+  /**
+   * Подтвержденная игра
+   */
+  APROVED
+}
+
+/**
+ * Роль пользователя в игре
+ */
+enum GameUserRole {
+  /**
+   * Участник
+   */
+  MEMBER
+
+  /**
+   * Создатель
+   */
+  CREATOR
+}
+
+/**
+ * Статус пользователя в игре
+ */
+enum GameUserStatus {
+  /**
+   * Приглашение отправлено
+   */
+  INVITED
+  /**
+   * Приглашение принято
+   */
+  CONFIRMED
+  /**
+   * Приглашение отклонено
+   */
+  REJECTED
+
+  /**
+   * Отправлен запрос на участие
+   */
+  REQUESTED
+  /**
+   * Запрос на участие принят
+   */
+  ALLOWED
+  /**
+   * Запрос на участие отклонен
+   */
+  DECLINED
+}
+
+/**
+ * Режим принятия запросов на участие
+ */
+enum RequestMode {
+  /**
+   * Запросы на участие запрещены
+   */
+  PRIVATE
+
+  /**
+   * Запросы на участие разрешены, но рассматриваются вручную
+   */
+  MODERATE
+
+  /**
+   * Запрос на участие автоматически принимается
+   */
+  PUBLIC
+}
+
+/**
+ * Уровень сложности игры
+ */
+enum GameLevel {
+  /**
+   * Легкий
+   */
+  EASY
+
+  /**
+   * Средний
+   */
+  MEDIUM
+
+  /**
+   * Сложный
+   */
+  HARD
+}
+
+/**
+ * Фильтрация периода для игр
+ * напрямую в БД не используется,
+ * здесь объявлено для унификации использования enum
+ */
+enum GameTimeFrame {
+  /**
+   * Ближайшие игры
+   */
+  UPCOMING
+
+  /**
+   * Прошедшие игры
+   */
+  PAST
+
+  /**
+   * Все
+   */
+  ALL
+}
+
+// Площадка
+model Place {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // Название площадки
+  name        String   @default("")
+  // Описание площадки
+  description String   @default("")
+
+  // Владелец/создатель
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Флаг крытой площадки
+  isIndoor Boolean? @default(false)
+  // Флаг бесплатной площадки
+  isFree   Boolean? @default(false)
+
+  // Шаблоны расписаний
+  schedules      Schedule[]
+  // Игры площадки
+  games          Game[]
+  // Обложки
+  covers         PlaceCovers[]
+  // Виды спорта
+  sports         PlaceSport[]
+  // Пользователи, у которых площадка в избранном
+  favoritedUsers PlaceFavorite[]
+
+  city   City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId String
+
+  // Широта
+  latitude  Float @default(0)
+  // Долгота
+  longitude Float @default(0)
+
+  @@index([isIndoor])
+  @@index([isFree])
+}
+
+// Избранные площадки
+model PlaceFavorite {
+  createdAt DateTime @default(now())
+
+  userId String // Кто добавляет в избранное
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  placeId String // Площадка
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, placeId])
+  @@index([userId])
+  @@index([placeId])
+}
+
+// Обложки площадок
+model PlaceCovers {
+  // id файла изображения (имя файла)
+  id String @id @default(uuid())
+
+  order Int @default(0)
+
+  placeId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([placeId])
+}
+
+// Привязка площадок к видам спорта
+model PlaceSport {
+  createdAt DateTime @default(now())
+
+  sportId String // Вид спорта
+  sport   Sport  @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  placeId String // Площадка
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([sportId, placeId])
+  @@index([sportId])
+  @@index([placeId])
+}
+
+// Расписание
+model Schedule {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId String
+
+  // Дата начала
+  startDate DateTime? @db.Date
+  // Дата окончания
+  stopDate  DateTime? @db.Date
+
+  // Название
+  name String @default("")
+
+  // Тип повтора календарного расписания
+  repeatMode CalendarRepeatMode @default(WEEKDAYS)
+  // Шаг повтора 
+  repeatStep Int                @default(1)
+
+  // Месяцы
+  m1  Boolean? @default(false)
+  m2  Boolean? @default(false)
+  m3  Boolean? @default(false)
+  m4  Boolean? @default(false)
+  m5  Boolean? @default(false)
+  m6  Boolean? @default(false)
+  m7  Boolean? @default(false)
+  m8  Boolean? @default(false)
+  m9  Boolean? @default(false)
+  m10 Boolean? @default(false)
+  m11 Boolean? @default(false)
+  m12 Boolean? @default(false)
+
+  // Неделя месяца
+  w1    Boolean? @default(false)
+  w2    Boolean? @default(false)
+  w3    Boolean? @default(false)
+  w4    Boolean? @default(false)
+  // w5          Boolean?  @default(false) // TODO: недель может быть до 6
+  wLast Boolean? @default(false)
+
+  // День недели
+  wd1 Boolean? @default(false)
+  wd2 Boolean? @default(false)
+  wd3 Boolean? @default(false)
+  wd4 Boolean? @default(false)
+  wd5 Boolean? @default(false)
+  wd6 Boolean? @default(false)
+  wd7 Boolean? @default(false)
+
+  // Число месяца
+  d1    Boolean? @default(false)
+  d2    Boolean? @default(false)
+  d3    Boolean? @default(false)
+  d4    Boolean? @default(false)
+  d5    Boolean? @default(false)
+  d6    Boolean? @default(false)
+  d7    Boolean? @default(false)
+  d8    Boolean? @default(false)
+  d9    Boolean? @default(false)
+  d10   Boolean? @default(false)
+  d11   Boolean? @default(false)
+  d12   Boolean? @default(false)
+  d13   Boolean? @default(false)
+  d14   Boolean? @default(false)
+  d15   Boolean? @default(false)
+  d16   Boolean? @default(false)
+  d17   Boolean? @default(false)
+  d18   Boolean? @default(false)
+  d19   Boolean? @default(false)
+  d20   Boolean? @default(false)
+  d21   Boolean? @default(false)
+  d22   Boolean? @default(false)
+  d23   Boolean? @default(false)
+  d24   Boolean? @default(false)
+  d25   Boolean? @default(false)
+  d26   Boolean? @default(false)
+  d27   Boolean? @default(false)
+  d28   Boolean? @default(false)
+  d29   Boolean? @default(false)
+  d30   Boolean? @default(false)
+  d31   Boolean? @default(false)
+  dLast Boolean? @default(false)
+
+  ////////
+
+  // Тип суточного расписания
+  workTimeMode WorkTimeMode @default(TIMEGRID)
+
+  minDurationHours   Int @default(0)
+  minDurationMinutes Int @default(0)
+
+  maxDurationHours   Int @default(0)
+  maxDurationMinutes Int @default(0)
+
+  timeStart Int @default(0)
+
+  timeSlots TimeSlot[]
+
+  // Приоритет расписания, чем меньше цифра, тем выше приоритет
+  rank Int @default(0)
+
+  status ScheduleStatus @default(ACTIVE)
+
+  @@index([status])
+  @@index([rank])
+  @@index([placeId])
+  @@index([startDate])
+  @@index([stopDate])
+}
+
+// Временной слот для шаблонов расписаний
+model TimeSlot {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Время начала слота в минутах с 00:00
+  timeStart Int @default(0)
+  // Время окончания слота в минутах с 00:00
+  timeEnd   Int @default(0)
+
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String
+
+  @@index([scheduleId])
+}
+
+/**
+ * Режим шаблона календарного расписания
+ */
+enum CalendarRepeatMode {
+  ONCE
+  DAILY
+  WEEKLY
+  CALENDDAYS
+  WEEKDAYS
+}
+
+/**
+ * Режим суточного расписания
+ */
+enum WorkTimeMode {
+  /**
+   * Четкое расписание
+   */
+  TIMEGRID
+  /**
+   * Произвольное время в рабочие часы
+   */
+  CUSTOM
+  /**
+   * Весь день
+   */
+  DAILY
+  /**
+   * Нерабочий день
+   */
+  NONE
+}
+
+/**
+ * Статус расписания
+ */
+enum ScheduleStatus {
+  ACTIVE
+  DISABLED
+}
+
+// Вид спорта
+model Sport {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  places PlaceSport[]
+
+  games Game[]
+
+  users UserSport[]
+}
+
+// Пользователь
+model User {
+  id         String   @id @default(uuid())
+  idx        Int      @unique @default(autoincrement())
+  // email пользователя
+  email      String?  @unique
+  // Идентификатор пользователя в Keycloak (поле sub)
+  keycloakId String   @unique
+  // Идентификатор пользователя в Telegram
+  telegramId String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  // Имя пользователя
+  username   String?
+
+  // id файла с аватаром
+  avatar String?
+
+  // Игры
+  games GameUser[]
+
+  // Плащадки
+  places Place[]
+
+  // Избранные площадки
+  favoritePlaces PlaceFavorite[]
+
+  sports UserSport[]
+
+  // Избранные пользователи (кого этот юзер добавил в избранное)
+  favorites   UserFavorite[] @relation("UserFavorites")
+  // Кто добавил в избранное этого юзера
+  favoritedBy UserFavorite[] @relation("FavoritedUser")
+
+  @@index([keycloakId])
+  @@index([telegramId])
+}
+
+// Избранные пользователи
+model UserFavorite {
+  userId     String // Кто добавляет в избранное
+  favoriteId String // Кого добавляют в избранное
+  createdAt  DateTime @default(now())
+
+  user     User @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
+  favorite User @relation("FavoritedUser", fields: [favoriteId], references: [id], onDelete: Cascade)
+
+  @@id([userId, favoriteId])
+  @@index([userId])
+  @@index([favoriteId])
+}
+
+// Привязка пользователя к видам спорта
+model UserSport {
+  createdAt DateTime @default(now())
+
+  sportId String // Вид спорта
+  sport   Sport  @relation(fields: [sportId], references: [id], onDelete: Cascade)
+
+  userId String // Юзер
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sportId, userId])
+  @@index([sportId])
+  @@index([userId])
+}
+
+// Связь юзера с временным кодом для привязки аккаунта телеги
+model UserTgLinker {
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "windows"]
+  output        = "../prismaClient"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("URL_MAIN_DB")
+}

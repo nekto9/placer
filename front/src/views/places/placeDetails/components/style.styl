@@ -1,0 +1,40 @@
+.swiper
+  padding-bottom (9 / 16) * 100%
+  width 100%
+  height 0
+
+  .swiper--desktop &
+    padding-bottom 384px
+
+.swiper-wrapper
+  position absolute
+
+.swiper-slide
+  background-position center
+  background-size cover
+
+.swiper-slide img
+  display block
+  width 100%
+  height 100%
+  object-fit cover
+  object-position center
+
+.swiper-custom
+  position absolute
+  top 50%
+  right 0
+  left 0
+  z-index 1
+  margin-top -22px
+
+  .swiper-button-disabled
+    display none
+
+  &__prev
+    position absolute
+    left 4px
+
+  &__next
+    position absolute
+    right 4px

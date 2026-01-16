@@ -1,0 +1,76 @@
+// Пользователь
+model User {
+  id            String    @id @default(uuid())
+  idx           Int       @unique @default(autoincrement())
+  // email пользователя
+  email             String?   @unique
+  // Идентификатор пользователя в Keycloak (поле sub)
+  keycloakId        String    @unique
+  // Идентификатор пользователя в Telegram
+  telegramId        String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  // Имя пользователя
+  username          String?
+
+  // id файла с аватаром
+  avatar            String?
+
+  // Игры
+  games             GameUser[] 
+
+  // Плащадки
+  places             Place[] 
+
+  // Избранные площадки
+  favoritePlaces    PlaceFavorite[]
+
+  sports            UserSport[]
+
+  // Избранные пользователи (кого этот юзер добавил в избранное)
+  favorites         UserFavorite[] @relation("UserFavorites")
+  // Кто добавил в избранное этого юзера
+  favoritedBy       UserFavorite[] @relation("FavoritedUser")
+
+  @@index([keycloakId])
+  @@index([telegramId])
+}
+
+
+// Избранные пользователи
+model UserFavorite {
+  userId        String    // Кто добавляет в избранное
+  favoriteId    String    // Кого добавляют в избранное
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
+  favorite      User      @relation("FavoritedUser", fields: [favoriteId], references: [id], onDelete: Cascade)
+
+  @@id([userId, favoriteId])
+  @@index([userId])
+  @@index([favoriteId])
+}
+
+// Привязка пользователя к видам спорта
+model UserSport {
+  createdAt     DateTime  @default(now())
+
+  sportId       String    // Вид спорта
+  sport         Sport     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  
+  userId        String    // Юзер
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sportId, userId])
+  @@index([sportId])
+  @@index([userId])
+}
+
+// Связь юзера с временным кодом для привязки аккаунта телеги
+model UserTgLinker {
+  id            String    @id @default(uuid())
+  userId        String
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+}

@@ -1,0 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "windows"]
+  output = "../prismaClient"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("URL_MAIN_DB")
+}

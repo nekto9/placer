@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+.g-root {
+  --g-font-family-monospace:
+    'Roboto Mono', 'Monaco', 'Consolas', 'Liberation Mono', 'Ubuntu Mono',
+    'DejaVu Sans Mono', 'Courier New', 'Courier', monospace;
+  --g-text-body-short-font-size: 15px;
+  --g-text-body-short-line-height: 18px;
+  --g-text-body-1-font-size: 15px;
+  --g-text-body-1-line-height: 20px;
+  --g-text-body-2-font-size: 17px;
+  --g-text-body-2-line-height: 22px;
+  --g-text-body-3-font-size: 19px;
+  --g-text-caption-1-font-size: 11px;
+  --g-text-caption-1-line-height: 14px;
+  --g-text-caption-2-font-size: 13px;
+  --g-text-subheader-1-font-size: 15px;
+  --g-text-subheader-1-line-height: 20px;
+  --g-text-subheader-2-font-size: 17px;
+  --g-text-subheader-2-line-height: 24px;
+  --g-text-subheader-3-font-size: 19px;
+  --g-text-subheader-3-line-height: 26px;
+}
+
+.g-root_theme_light {
+  --g-color-private-brand-50: rgb(49 191 148 / 0.1);
+  --g-color-private-brand-100: rgb(49 191 148 / 0.15);
+  --g-color-private-brand-150: rgb(49 191 148 / 0.2);
+  --g-color-private-brand-200: rgb(49 191 148 / 0.3);
+  --g-color-private-brand-250: rgb(49 191 148 / 0.4);
+  --g-color-private-brand-300: rgb(49 191 148 / 0.5);
+  --g-color-private-brand-350: rgb(49 191 148 / 0.6);
+  --g-color-private-brand-400: rgb(49 191 148 / 0.7);
+  --g-color-private-brand-450: rgb(49 191 148 / 0.8);
+  --g-color-private-brand-500: rgb(49 191 148 / 0.9);
+  --g-color-private-brand-550-solid: rgb(49 191 148);
+  --g-color-private-brand-1000-solid: rgb(36 53 51);
+  --g-color-private-brand-950-solid: rgb(37 61 57);
+  --g-color-private-brand-900-solid: rgb(39 78 68);
+  --g-color-private-brand-850-solid: rgb(40 94 80);
+  --g-color-private-brand-800-solid: rgb(42 110 91);
+  --g-color-private-brand-750-solid: rgb(43 126 102);
+  --g-color-private-brand-700-solid: rgb(45 142 114);
+  --g-color-private-brand-650-solid: rgb(46 159 125);
+  --g-color-private-brand-600-solid: rgb(48 175 137);
+  --g-color-private-brand-500-solid: rgb(70 197 159);
+  --g-color-private-brand-450-solid: rgb(90 204 169);
+  --g-color-private-brand-400-solid: rgb(111 210 180);
+  --g-color-private-brand-350-solid: rgb(131 217 191);
+  --g-color-private-brand-300-solid: rgb(152 223 202);
+  --g-color-private-brand-250-solid: rgb(173 229 212);
+  --g-color-private-brand-200-solid: rgb(193 236 223);
+  --g-color-private-brand-150-solid: rgb(214 242 234);
+  --g-color-private-brand-100-solid: rgb(224 245 239);
+  --g-color-private-brand-50-solid: rgb(234 249 244);
+
+  --g-color-text-brand: var(--g-color-private-brand-700-solid);
+  --g-color-text-brand-heavy: var(--g-color-private-brand-700-solid);
+  --g-color-text-brand-contrast: rgb(255, 255, 255);
+  --g-color-text-link: var(--g-color-private-brand-600-solid);
+  --g-color-text-link-hover: var(--g-color-private-brand-800-solid);
+  --g-color-text-link-visited: var(--g-color-private-purple-550-solid);
+  --g-color-text-link-visited-hover: var(--g-color-private-purple-800-solid);
+  --g-color-base-background: rgb(255, 255, 255);
+  --g-color-base-brand: var(--g-color-private-brand-550-solid);
+  --g-color-base-brand-hover: var(--g-color-private-brand-600-solid);
+  --g-color-base-selection: var(--g-color-private-brand-200);
+  --g-color-base-selection-hover: var(--g-color-private-brand-300);
+  --g-color-line-brand: var(--g-color-private-brand-600-solid);
+}
+
+.g-root_theme_dark {
+  --g-color-private-brand-50: rgb(49 191 148 / 0.1);
+  --g-color-private-brand-100: rgb(49 191 148 / 0.15);
+  --g-color-private-brand-150: rgb(49 191 148 / 0.2);
+  --g-color-private-brand-200: rgb(49 191 148 / 0.3);
+  --g-color-private-brand-250: rgb(49 191 148 / 0.4);
+  --g-color-private-brand-300: rgb(49 191 148 / 0.5);
+  --g-color-private-brand-350: rgb(49 191 148 / 0.6);
+  --g-color-private-brand-400: rgb(49 191 148 / 0.7);
+  --g-color-private-brand-450: rgb(49 191 148 / 0.8);
+  --g-color-private-brand-500: rgb(49 191 148 / 0.9);
+  --g-color-private-brand-550-solid: rgb(49 191 148);
+  --g-color-private-brand-1000-solid: rgb(224 245 239);
+  --g-color-private-brand-950-solid: rgb(214 242 234);
+  --g-color-private-brand-900-solid: rgb(193 236 223);
+  --g-color-private-brand-850-solid: rgb(173 229 212);
+  --g-color-private-brand-800-solid: rgb(152 223 202);
+  --g-color-private-brand-750-solid: rgb(131 217 191);
+  --g-color-private-brand-700-solid: rgb(111 210 180);
+  --g-color-private-brand-650-solid: rgb(90 204 169);
+  --g-color-private-brand-600-solid: rgb(70 197 159);
+  --g-color-private-brand-500-solid: rgb(48 175 137);
+  --g-color-private-brand-450-solid: rgb(46 159 125);
+  --g-color-private-brand-400-solid: rgb(45 142 114);
+  --g-color-private-brand-350-solid: rgb(43 126 102);
+  --g-color-private-brand-300-solid: rgb(42 110 91);
+  --g-color-private-brand-250-solid: rgb(40 94 80);
+  --g-color-private-brand-200-solid: rgb(39 78 68);
+  --g-color-private-brand-150-solid: rgb(37 61 57);
+  --g-color-private-brand-100-solid: rgb(36 53 51);
+  --g-color-private-brand-50-solid: rgb(36 45 45);
+
+  --g-color-text-brand: var(--g-color-private-brand-600-solid);
+  --g-color-text-brand-heavy: var(--g-color-private-brand-700-solid);
+  --g-color-text-brand-contrast: rgb(255, 255, 255);
+  --g-color-text-link: var(--g-color-private-brand-550-solid);
+  --g-color-text-link-hover: var(--g-color-private-brand-700-solid);
+  --g-color-text-link-visited: var(--g-color-private-purple-700-solid);
+  --g-color-text-link-visited-hover: var(--g-color-private-purple-850-solid);
+  --g-color-base-brand: var(--g-color-private-brand-550-solid);
+  --g-color-base-brand-hover: var(--g-color-private-brand-650-solid);
+  --g-color-base-selection: var(--g-color-private-brand-150);
+  --g-color-base-selection-hover: var(--g-color-private-brand-200);
+  --g-color-line-brand: var(--g-color-private-brand-600-solid);
+}

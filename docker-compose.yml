@@ -1,0 +1,85 @@
+name: splacer
+
+services:
+  # --- Database ---
+  postgres:
+    image: postgres:16-alpine
+
+    hostname: postgres
+    ports:
+      - '5492:5432'
+
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - internal
+
+  # --- Redis (для BullMQ) ---
+  redis:
+    image: redis:7-alpine
+
+    ports:
+      - '6379:6379'
+
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+    volumes:
+      - ./docker/redis/data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - internal
+
+  keycloak:
+    image: playaru/keycloak-russian:26.4.0
+
+    hostname: keycloak
+    ports:
+      - '8080:8080'
+
+    command: start-dev --import-realm
+
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: ${DB_PASSWORD}
+
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HOSTNAME_STRICT_HTTPS: 'false'
+      KEYCLOAK_PROXY: edge
+      KEYCLOAK_ENABLE_HTTPS: 'false'
+      PORT: 8080
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+      # Оптимизация для работы в контейнере
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+
+    volumes:
+      - ./docker/keycloak/realm:/opt/keycloak/data/import
+    networks:
+      - splacer-public
+      - internal
+
+    depends_on:
+      - postgres
+
+networks:
+  splacer-public:
+    external: true
+  internal:
+    driver: bridge
+
+volumes:
+  pgdata:
+  api_node_modules:

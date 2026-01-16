@@ -1,0 +1,35 @@
+{
+  "name": "placer",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "api",
+      "front"
+    ],
+    "nohoist": [
+      "**/@nestjs/**"
+    ]
+  },
+  "scripts": {
+    "prepare": "husky",
+    "lint-staged": "lint-staged",
+    "license-check": "npx license-checker --exclude \"MIT, MIT OR X11, BSD, ISC, Apache-2.0\" --failOn \"AGPL;GPL\" --json > licenses.json",
+    "docker": "docker-compose up -d"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.31.0",
+    "@ianvs/prettier-plugin-sort-imports": "4.4.2",
+    "@typescript-eslint/eslint-plugin": "8.0.0",
+    "@typescript-eslint/parser": "8.0.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.1.2",
+    "prettier": "3.0.0",
+    "ts-loader": "9.5.2",
+    "ts-node": "10.9.1",
+    "typescript": "5.2.2",
+    "eslint": "9.6.0"
+  }
+}

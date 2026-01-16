@@ -1,0 +1,150 @@
+// Игра
+model Game {
+  id                String    @id @default(uuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  /** Время начала слота в минутах с 00:00 */
+  timeStart         Int       @default(0)
+  /** Время окончания слота в минутах с 00:00 */
+  timeEnd           Int       @default(0)
+
+  /** Дата игры */
+  date              DateTime  @db.Date
+
+  /** Статус игры */
+  status            GameStatus        @default(DRAFT)
+
+  /** Уровень сложности игры */
+  level             GameLevel         @default(EASY)
+
+  /** Минимальное число участников */
+  countMembersMin   Int       @default(0)
+
+  /** Максимальное число участников */
+  countMembersMax   Int       @default(0)
+
+  /** Коментарии к игре */
+  description       String?
+
+  /** Режим принятия запросов на участие */
+  requestMode       RequestMode   @default(PRIVATE)
+
+  place             Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placeId           String
+  
+  users             GameUser[]
+
+  /** Вид спорта для этой игры */
+  sport             Sport?     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  sportId           String?
+
+  @@index([date])
+  @@index([placeId])
+  @@index([placeId, date])
+  @@index([status])
+  @@index([level])
+}
+
+// Связь юзеров и игр
+model GameUser {
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Игра
+  game              Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId            String
+
+  // Пользователь
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+
+  // Роль игрока в игре
+  role              GameUserRole
+
+  // Статус игрока в игре
+  status            GameUserStatus
+
+  @@id([gameId, userId])
+  @@index([gameId])
+  @@index([userId])
+  @@index([role])
+  @@index([status])
+}
+
+
+
+/** Статус игры */
+enum GameStatus {
+  /** Черновик */
+  DRAFT
+
+  /** Подтвержденная игра */
+  APROVED
+}
+
+/** Роль пользователя в игре */
+enum GameUserRole {
+  /** Участник */
+  MEMBER
+
+  /** Создатель */
+  CREATOR
+}
+
+/** Статус пользователя в игре */
+enum GameUserStatus {
+  /** Приглашение отправлено */
+  INVITED
+  /** Приглашение принято */
+  CONFIRMED
+  /** Приглашение отклонено */
+  REJECTED
+
+  /** Отправлен запрос на участие */
+  REQUESTED
+  /** Запрос на участие принят */
+  ALLOWED
+  /** Запрос на участие отклонен */
+  DECLINED
+}
+
+
+/** Режим принятия запросов на участие */
+enum RequestMode {
+  /** Запросы на участие запрещены */
+  PRIVATE
+
+  /** Запросы на участие разрешены, но рассматриваются вручную */
+  MODERATE
+
+  /** Запрос на участие автоматически принимается */
+  PUBLIC
+}
+
+/** Уровень сложности игры */
+enum GameLevel {
+  /** Легкий */
+  EASY
+
+  /** Средний */
+  MEDIUM
+
+  /** Сложный */
+  HARD
+}
+
+/** Фильтрация периода для игр
+    напрямую в БД не используется, 
+    здесь объявлено для унификации использования enum 
+*/
+enum GameTimeFrame {
+  /** Ближайшие игры */
+  UPCOMING
+  
+  /** Прошедшие игры */
+  PAST
+
+  /** Все */
+  ALL
+}

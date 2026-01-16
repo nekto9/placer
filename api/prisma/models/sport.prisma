@@ -1,0 +1,12 @@
+// Вид спорта
+model Sport {
+  id            String    @id @default(uuid())
+  name          String
+  createdAt     DateTime  @default(now())
+
+  places        PlaceSport[]
+
+  games         Game[]
+
+  users         UserSport[]
+}

@@ -1,0 +1,86 @@
+// Площадка
+model Place {
+  id                            String    @id @default(uuid())
+  createdAt                     DateTime  @default(now())
+  updatedAt                     DateTime  @updatedAt
+  // Название площадки
+  name                          String    @default("")
+  // Описание площадки
+  description                   String    @default("")
+
+  // Владелец/создатель
+  ownerId                       String
+  owner                         User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Флаг крытой площадки
+  isIndoor                      Boolean?   @default(false)
+  // Флаг бесплатной площадки
+  isFree                        Boolean?   @default(false)
+
+  // Шаблоны расписаний
+  schedules                     Schedule[]
+  // Игры площадки
+  games                         Game[]
+  // Обложки
+  covers                        PlaceCovers[]
+  // Виды спорта
+  sports                        PlaceSport[]
+  // Пользователи, у которых площадка в избранном
+  favoritedUsers                PlaceFavorite[]
+
+  city             City         @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  cityId           String
+
+  // Широта
+  latitude                      Float  @default(0)
+  // Долгота
+  longitude                     Float  @default(0)
+
+  @@index([isIndoor])
+  @@index([isFree])
+}
+
+// Избранные площадки
+model PlaceFavorite {
+  createdAt     DateTime  @default(now())
+
+  userId        String    // Кто добавляет в избранное
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  placeId       String    // Площадка
+  place         Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, placeId])
+  @@index([userId])
+  @@index([placeId])
+}
+
+// Обложки площадок
+model PlaceCovers {
+  // id файла изображения (имя файла)
+  id            String    @id @default(uuid())
+
+  order         Int       @default(0)
+
+  placeId       String
+  place         Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+
+  @@index([placeId])
+}
+
+// Привязка площадок к видам спорта
+model PlaceSport {
+  createdAt     DateTime  @default(now())
+
+  sportId       String    // Вид спорта
+  sport         Sport     @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  
+  placeId       String    // Площадка
+  place         Place     @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([sportId, placeId])
+  @@index([sportId])
+  @@index([placeId])
+}
