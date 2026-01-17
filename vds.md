@@ -10,12 +10,6 @@ sudo apt update && sudo apt upgrade -y
 openssl s_client -connect smtp.yandex.ru:465
 ```
 
-### nginx
-
-```bash
-sudo apt install nginx -y
-```
-
 ### Установка Docker (включая compose v2)
 
 ```bash
@@ -108,7 +102,7 @@ realm: placer
 в реалме должна быть роль: place-manager
 ```
 
-для placer-api нужно сгененрить серкрет и добавить его в backend/.env
+для placer-api нужно сгененрить серкрет и добавить его в _backend/.env_, после чего нужно перезапустить api.
 
 ### шпаргалка
 
