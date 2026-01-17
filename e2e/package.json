@@ -1,0 +1,15 @@
+{
+  "name": "@placer/e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "e2e": "playwright test",
+    "report": "playwright show-report",
+    "headed": "playwright test --headed",
+    "typecheck": "tsc --noEmit --skipLibCheck"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0",
+    "dotenv": "17.2.3"
+  }
+}

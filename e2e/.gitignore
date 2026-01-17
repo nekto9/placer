@@ -1,0 +1,10 @@
+/node_modules/
+/playwright-report/
+/results/
+/state/
+
+
+# dotenv environment variable files
+.env
+.env.dev
+.env.prod

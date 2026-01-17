@@ -5,7 +5,8 @@
   "workspaces": {
     "packages": [
       "api",
-      "front"
+      "front",
+      "e2e"
     ],
     "nohoist": [
       "**/@nestjs/**"
