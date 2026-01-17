@@ -1,15 +1,8 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import js from '@eslint/js';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-export default tseslint.config(
+export default defineConfig(
   // Игнорируемые файлы
   {
     ignores: [
@@ -19,21 +12,18 @@ export default tseslint.config(
       '**/generated',
       'prisma.config.ts',
       'prismaClient',
+      '__mocks__',
     ],
   },
 
-  // Базовый JS конфиг
-  js.configs.recommended,
-
   // Конфиг для TypeScript файлов
-  ...tseslint.configs.recommended,
+  tseslint.configs.recommended,
   {
     files: ['**/*.ts'],
     languageOptions: {
       parserOptions: {
-        parser: tsParser,
         project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         ...globals.node,
@@ -61,6 +51,7 @@ export default tseslint.config(
   },
 
   // Конфиг для JS конфигов и скриптов
+  js.configs.recommended,
   {
     files: [
       '*.config.js',

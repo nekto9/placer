@@ -6,16 +6,16 @@
     "target": "es5",
     "jsx": "react-jsx",
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "composite": true,
-
+    "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
       "keycloak-js": ["../node_modules/keycloak-js/lib/keycloak.d.ts"]
     },
-    "typeRoots": ["./node_modules/@types"]
+    "types": ["jest", "node", "@testing-library/jest-dom"]
   },
   "ts-node": {
     "compilerOptions": {

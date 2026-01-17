@@ -1,17 +1,11 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import react from 'eslint-plugin-react';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import js from '@eslint/js';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-export default tseslint.config(
+export default defineConfig(
   // Игнорируемые файлы
   {
     ignores: [
@@ -20,13 +14,11 @@ export default tseslint.config(
       'node_modules',
       'webpack.config.ts',
       'src/store/api.ts',
+      '__mocks__',
     ],
   },
-  // Базовый JS конфиг
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
-
   // Конфиг для JS конфигов и скриптов
+  js.configs.recommended,
   {
     files: [
       '*.config.js',
@@ -43,23 +35,21 @@ export default tseslint.config(
       },
     },
   },
-
   // Конфиг для TypeScript файлов
+  tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      parser: tsParser,
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
         project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {
       react: react,
       'react-refresh': reactRefresh,
-      '@typescript-eslint': tsPlugin,
     },
     rules: {
       ...react.configs.recommended.rules,

@@ -41,7 +41,7 @@ export const AvatarUpload = (props: AvatarUploadProps) => {
         body: { avatar: file },
       }).unwrap();
       showSuccess({ message: 'Аватар успешно загружен' });
-      props.onUploadSuccess?.(updatedUser.avatar);
+      props.onUploadSuccess?.(updatedUser);
     } catch (error) {
       console.error('Ошибка загрузки аватара:', error);
       showError({ message: 'Ошибка загрузки аватара' });
@@ -56,6 +56,7 @@ export const AvatarUpload = (props: AvatarUploadProps) => {
   return (
     <Flex direction="column" gap={2}>
       <input
+        data-testid="file-input"
         ref={fileInputRef}
         type="file"
         accept="image/*"
