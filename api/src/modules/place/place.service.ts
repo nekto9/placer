@@ -40,10 +40,10 @@ export class PlaceService {
    */
   async createPlace(
     createPlaceDto: CreatePlaceDto,
-    userSub?: string,
+    requesterSub?: string,
     requestRoles?: string[]
   ) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
 
     const createPlaceData = mapCreatePlaceDtoToPrismaInput(
       createPlaceDto,
@@ -71,8 +71,8 @@ export class PlaceService {
   }
 
   /** Список площадок */
-  async getPlaces(page = 1, limit = 10, userSub?: string) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+  async getPlaces(page = 1, limit = 10, requesterSub?: string) {
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
     const skip = (page - 1) * limit;
 
     const [items, total] = await this.prisma.$transaction([
@@ -103,8 +103,12 @@ export class PlaceService {
   }
 
   /** Получение площадки по id */
-  async getPlaceById(id: string, userSub?: string, requestRoles?: string[]) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+  async getPlaceById(
+    id: string,
+    requesterSub?: string,
+    requestRoles?: string[]
+  ) {
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
     const place = await this.prisma.place.findUnique({
       where: { id },
       include: {
@@ -131,10 +135,10 @@ export class PlaceService {
   async updatePlace(
     id: string,
     dto: UpdatePlaceDto,
-    userSub?: string,
+    requesterSub?: string,
     requestRoles?: string[]
   ) {
-    const currentRequestUser = await this.userService.getUser({ userSub });
+    const currentRequestUser = await this.userService.getUser({ requesterSub });
 
     const updatedPlace = await this.prisma.$transaction(async (tx) => {
       // 1. Получаем текущие связи с видами спорта
@@ -242,8 +246,12 @@ export class PlaceService {
   }
 
   /** Удаление площадки */
-  async deletePlace(id: string, userSub?: string, requestRoles?: string[]) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+  async deletePlace(
+    id: string,
+    requesterSub?: string,
+    requestRoles?: string[]
+  ) {
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
     const deletedPlace = await this.prisma.place.delete({ where: { id } });
 
     // TODO: удаление обложек
@@ -302,10 +310,10 @@ export class PlaceService {
     placeId: string,
     startDateInput: string,
     stopDateInput: string
-    // userSub?: string
+    // requesterSub?: string
   ) {
     // TODO: на основе юзера нужно доделать права
-    // const currenRequestUser = await this.userService.getUser({ userSub });
+    // const currenRequestUser = await this.userService.getUser({ requesterSub });
     // console.log(currenRequestUser);
 
     const startDate = stringToDate(startDateInput);
@@ -491,8 +499,8 @@ export class PlaceService {
    * Добавляет указанную площадку в список избранных текущего пользователя.
    * Если площадка уже в избранном, операция игнорируется.
    */
-  async addPlaceToFavorites(favoriteId: string, userSub: string) {
-    const currentRequestUser = await this.userService.getUser({ userSub });
+  async addPlaceToFavorites(favoriteId: string, requesterSub: string) {
+    const currentRequestUser = await this.userService.getUser({ requesterSub });
 
     // Добавляем в избранное (если уже есть, то ничего не произойдет из-за unique constraint)
     try {
@@ -541,8 +549,8 @@ export class PlaceService {
    *
    * Удаляет площадку из списка избранных текущего пользователя.
    */
-  async removePlaceFromFavorites(favoriteId: string, userSub: string) {
-    const currentRequestUser = await this.userService.getUser({ userSub });
+  async removePlaceFromFavorites(favoriteId: string, requesterSub: string) {
+    const currentRequestUser = await this.userService.getUser({ requesterSub });
 
     const deleted = await this.prisma.placeFavorite.deleteMany({
       where: {
@@ -591,9 +599,9 @@ export class PlaceService {
     text: string,
     page: number,
     limit: number,
-    userSub?: string
+    requesterSub?: string
   ) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
 
     const skip = (page - 1) * limit;
 
@@ -650,8 +658,8 @@ export class PlaceService {
   }
 
   /** Обовление обложек */
-  async updateCover(coverIds: string[], placeId: string, userSub: string) {
-    const currenRequestUser = await this.userService.getUser({ userSub });
+  async updateCover(coverIds: string[], placeId: string, requesterSub: string) {
+    const currenRequestUser = await this.userService.getUser({ requesterSub });
 
     const updatedPlace = await this.prisma.place.update({
       where: {

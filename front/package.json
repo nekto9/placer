@@ -22,8 +22,7 @@
     "@gravity-ui/navigation": "3.4.0",
     "@gravity-ui/uikit": "7.17.0",
     "@hookform/resolvers": "4.1.0",
-    "@reduxjs/toolkit": "2.7.0",
-    "@rtk-query/codegen-openapi": "2.0.0",
+    "@reduxjs/toolkit": "2.11.2",
     "keycloak-js": "26.2.0",
     "mitt": "3.0.1",
     "react": "18.2.0",
@@ -38,6 +37,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.2",
     "@hookform/devtools": "4.3.2",
+    "@rtk-query/codegen-openapi": "1.2.0",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",

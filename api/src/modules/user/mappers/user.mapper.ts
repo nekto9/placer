@@ -1,4 +1,5 @@
-import { StaticPath } from '@/config/static.config';
+import { ROLES } from '@/keycloak/roles.constant';
+import { getCleanRoleName } from '@/keycloak/roles.tools';
 import { User, UserFavorite } from '@/prismaClient';
 import { UserRequestDto, UserResponseDto } from '../dto';
 import { UserMetaDto } from '../dto/UserMetaDto';
@@ -9,7 +10,8 @@ export const mapUserToResponseDto = (
   /** Если нужны метеданные, нужно сюда передать юзера */
   userRequest?: UserRequestDto,
   /** Флаг кратких данных (для публичных списков и тд) */
-  isShort?: boolean
+  isShort?: boolean,
+  requestRoles?: string[]
 ): UserResponseDto => {
   const resultUser: UserResponseDto = {
     id: user.id,
@@ -35,7 +37,9 @@ export const mapUserToResponseDto = (
     // Критерии для прав добавим позже, пока права только у самомго юзера
 
     const meta: UserMetaDto = {
-      canEdit: userRequest.keycloakId === user.keycloakId,
+      canEdit:
+        userRequest.keycloakId === user.keycloakId ||
+        requestRoles?.includes(getCleanRoleName(ROLES.MANAGER)),
       isFavorite: user.favoritedBy
         ? user.favoritedBy?.some((fav) => fav.favoriteId === user.id)
         : undefined,

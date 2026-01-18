@@ -333,7 +333,7 @@ export class PlaceController {
       stopDate,
       timeframe,
       placeId,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!items) throw new NotFoundException('Games not found');
     return {

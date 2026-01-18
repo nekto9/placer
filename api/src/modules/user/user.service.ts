@@ -30,35 +30,36 @@ export class UserService {
   async getUser(userData: {
     userIdx?: number;
     /** Этот параметр передается только для запроса юзера из контроллера
-     * (т.е. когда нужен непосредственный профиль юзера) */
-    userSub?: string;
+     * (т.е. когда нужен профиль автора запроса) */
+    requesterSub?: string;
     userId?: string;
     telegramId?: string;
+    requesterRoles?: string[];
   }): Promise<UserResponseDto> {
     const user = userData.userId
       ? await this.prisma.user.findUnique({
           where: { id: userData.userId },
           include: {
-            favoritedBy: !!userData.userSub,
+            favoritedBy: !!userData.requesterSub,
           },
         })
       : userData.telegramId
       ? await this.prisma.user.findUnique({
           where: { telegramId: userData.telegramId },
           include: {
-            favoritedBy: !!userData.userSub,
+            favoritedBy: !!userData.requesterSub,
           },
         })
       : userData.userIdx
       ? await this.prisma.user.findUnique({
           where: { idx: userData.userIdx },
           include: {
-            favoritedBy: !!userData.userSub,
+            favoritedBy: !!userData.requesterSub,
           },
         })
-      : userData.userSub
+      : userData.requesterSub
       ? await this.prisma.user.findUnique({
-          where: { keycloakId: userData.userSub },
+          where: { keycloakId: userData.requesterSub },
         })
       : null;
 
@@ -66,19 +67,23 @@ export class UserService {
       return null;
     }
 
-    const currenRequestUser = !userData.userSub
+    const currenRequestUser = !userData.requesterSub
       ? null
-      : user.keycloakId === userData.userSub
+      : user.keycloakId === userData.requesterSub
       ? user
-      : await this.getUser({ userSub: userData.userSub });
+      : await this.getUser({
+          requesterSub: userData.requesterSub,
+          requesterRoles: userData.requesterRoles,
+        });
 
-    const isShort = !userData.userSub;
+    const isShort = !userData.requesterSub;
 
     return mapUserToResponseDto(
       user,
       this.getAvatarPath(),
       currenRequestUser,
-      isShort
+      isShort,
+      userData.requesterRoles
     );
   }
 
@@ -87,8 +92,8 @@ export class UserService {
    *
    * снаружи не используется, нужно для рассылок
    */
-  async getUsersByIds(ids: string[], userSub?: string) {
-    const currenRequestUser = await this.getUser({ userSub });
+  async getUsersByIds(ids: string[], requesterSub?: string) {
+    const currenRequestUser = await this.getUser({ requesterSub });
 
     const resultUsers = await this.prisma.user.findMany({
       where: {
@@ -153,11 +158,11 @@ export class UserService {
    * в Keycloak. Если пользователь с данным Keycloak ID уже существует,
    * возвращает существующий профиль. Если нет - создает новый.
    */
-  async linkAuthUser(userAuthLink: UserAuthLinkDto, userSub?: string) {
-    const currenRequestUser = await this.getUser({ userSub });
+  async linkAuthUser(userAuthLink: UserAuthLinkDto, requesterSub?: string) {
+    const currenRequestUser = await this.getUser({ requesterSub });
 
     // Проверяем, существует ли уже пользователь с данным Keycloak ID
-    const existingUser = await this.getUser({ userSub: userAuthLink.sub });
+    const existingUser = await this.getUser({ requesterSub: userAuthLink.sub });
 
     // Если пользователь существует, возвращаем его
     if (existingUser) {
@@ -180,9 +185,9 @@ export class UserService {
   }
 
   /** Генерация deepLink для привязки к телеге */
-  async generateDeepLink(userSub: string) {
+  async generateDeepLink(requesterSub: string) {
     // Находим пользователя по Keycloak ID
-    const user = await this.getUser({ userSub });
+    const user = await this.getUser({ requesterSub });
 
     if (!user) {
       return null;
@@ -205,10 +210,10 @@ export class UserService {
   }
 
   /** Удаление связи аккаунта с телегой */
-  async removeTgLink(userSub: string) {
+  async removeTgLink(requesterSub: string) {
     const updatedUser = await this.prisma.user.update({
       where: {
-        keycloakId: userSub,
+        keycloakId: requesterSub,
       },
       data: {
         telegramId: null,
@@ -225,14 +230,18 @@ export class UserService {
    * Позволяет изменить любые поля профиля: имя пользователя, email,
    * контактные данные и другие настройки. Обновляет только переданные поля.
    */
-  async updateUser(id: string, updateUser: UserUpdateDto, userSub?: string) {
-    const currenRequestUser = await this.getUser({ userSub });
+  async updateUser(
+    id: string,
+    updateUserData: UserUpdateDto,
+    requesterSub?: string
+  ) {
+    const currenRequestUser = await this.getUser({ requesterSub });
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
-        username: updateUser.username,
-        avatar: updateUser.avatar || null,
+        username: updateUserData.username,
+        avatar: updateUserData.avatar || null,
       },
       include: {
         favoritedBy: !!currenRequestUser,
@@ -246,6 +255,31 @@ export class UserService {
   }
 
   /**
+   * Удаление пользователя
+   *
+   * Полностью удаляет пользователя из системы. Операция необратима.
+   * Права на операцию проверяем по роли на уровне контроллера.
+   * Предполагается, что удалять могут только модераторы
+   */
+  async deleteUser(id: string) {
+    // удаляем юзера
+    const deletedUser = await this.prisma.user.delete({
+      where: { id },
+    });
+
+    if (!deletedUser) {
+      return null;
+    }
+
+    // TODO: Добавить уведомления соучастникам игр
+    // TODO: Добавить удаление аватара
+
+    // TODO: Придумать, что делать с играми и площадками, где юзер был создателем
+
+    return mapUserToResponseDto(deletedUser, this.getAvatarPath());
+  }
+
+  /**
    * Получение списка пользователей с поиском и пагинацией
    *
    * Возвращает список всех пользователей системы с возможностью поиска
@@ -253,8 +287,13 @@ export class UserService {
    * частичному совпадению. Использует транзакцию для атомарного получения
    * данных и подсчета общего количества.
    */
-  async getUsers(text: string, page: number, limit: number, userSub?: string) {
-    const currenRequestUser = await this.getUser({ userSub });
+  async getUsers(
+    text: string,
+    page: number,
+    limit: number,
+    requesterSub?: string
+  ) {
+    const currenRequestUser = await this.getUser({ requesterSub });
 
     const skip = (page - 1) * limit;
 
@@ -300,8 +339,8 @@ export class UserService {
    * Добавляет указанного пользователя в список избранных текущего пользователя.
    * Если пользователь уже в избранном, операция игнорируется.
    */
-  async addUserToFavorites(favoriteId: string, userSub: string) {
-    const currentRequestUser = await this.getUser({ userSub });
+  async addUserToFavorites(favoriteId: string, requesterSub: string) {
+    const currentRequestUser = await this.getUser({ requesterSub });
 
     // Проверяем, что пользователь не добавляет себя в избранное
     if (currentRequestUser.id === favoriteId) {
@@ -351,8 +390,8 @@ export class UserService {
    *
    * Удаляет указанного пользователя из списка избранных текущего пользователя.
    */
-  async removeUserFromFavorites(favoriteId: string, userSub: string) {
-    const currentRequestUser = await this.getUser({ userSub });
+  async removeUserFromFavorites(favoriteId: string, requesterSub: string) {
+    const currentRequestUser = await this.getUser({ requesterSub });
 
     // Сначала получаем информацию о пользователе, которого удаляем из избранного
     const favoriteUser = await this.prisma.user.findUnique({
@@ -392,9 +431,9 @@ export class UserService {
     text: string,
     page: number,
     limit: number,
-    userSub?: string
+    requesterSub?: string
   ) {
-    const currenRequestUser = await this.getUser({ userSub });
+    const currenRequestUser = await this.getUser({ requesterSub });
 
     const skip = (page - 1) * limit;
 
@@ -441,10 +480,10 @@ export class UserService {
   }
 
   /** Обовление аватара */
-  async updateAvatar(avatarId: string | null, userSub: string) {
+  async updateAvatar(avatarId: string | null, requesterSub: string) {
     const updatedUser = await this.prisma.user.update({
       where: {
-        keycloakId: userSub,
+        keycloakId: requesterSub,
       },
       data: {
         avatar: avatarId,

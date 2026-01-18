@@ -62,6 +62,13 @@ type UserDecor = {
       id: ApiParamOptions;
     };
   };
+  deleteUser: {
+    operation: ApiOperationOptions;
+    responseOk: ApiResponseNoStatusOptions;
+    params: {
+      id: ApiParamOptions;
+    };
+  };
   linkAuthUser: {
     operation: ApiOperationOptions;
     responseOk: ApiResponseNoStatusOptions;
@@ -171,6 +178,18 @@ export const userDecor: UserDecor = {
     },
     responseOk: {
       description: 'Пользователь обновлен',
+      type: UserResponseDto,
+    },
+    params: {
+      id: idParam,
+    },
+  },
+  deleteUser: {
+    operation: {
+      summary: 'Удаление пользователя',
+    },
+    responseOk: {
+      description: 'Пользователь удален',
       type: UserResponseDto,
     },
     params: {

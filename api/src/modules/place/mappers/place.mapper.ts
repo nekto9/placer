@@ -1,4 +1,3 @@
-import { StaticPath } from '@/config/static.config';
 import { UserRequestDto } from '@/modules/user/dto';
 import { Place, PlaceFavorite, Schedule } from '@/prismaClient';
 import { PlaceResponseDto, ScheduleShortResponseDto } from '../dto';

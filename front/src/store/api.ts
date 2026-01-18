@@ -12,10 +12,7 @@ const injectedRtkApi = api.injectEndpoints({
     getPlaces: build.query<GetPlacesApiResponse, GetPlacesApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/places`,
-        params: {
-          limit: queryArg.limit,
-          page: queryArg.page,
-        },
+        params: { limit: queryArg.limit, page: queryArg.page },
       }),
     }),
     getPlaceById: build.query<GetPlaceByIdApiResponse, GetPlaceByIdApiArg>({
@@ -53,10 +50,7 @@ const injectedRtkApi = api.injectEndpoints({
     getPlaceSlots: build.query<GetPlaceSlotsApiResponse, GetPlaceSlotsApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/places/${queryArg.id}/slots`,
-        params: {
-          startDate: queryArg.startDate,
-          stopDate: queryArg.stopDate,
-        },
+        params: { startDate: queryArg.startDate, stopDate: queryArg.stopDate },
       }),
     }),
     addPlaceToFavorites: build.mutation<
@@ -193,6 +187,12 @@ const injectedRtkApi = api.injectEndpoints({
     }),
     getUserById: build.query<GetUserByIdApiResponse, GetUserByIdApiArg>({
       query: (queryArg) => ({ url: `/api/v1/users/${queryArg.id}` }),
+    }),
+    deleteUser: build.mutation<DeleteUserApiResponse, DeleteUserApiArg>({
+      query: (queryArg) => ({
+        url: `/api/v1/users/${queryArg.id}`,
+        method: 'DELETE',
+      }),
     }),
     updateUser: build.mutation<UpdateUserApiResponse, UpdateUserApiArg>({
       query: (queryArg) => ({
@@ -575,6 +575,12 @@ export type JoinApiArg = {
 export type GetUserByIdApiResponse =
   /** status 200 Пользователь */ UserResponseDto;
 export type GetUserByIdApiArg = {
+  /** ID пользователя */
+  id: string;
+};
+export type DeleteUserApiResponse =
+  /** status 200 Пользователь удален */ UserResponseDto;
+export type DeleteUserApiArg = {
   /** ID пользователя */
   id: string;
 };
@@ -1463,6 +1469,7 @@ export const {
   useUnJoinMutation,
   useJoinMutation,
   useGetUserByIdQuery,
+  useDeleteUserMutation,
   useUpdateUserMutation,
   useLinkAuthUserMutation,
   useGetUsersQuery,

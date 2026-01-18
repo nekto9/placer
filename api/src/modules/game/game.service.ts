@@ -42,7 +42,7 @@ export class GameService {
     placeId: string,
     slotId: string,
     dateInput: string,
-    userSub: string
+    requesterSub: string
   ) {
     // Получаем данные временного слота
     const timeSlot = await this.prisma.timeSlot.findUnique({
@@ -54,11 +54,11 @@ export class GameService {
     }
 
     const user = await this.userService.getUser({
-      userSub,
+      requesterSub,
     });
 
     if (!user) {
-      throw new Error(`User with keycloak id ${userSub} not found`);
+      throw new Error(`User with keycloak id ${requesterSub} not found`);
     }
 
     // Подготавливаем данные для создания игры
@@ -97,15 +97,15 @@ export class GameService {
    */
   async createGameForCustomSlot(
     placeId: string,
-    userSub: string,
+    requesterSub: string,
     dto: CreateGameDto
   ) {
     const user = await this.userService.getUser({
-      userSub,
+      requesterSub,
     });
 
     if (!user) {
-      throw new Error(`User with keycloak id ${userSub} not found`);
+      throw new Error(`User with keycloak id ${requesterSub} not found`);
     }
 
     // Подготавливаем данные для создания игры с кастомным временем
@@ -133,9 +133,9 @@ export class GameService {
    * При добавлении новых участников со статусом INVITED автоматически
    * отправляет им приглашения через систему очередей.
    */
-  async updateGame(id: string, dto: UpdateGameDto, userSub?: string) {
+  async updateGame(id: string, dto: UpdateGameDto, requesterSub?: string) {
     const user = await this.userService.getUser({
-      userSub,
+      requesterSub,
     });
 
     if (!user) {
@@ -245,9 +245,9 @@ export class GameService {
    * Полностью удаляет игру из системы. Операция необратима.
    * Также удаляются все связанные записи об участниках игры.
    */
-  async deleteGame(id: string, userSub?: string) {
+  async deleteGame(id: string, requesterSub?: string) {
     const user = await this.userService.getUser({
-      userSub,
+      requesterSub,
     });
 
     if (!user) {
@@ -320,14 +320,14 @@ export class GameService {
    * Возвращает подробную информацию об игре, включая данные о площадке
    * и всех участниках с их ролями и статусами.
    */
-  async getGameById(id: string, userSub?: string) {
+  async getGameById(id: string, requesterSub?: string) {
     const currentGame = await this.prisma.game.findUnique({
       where: { id },
       include: { place: true, sport: true, users: { include: { user: true } } },
     });
 
     const requestedUser = await this.userService.getUser({
-      userSub,
+      requesterSub,
     });
 
     return mapGameToResponseDto(currentGame, requestedUser || undefined);
@@ -345,9 +345,9 @@ export class GameService {
     startDate?: string;
     stopDate?: string;
     timeframe?: GameTimeFrame;
-    /** userSub всегда передается из запроса,
+    /** requesterSub всегда передается из запроса,
      * по этому параметру определяется блок meta для прав на фронте */
-    userSub?: string;
+    requesterSub?: string;
     /** Если нужны игры юзера, то передаем его id */
     userId?: string;
     /** Статусы участников */
@@ -425,23 +425,23 @@ export class GameService {
             },
           }
         : data.memberStatuses
-          ? {
-              users: {
-                some: {
-                  userId: data.userId,
-                  status: {
-                    in: [data.memberStatuses as unknown as GameUserStatus],
-                  },
+        ? {
+            users: {
+              some: {
+                userId: data.userId,
+                status: {
+                  in: [data.memberStatuses as unknown as GameUserStatus],
                 },
               },
-            }
-          : {
-              users: {
-                some: {
-                  userId: data.userId,
-                },
+            },
+          }
+        : {
+            users: {
+              some: {
+                userId: data.userId,
               },
-            }
+            },
+          }
       : undefined;
 
     const placeIdWhere = data.placeId ? { placeId: data.placeId } : undefined;
@@ -485,7 +485,7 @@ export class GameService {
     ]);
 
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
     });
 
     return {
@@ -503,11 +503,11 @@ export class GameService {
    */
   async acceptInvite(data: {
     gameId: string;
-    userSub?: string;
+    requesterSub?: string;
     userId?: string;
   }) {
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
       userId: data.userId,
     });
 
@@ -535,7 +535,7 @@ export class GameService {
     await this.gameQueueService.sendAcceptInvite(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
@@ -548,11 +548,11 @@ export class GameService {
    */
   async rejectInvite(data: {
     gameId: string;
-    userSub?: string;
+    requesterSub?: string;
     userId?: string;
   }) {
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
       userId: data.userId,
     });
 
@@ -580,7 +580,7 @@ export class GameService {
     await this.gameQueueService.sendRejectInvite(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
@@ -591,11 +591,11 @@ export class GameService {
    */
   async requestJoin(data: {
     gameId: string;
-    userSub?: string;
+    requesterSub?: string;
     userId?: string;
   }) {
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
       userId: data.userId,
     });
 
@@ -642,7 +642,7 @@ export class GameService {
     await this.gameQueueService.sendJoinRequest(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
@@ -650,9 +650,9 @@ export class GameService {
    *
    * Доступно только для игр со статусом PUBLIC
    */
-  async join(data: { gameId: string; userSub?: string; userId?: string }) {
+  async join(data: { gameId: string; requesterSub?: string; userId?: string }) {
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
       userId: data.userId,
     });
 
@@ -696,15 +696,19 @@ export class GameService {
     await this.gameQueueService.sendJoinNotification(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
    * Выход из участников игры
    */
-  async unJoin(data: { gameId: string; userSub?: string; userId?: string }) {
+  async unJoin(data: {
+    gameId: string;
+    requesterSub?: string;
+    userId?: string;
+  }) {
     const user = await this.userService.getUser({
-      userSub: data.userSub,
+      requesterSub: data.requesterSub,
       userId: data.userId,
     });
 
@@ -725,7 +729,7 @@ export class GameService {
     await this.gameQueueService.sendUnJoinNotification(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
@@ -733,7 +737,7 @@ export class GameService {
    */
   async declineJoin(data: {
     gameId: string;
-    userSub?: string;
+    requesterSub?: string;
     userId?: string;
   }) {
     const user = await this.userService.getUser({
@@ -764,13 +768,17 @@ export class GameService {
     await this.gameQueueService.sendJoinDecline(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 
   /**
    * Принятие запроса на участие в игре
    */
-  async allowJoin(data: { gameId: string; userSub?: string; userId?: string }) {
+  async allowJoin(data: {
+    gameId: string;
+    requesterSub?: string;
+    userId?: string;
+  }) {
     const user = await this.userService.getUser({
       userId: data.userId,
     });
@@ -799,6 +807,6 @@ export class GameService {
     await this.gameQueueService.sendJoinAllow(data.gameId, user.id);
 
     // Возвращаем обновленную игру
-    return this.getGameById(data.gameId, data.userSub);
+    return this.getGameById(data.gameId, data.requesterSub);
   }
 }

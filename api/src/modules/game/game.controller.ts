@@ -136,6 +136,7 @@ export class GameController {
     request: AuthenticatedRequest
   ): Promise<GameResponseDto> {
     const game = await this.gameService.deleteGame(id, request.user.sub);
+    if (!game) throw new NotFoundException('Game not found');
     return game;
   }
 
@@ -192,7 +193,7 @@ export class GameController {
       startDate,
       stopDate,
       timeframe,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!items) throw new NotFoundException('Games not found');
     return {
@@ -223,7 +224,7 @@ export class GameController {
   ): Promise<GameResponseDto> {
     const game = await this.gameService.acceptInvite({
       gameId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or invitation not found');
     return game;
@@ -247,7 +248,7 @@ export class GameController {
   ): Promise<GameResponseDto> {
     const game = await this.gameService.rejectInvite({
       gameId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or invitation not found');
     return game;
@@ -268,7 +269,7 @@ export class GameController {
   ): Promise<GameResponseDto> {
     const game = await this.gameService.requestJoin({
       gameId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
     return game;
@@ -293,7 +294,7 @@ export class GameController {
     const game = await this.gameService.declineJoin({
       gameId: id,
       userId,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
     return game;
@@ -318,7 +319,7 @@ export class GameController {
     const game = await this.gameService.allowJoin({
       gameId: id,
       userId,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
     return game;
@@ -341,7 +342,7 @@ export class GameController {
   ): Promise<GameResponseDto> {
     const game = await this.gameService.unJoin({
       gameId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
     return game;
@@ -364,7 +365,7 @@ export class GameController {
   ): Promise<GameResponseDto> {
     const game = await this.gameService.join({
       gameId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
     return game;

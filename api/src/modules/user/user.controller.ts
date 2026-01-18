@@ -19,6 +19,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'nest-keycloak-connect';
+import { ROLES } from '@/keycloak/roles.constant';
 import { GameTimeFrame, GameUserStatus } from '@/prismaClient';
 import {
   PaginatedQueryOptions,
@@ -60,8 +62,23 @@ export class UserController {
   ): Promise<UserResponseDto> {
     const user = await this.userService.getUser({
       userId: id,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
+      requesterRoles: request.user.realm_access?.roles,
     });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  /**
+   * Удаление пользователя
+   */
+  @Delete(':id')
+  @Roles(ROLES.MANAGER)
+  @ApiOperation(userDecor.deleteUser.operation)
+  @ApiParam(userDecor.deleteUser.params.id)
+  @ApiOkResponse(userDecor.deleteUser.responseOk)
+  async deleteUser(@Param('id') id: string): Promise<UserResponseDto> {
+    const user = await this.userService.deleteUser(id);
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -299,7 +316,7 @@ export class UserController {
       stopDate,
       timeframe,
       userId,
-      userSub: request.user.sub,
+      requesterSub: request.user.sub,
       memberStatuses,
     });
     if (!items) throw new NotFoundException('Games not found');
