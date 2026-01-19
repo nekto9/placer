@@ -1,3 +1,4 @@
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -19,9 +20,6 @@ export default defineConfig(
       globals: {
         ...globals.node,
       },
-    },
-    plugins: {
-      '@typescript-eslint': tsPlugin,
     },
     rules: {
       '@typescript-eslint/interface-name-prefix': 'off',

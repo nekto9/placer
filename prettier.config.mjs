@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* global node */
 
 export default {
   trailingComma: 'es5',

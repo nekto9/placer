@@ -1,3 +1,8 @@
 {
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "eslint.workingDirectories": [
+    { "directory": "./front", "changeProcessCWD": true },
+    { "directory": "./api", "changeProcessCWD": true },
+    { "directory": "./e2e", "changeProcessCWD": true }
+  ]
 }
