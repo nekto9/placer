@@ -1,4 +1,5 @@
 import { useAuthContext } from '@/context/useAuthContext';
+import { Loading } from '@/layouts/components';
 import {
   GameTimeFrame,
   GameUserStatus,
@@ -38,6 +39,12 @@ export const HomePage = () => {
 
   useSetPageData({ title: 'Старт' });
 
+  const isLoading =
+    gameListGetState.isLoading ||
+    gameInvitedListGetState.isLoading ||
+    gameRequestListGetState.isLoading ||
+    placeFavoritesGetState.isLoading;
+
   return (
     <div>
       <GameList
@@ -53,6 +60,8 @@ export const HomePage = () => {
         list={gameRequestListGetState.data?.items || []}
       />
       <Places places={placeFavoritesGetState.data?.items || []} />
+
+      <Loading isActive={isLoading} loadingKey="homePage" />
     </div>
   );
 };

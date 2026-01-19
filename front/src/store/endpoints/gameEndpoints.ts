@@ -5,40 +5,40 @@ export const getGameEndpoints = (api: ApiType) => ({
     providesTags: ['getGames'],
   },
   updateGame: {
-    invalidatesTags: ['getGames', 'getPlaceSlots'],
+    invalidatesTags: ['getGames', 'getPlaceSlots', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   createGameForSlot: {
-    invalidatesTags: ['getGames', 'getPlaceSlots'],
+    invalidatesTags: ['getGames', 'getPlaceSlots', 'getUserGames'],
   },
   createGameForCustomSlot: {
-    invalidatesTags: ['getGames', 'getPlaceSlots'],
+    invalidatesTags: ['getGames', 'getPlaceSlots', 'getUserGames'],
   },
   deleteGame: {
-    invalidatesTags: ['getGames', 'getPlaceSlots'],
+    invalidatesTags: ['getGames', 'getPlaceSlots', 'getUserGames'],
   },
   acceptInvite: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   rejectInvite: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   requesrJoin: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   unJoin: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   declineJoin: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
   allowJoin: {
-    invalidatesTags: ['getGames'],
+    invalidatesTags: ['getGames', 'getUserGames'],
     onQueryStarted: updateHandler('getGameById', 'id', api),
   },
 });

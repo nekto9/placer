@@ -23,7 +23,7 @@ export const getUsersEndpoints = (api: ApiType) => ({
     invalidatesTags: ['getUserFavorites', 'getUsers'],
     onQueryStarted: updateHandler('getUserById', 'favoriteId', api, 'id'),
   },
-  checkUserInFavorites: {
-    providesTags: ['checkUserInFavorites'],
+  getUserGames: {
+    providesTags: ['getUserGames'],
   },
 });
