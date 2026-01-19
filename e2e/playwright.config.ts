@@ -23,9 +23,11 @@ export default defineConfig({
   webServer: process.env.CI
     ? undefined
     : {
-        command: 'yarn workspace @placer/front serve',
+        command:
+          'concurrently "yarn workspace @placer/api start:dev" "yarn workspace @placer/front serve"',
         url: process.env.BASE_URL,
         reuseExistingServer: true,
+        timeout: 120 * 1000,
       },
 
   // Проекты: сначала аутентификация, потом тесты

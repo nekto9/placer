@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "prisma:generate": "yarn prisma generate",
     "prisma:migrate": "yarn prisma migrate dev",
