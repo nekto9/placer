@@ -34,8 +34,6 @@ export const mapUserToResponseDto = (
   }
 
   if (userRequest) {
-    // Критерии для прав добавим позже, пока права только у самомго юзера
-
     const meta: UserMetaDto = {
       canEdit:
         userRequest.keycloakId === user.keycloakId ||

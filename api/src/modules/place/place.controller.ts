@@ -222,9 +222,6 @@ export class PlaceController {
 
   /**
    * Добавление площадки в избранное
-   *
-   * Добавляет указанную площадку в список избранных текущего пользователя.
-   * Требует аутентификации.
    */
   @Post('favorites/:favoriteId')
   @ApiOperation(placeDecor.addPlaceToFavorites.operation)
@@ -236,7 +233,8 @@ export class PlaceController {
   ): Promise<PlaceResponseDto> {
     const addedPlace = await this.placeService.addPlaceToFavorites(
       favoriteId,
-      request.user.sub
+      request.user.sub,
+      request.user.realm_access?.roles
     );
     if (!addedPlace) throw new NotFoundException('Place not found');
     return addedPlace;
@@ -244,9 +242,6 @@ export class PlaceController {
 
   /**
    * Удаление площадки из избранного
-   *
-   * Удаляет указанную площадку из списка избранных текущего пользователя.
-   * Требует аутентификации.
    */
   @Delete('favorites/:favoriteId')
   @ApiOperation(placeDecor.removePlaceFromFavorites.operation)
@@ -258,7 +253,8 @@ export class PlaceController {
   ): Promise<PlaceResponseDto> {
     const removedPlace = await this.placeService.removePlaceFromFavorites(
       favoriteId,
-      request.user.sub
+      request.user.sub,
+      request.user.realm_access?.roles
     );
     if (!removedPlace) throw new NotFoundException('Place not found');
     return removedPlace;
@@ -266,9 +262,6 @@ export class PlaceController {
 
   /**
    * Получение списка избранных площадок
-   *
-   * Возвращает список всех площадок, добавленных в избранное текущим пользователем.
-   * Требует аутентификации.
    */
   @Get('favorites/list')
   @ApiOperation(placeDecor.getPlaceFavorites.operation)
@@ -303,9 +296,6 @@ export class PlaceController {
 
   /**
    * Получение списка игр с пагинацией
-   *
-   * Возвращает список игр площадки с поддержкой пагинации.
-   * Игры сортируются по дате создания (новые первыми).
    */
   @Get(':id/games')
   @ApiOperation(placeDecor.getPlaceGames.operation)

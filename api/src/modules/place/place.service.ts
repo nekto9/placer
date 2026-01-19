@@ -495,11 +495,12 @@ export class PlaceService {
 
   /**
    * Добавление площадки в избранное
-   *
-   * Добавляет указанную площадку в список избранных текущего пользователя.
-   * Если площадка уже в избранном, операция игнорируется.
    */
-  async addPlaceToFavorites(favoriteId: string, requesterSub: string) {
+  async addPlaceToFavorites(
+    favoriteId: string,
+    requesterSub: string,
+    requestRoles?: string[]
+  ) {
     const currentRequestUser = await this.userService.getUser({ requesterSub });
 
     // Добавляем в избранное (если уже есть, то ничего не произойдет из-за unique constraint)
@@ -540,16 +541,19 @@ export class PlaceService {
     return mapPlaceToResponseDto(
       favoritePlace,
       this.getCoverPath(),
-      currentRequestUser
+      currentRequestUser,
+      requestRoles
     );
   }
 
   /**
    * Удаление площадки из избранного
-   *
-   * Удаляет площадку из списка избранных текущего пользователя.
    */
-  async removePlaceFromFavorites(favoriteId: string, requesterSub: string) {
+  async removePlaceFromFavorites(
+    favoriteId: string,
+    requesterSub: string,
+    requestRoles?: string[]
+  ) {
     const currentRequestUser = await this.userService.getUser({ requesterSub });
 
     const deleted = await this.prisma.placeFavorite.deleteMany({
@@ -586,7 +590,8 @@ export class PlaceService {
     return mapPlaceToResponseDto(
       favoritePlace,
       this.getCoverPath(),
-      currentRequestUser
+      currentRequestUser,
+      requestRoles
     );
   }
 

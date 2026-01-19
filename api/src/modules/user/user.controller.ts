@@ -47,10 +47,6 @@ export class UserController {
   ) {}
   /**
    * Получение пользователя по внутреннему идентификатору
-   *
-   * Возвращает публичную информацию о пользователе по его внутреннему ID.
-   * Используется для отображения профилей других пользователей,
-   * списков участников игр и других публичных данных.
    */
   @Get(':id')
   @ApiOperation(userDecor.getUserById.operation)
@@ -88,7 +84,7 @@ export class UserController {
    *
    * Создает или обновляет связь между внутренним профилем пользователя
    * и его аккаунтом в Keycloak. Если пользователь с данным Keycloak ID
-   * не существует, создается новый профиль. Требует аутентификации.
+   * не существует, создается новый профиль.
    */
   @Post()
   @ApiOperation(userDecor.linkAuthUser.operation)
@@ -138,10 +134,6 @@ export class UserController {
 
   /**
    * Обновление информации о пользователе
-   *
-   * Позволяет изменить профильную информацию пользователя:
-   * имя пользователя, контактные данные и другие настройки профиля.
-   * Обновляет только переданные поля, остальные остаются без изменений.
    */
   @Patch(':id')
   @ApiOperation(userDecor.updateUser.operation)
@@ -203,9 +195,6 @@ export class UserController {
 
   /**
    * Добавление пользователя в избранное
-   *
-   * Добавляет указанного пользователя в список избранных текущего пользователя.
-   * Требует аутентификации.
    */
   @Post('favorites/:favoriteId')
   @ApiOperation(userDecor.addUserToFavorites.operation)
@@ -217,7 +206,8 @@ export class UserController {
   ): Promise<UserResponseDto> {
     const addedUser = await this.userService.addUserToFavorites(
       favoriteId,
-      request.user.sub
+      request.user.sub,
+      request.user.realm_access?.roles
     );
     if (!addedUser) throw new NotFoundException('User not found');
     return addedUser;
@@ -225,9 +215,6 @@ export class UserController {
 
   /**
    * Удаление пользователя из избранного
-   *
-   * Удаляет указанного пользователя из списка избранных текущего пользователя.
-   * Требует аутентификации.
    */
   @Delete('favorites/:favoriteId')
   @ApiOperation(userDecor.removeUserFromFavorites.operation)
@@ -239,7 +226,8 @@ export class UserController {
   ): Promise<UserResponseDto> {
     const removedUser = await this.userService.removeUserFromFavorites(
       favoriteId,
-      request.user.sub
+      request.user.sub,
+      request.user.realm_access?.roles
     );
     if (!removedUser) throw new NotFoundException('User not found');
     return removedUser;
@@ -247,9 +235,6 @@ export class UserController {
 
   /**
    * Получение списка избранных пользователей
-   *
-   * Возвращает список всех пользователей, добавленных в избранное текущим пользователем.
-   * Требует аутентификации.
    */
   @Get('favorites/list')
   @ApiOperation(userDecor.getUserFavorites.operation)

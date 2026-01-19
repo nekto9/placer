@@ -339,7 +339,11 @@ export class UserService {
    * Добавляет указанного пользователя в список избранных текущего пользователя.
    * Если пользователь уже в избранном, операция игнорируется.
    */
-  async addUserToFavorites(favoriteId: string, requesterSub: string) {
+  async addUserToFavorites(
+    favoriteId: string,
+    requesterSub: string,
+    requestRoles?: string[]
+  ) {
     const currentRequestUser = await this.getUser({ requesterSub });
 
     // Проверяем, что пользователь не добавляет себя в избранное
@@ -377,7 +381,8 @@ export class UserService {
       favoriteUser,
       this.getAvatarPath(),
       currentRequestUser,
-      true
+      true,
+      requestRoles
     );
     // Добавляем метаданные
     resultUser.meta.isFavorite = true;
@@ -390,7 +395,11 @@ export class UserService {
    *
    * Удаляет указанного пользователя из списка избранных текущего пользователя.
    */
-  async removeUserFromFavorites(favoriteId: string, requesterSub: string) {
+  async removeUserFromFavorites(
+    favoriteId: string,
+    requesterSub: string,
+    requestRoles?: string[]
+  ) {
     const currentRequestUser = await this.getUser({ requesterSub });
 
     // Сначала получаем информацию о пользователе, которого удаляем из избранного
@@ -418,7 +427,8 @@ export class UserService {
       favoriteUser,
       this.getAvatarPath(),
       currentRequestUser,
-      true
+      true,
+      requestRoles
     );
   }
 
