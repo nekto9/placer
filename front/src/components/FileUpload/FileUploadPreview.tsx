@@ -38,6 +38,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
           <div className="upload-preview__buttons">
             {fileItem.status !== 'deleted' && (
               <Button
+                aria-label="Remove file"
                 onClick={() => props.onRemove(fileItem.id)}
                 className="upload-preview__remove"
                 pin="circle-circle"
@@ -49,6 +50,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
             )}
             {fileItem.status === 'deleted' && (
               <Button
+                aria-label="Restore file"
                 onClick={() => props.onRestore(fileItem.id)}
                 className="upload-preview__restore"
                 pin="circle-circle"
@@ -68,6 +70,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
           </div>
           <div className="upload-preview__buttons upload-preview__buttons--center">
             <Button
+              aria-label="Add file"
               onClick={() => props.onAdd()}
               className="upload-preview__add"
               pin="circle-circle"

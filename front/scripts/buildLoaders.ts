@@ -59,8 +59,17 @@ export function buildLoaders(options: BuildOptions): ModuleOptions['rules'] {
     ],
   };
 
+  const workerLoader = {
+    test: /\.worker\.ts$/,
+    type: 'asset/resource',
+    generator: {
+      filename: '[contenthash].js', // нужен файл .js!
+    },
+  };
+
   return [
     assetLoader,
+    workerLoader,
     tsLoader,
     cssLoader,
     // scssLoader,

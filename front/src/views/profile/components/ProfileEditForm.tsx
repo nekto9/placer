@@ -14,6 +14,8 @@ interface ProfileEditFormProps {
   data: UserProfileViewModel;
 }
 
+const AVATAR_SIZE = 150;
+
 export const ProfileEditForm = (props: ProfileEditFormProps) => {
   const formMethods = useForm({
     defaultValues: props.data,
@@ -42,7 +44,8 @@ export const ProfileEditForm = (props: ProfileEditFormProps) => {
     <FormProvider {...formMethods}>
       <Flex direction="column" gap={4}>
         <FileUpload
-          accept="image/*"
+          imageHeight={AVATAR_SIZE}
+          imageWidth={AVATAR_SIZE}
           maxFiles={1}
           initialFiles={
             props.data.avatar

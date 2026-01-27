@@ -32,6 +32,9 @@ interface PlaceEditFormModel {
   mode?: EditFormMode;
 }
 
+const COVER_WIDTH = 1200;
+const COVER_HEIGHT = 400;
+
 export const PlaceEditForm = (props: PlaceEditFormModel) => {
   const formMethods = useForm({
     defaultValues: props.data,
@@ -188,8 +191,9 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
         ) : null}
 
         <FileUpload
+          imageHeight={COVER_HEIGHT}
+          imageWidth={COVER_WIDTH}
           multiple
-          accept="image/*"
           initialFiles={placeCovers.map((f) => ({
             id: f.id,
             status: 'uploaded',

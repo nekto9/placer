@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { UserResponseDto } from '@/store/api';
 
 const initialState: {
@@ -17,4 +17,6 @@ export const profileSlice = createSlice({
 });
 
 export const { setAuthUser } = profileSlice.actions;
-export default profileSlice.reducer;
+
+const profileReducer: Reducer<typeof initialState> = profileSlice.reducer;
+export default profileReducer;

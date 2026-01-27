@@ -7,6 +7,9 @@ import { PlaceService } from '@/modules/place/place.service';
 import { UserService } from '@/modules/user/user.service';
 import { getFileExtension } from '@/tools/file';
 
+const AVATAR_SIZE = 150;
+const COVER_WIDTH = 1200;
+const COVER_HEIGHT = 400;
 @Injectable()
 export class UploaderService {
   constructor(
@@ -57,7 +60,7 @@ export class UploaderService {
 
       // Генерим сам аватар
       const processedBuffer = await sharp(file.buffer)
-        .resize(150, 150, { fit: 'cover' })
+        .resize(AVATAR_SIZE, AVATAR_SIZE, { fit: 'cover' })
         .jpeg({ quality: 75 })
         .toBuffer();
 
@@ -119,7 +122,7 @@ export class UploaderService {
 
           // Генерим обложку для отображения
           const processedBuffer = await sharp(file.buffer)
-            .resize(720, 260, { fit: 'cover' })
+            .resize(COVER_WIDTH, COVER_HEIGHT, { fit: 'cover' })
             .jpeg({ quality: 75 })
             .toBuffer();
 

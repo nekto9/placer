@@ -1,5 +1,5 @@
 import { UseViewportSizeResult } from '@gravity-ui/uikit';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
 
 const initialState: {
   size?: UseViewportSizeResult;
@@ -19,4 +19,6 @@ export const viewportSlice = createSlice({
 
 export const { isDesktop } = viewportSlice.selectors;
 export const { setViewportSize } = viewportSlice.actions;
-export default viewportSlice.reducer;
+
+const viewportReducer: Reducer<typeof initialState> = viewportSlice.reducer;
+export default viewportReducer;

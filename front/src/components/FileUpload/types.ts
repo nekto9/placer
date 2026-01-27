@@ -13,6 +13,9 @@ export interface BaseFile {
   /** Статус */
   status: FileStatus;
 
+  /** Статус преобразования через воркер */
+  isResized?: boolean;
+
   url?: string; // опциональна (например, для PDF может не быть preview)
 }
 
