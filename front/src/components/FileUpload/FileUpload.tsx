@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNotification } from '@/components/Notify/useNotification';
-import { useImageResize } from '@/workers/useImageResize';
-import { FileUploadPreview } from './FileUploadPreview';
-import { changeExtension } from './tools';
-import { AddedFile, FileItem, UploadedFile } from './types';
+import { useEffect, useRef, useState } from "react";
+import { useNotification } from "@/components/Notify/useNotification";
+import { useImageResize } from "@/workers/useImageResize";
+import { FileUploadPreview } from "./FileUploadPreview";
+import { changeExtension } from "./tools";
+import { AddedFile, FileItem, UploadedFile } from "./types";
 
 interface FileUploadProps {
   /** Список уже загруженных файлов (например, с сервера) */
@@ -22,7 +22,7 @@ interface FileUploadProps {
 
 const addedFilesMapper = (file: File): AddedFile => {
   let previewUrl: string | undefined = undefined;
-  if (file.type.startsWith('image/')) {
+  if (file.type.startsWith("image/")) {
     previewUrl = URL.createObjectURL(file);
   }
   return {
@@ -32,7 +32,7 @@ const addedFilesMapper = (file: File): AddedFile => {
     type: file.type,
     file,
     url: previewUrl,
-    status: 'added',
+    status: "added",
     isResized: false,
   };
 };
@@ -42,7 +42,7 @@ const addedFilesMapper = (file: File): AddedFile => {
 export const FileUpload = (props: FileUploadProps) => {
   const { showError } = useNotification();
   const maxFiles = props.maxFiles || 10;
-  const accept = 'image/*';
+  const accept = "image/*";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,13 +51,13 @@ export const FileUpload = (props: FileUploadProps) => {
     return (
       props.initialFiles?.map((f) => ({
         ...f,
-        status: 'uploaded',
+        status: "uploaded",
       })) || []
     );
   });
 
   // Активные файлы
-  const activeFiles = files.filter((el) => el.status !== 'deleted');
+  const activeFiles = files.filter((el) => el.status !== "deleted");
 
   // Передача изменений наружу
   useEffect(() => {
@@ -66,7 +66,7 @@ export const FileUpload = (props: FileUploadProps) => {
     return () => {
       // Очистка objectURL при изменении/уходе
       files.forEach((f) => {
-        if (f.url.startsWith('blob:')) {
+        if (f.url.startsWith("blob:")) {
           URL.revokeObjectURL(f.url);
         }
       });
@@ -89,7 +89,7 @@ export const FileUpload = (props: FileUploadProps) => {
 
     // второй раз запуститься не должно, т.к. после воркера меняем isResized
     const unresizedFiles = files.filter(
-      (f) => !!('file' in f && !!f.file) && !f.isResized
+      (f) => !!("file" in f && !!f.file) && !f.isResized
     ) as AddedFile[];
 
     // через воркер прогоняем о одному файлу
@@ -103,7 +103,7 @@ export const FileUpload = (props: FileUploadProps) => {
             type: workerMessage.mimeType,
           });
           // т.к. воркер нам принудительно делает jpg, меняем расширение для аплоада
-          const fileName = changeExtension(processingFile.name, 'jpg');
+          const fileName = changeExtension(processingFile.name, "jpg");
 
           const resultFile = new File([blob], fileName, {
             type: workerMessage.mimeType,
@@ -158,7 +158,7 @@ export const FileUpload = (props: FileUploadProps) => {
       setFiles((prev) => [...prev, ...newFiles]);
     }
 
-    if (event.target) event.target.value = '';
+    if (event.target) event.target.value = "";
   };
 
   // Обработка удаления файлов
@@ -169,11 +169,11 @@ export const FileUpload = (props: FileUploadProps) => {
       prev
         .map((f) =>
           f.id === id
-            ? f.status === 'added'
+            ? f.status === "added"
               ? null
               : {
                   ...f,
-                  status: f.status === 'deleted' ? 'uploaded' : 'deleted',
+                  status: f.status === "deleted" ? "uploaded" : "deleted",
                 }
             : f
         )
@@ -183,7 +183,7 @@ export const FileUpload = (props: FileUploadProps) => {
 
   const restoreFile = (id: string) => {
     setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, status: 'uploaded' } : f))
+      prev.map((f) => (f.id === id ? { ...f, status: "uploaded" } : f))
     );
   };
 
@@ -195,7 +195,7 @@ export const FileUpload = (props: FileUploadProps) => {
         multiple={props.multiple}
         accept={accept}
         onChange={handleFileChange}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
       <FileUploadPreview

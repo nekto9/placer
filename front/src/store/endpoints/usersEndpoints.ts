@@ -1,29 +1,29 @@
-import { ApiType, updateHandler } from '../utils';
+import { ApiType, updateHandler } from "../utils";
 
 /** Пользователи */
 export const getUsersEndpoints = (api: ApiType) => ({
   getUsers: {
-    providesTags: ['getUsers'],
+    providesTags: ["getUsers"],
   },
   updateUser: {
-    invalidatesTags: ['getUsers'],
-    onQueryStarted: updateHandler('getUserById', 'id', api),
+    invalidatesTags: ["getUsers"],
+    onQueryStarted: updateHandler("getUserById", "id", api),
   },
   deleteUser: {
-    invalidatesTags: ['getUsers'],
+    invalidatesTags: ["getUsers"],
   },
   getUserFavorites: {
-    providesTags: ['getUserFavorites'],
+    providesTags: ["getUserFavorites"],
   },
   addUserToFavorites: {
-    invalidatesTags: ['getUserFavorites', 'getUsers'],
-    onQueryStarted: updateHandler('getUserById', 'favoriteId', api, 'id'),
+    invalidatesTags: ["getUserFavorites", "getUsers"],
+    onQueryStarted: updateHandler("getUserById", "favoriteId", api, "id"),
   },
   removeUserFromFavorites: {
-    invalidatesTags: ['getUserFavorites', 'getUsers'],
-    onQueryStarted: updateHandler('getUserById', 'favoriteId', api, 'id'),
+    invalidatesTags: ["getUserFavorites", "getUsers"],
+    onQueryStarted: updateHandler("getUserById", "favoriteId", api, "id"),
   },
   getUserGames: {
-    providesTags: ['getUserGames'],
+    providesTags: ["getUserGames"],
   },
 });

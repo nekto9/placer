@@ -1,8 +1,8 @@
-import { RangeDatePicker, RangeValue } from '@gravity-ui/date-components';
-import { dateTime, DateTime } from '@gravity-ui/date-utils';
-import { Button, Flex, Select } from '@gravity-ui/uikit';
-import { GameStatus, GameUserRole, GameUserStatus } from '@/store/api';
-import { DATE_VIEW_FORMAT } from '@/tools/constants';
+import { RangeDatePicker, RangeValue } from "@gravity-ui/date-components";
+import { dateTime, DateTime } from "@gravity-ui/date-utils";
+import { Button, Flex, Select } from "@gravity-ui/uikit";
+import { GameStatus, GameUserRole, GameUserStatus } from "@/store/api";
+import { DATE_VIEW_FORMAT } from "@/tools/constants";
 
 interface UserGamesFiltersProps {
   userRole?: GameUserRole;
@@ -18,25 +18,25 @@ interface UserGamesFiltersProps {
 }
 
 const userStatusOptions = [
-  { value: '', label: 'Все статусы участника' },
-  { value: GameUserStatus.Invited, label: 'Приглашен' },
-  { value: GameUserStatus.Confirmed, label: 'Подтвердил участие' },
-  { value: GameUserStatus.Rejected, label: 'Отказался от приглашения' },
-  { value: GameUserStatus.Requested, label: 'Запросил приглашение' },
-  { value: GameUserStatus.Allowed, label: 'Одобрен' },
-  { value: GameUserStatus.Declined, label: 'Отклонен' },
+  { value: "", label: "Все статусы участника" },
+  { value: GameUserStatus.Invited, label: "Приглашен" },
+  { value: GameUserStatus.Confirmed, label: "Подтвердил участие" },
+  { value: GameUserStatus.Rejected, label: "Отказался от приглашения" },
+  { value: GameUserStatus.Requested, label: "Запросил приглашение" },
+  { value: GameUserStatus.Allowed, label: "Одобрен" },
+  { value: GameUserStatus.Declined, label: "Отклонен" },
 ];
 
 const userRoleOptions = [
-  { value: '', label: 'Все роли участника' },
-  { value: GameUserRole.Creator, label: 'Создатель' },
-  { value: GameUserRole.Member, label: 'Участник' },
+  { value: "", label: "Все роли участника" },
+  { value: GameUserRole.Creator, label: "Создатель" },
+  { value: GameUserRole.Member, label: "Участник" },
 ];
 
 const gameStatusOptions = [
-  { value: '', label: 'Все статусы игр' },
-  { value: GameStatus.Draft, label: 'Черновик' },
-  { value: GameStatus.Aproved, label: 'Подтвержденная' },
+  { value: "", label: "Все статусы игр" },
+  { value: GameStatus.Draft, label: "Черновик" },
+  { value: GameStatus.Aproved, label: "Подтвержденная" },
 ];
 
 export const UserGamesFilters = (props: UserGamesFiltersProps) => {
@@ -53,7 +53,7 @@ export const UserGamesFilters = (props: UserGamesFiltersProps) => {
       <Flex gap={3} wrap>
         <Select
           label="Роль участника"
-          value={[props.userRole || '']}
+          value={[props.userRole || ""]}
           onUpdate={(value) =>
             props.onUserRoleChange((value[0] as GameUserRole) || undefined)
           }
@@ -67,7 +67,7 @@ export const UserGamesFilters = (props: UserGamesFiltersProps) => {
 
         <Select
           label="Статус участника"
-          value={[props.userStatus || '']}
+          value={[props.userStatus || ""]}
           onUpdate={(value) =>
             props.onUserStatusChange((value[0] as GameUserStatus) || undefined)
           }
@@ -81,7 +81,7 @@ export const UserGamesFilters = (props: UserGamesFiltersProps) => {
 
         <Select
           label="Статус игры"
-          value={[props.gameStatus || '']}
+          value={[props.gameStatus || ""]}
           onUpdate={(value) =>
             props.onGameStatusChange((value[0] as GameStatus) || undefined)
           }

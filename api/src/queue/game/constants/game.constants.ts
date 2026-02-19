@@ -35,6 +35,10 @@ export const GAME_JOB_NAMES = {
   /** Выход юзера из участников
    * Получатель: создатель игры */
   SEND_UNJOIN_NOTIFICATION: 'sendUnJoinNotification',
+
+  /** Отмена бронирования игры
+   * Удаление черновика после истечения TTL */
+  CANCEL_RESERVATION: 'cancelReservation',
 } as const;
 
 /** Названия очередей */

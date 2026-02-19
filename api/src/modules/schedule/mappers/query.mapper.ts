@@ -1,6 +1,6 @@
-import { Prisma } from '@/prismaClient';
-import { stringToDate } from '@/tools/dateUtils';
-import { CreateScheduleDto, UpdateScheduleDto } from '../dto';
+import { Prisma } from "@/prismaClient";
+import { stringToDate } from "@/tools/dateUtils";
+import { CreateScheduleDto, UpdateScheduleDto } from "../dto";
 
 export function mapCreateScheduleDtoToPrismaInput(
   dto: CreateScheduleDto
@@ -9,11 +9,11 @@ export function mapCreateScheduleDtoToPrismaInput(
   return {
     ...rest,
     startDate: stringToDate(dto.startDate),
-    stopDate: stringToDate(dto.stopDate),
+    ...(dto.stopDate ? { stopDate: stringToDate(dto.stopDate) } : {}),
     place: { connect: { id: placeId } },
     timeSlots: {
       createMany: {
-        data: dto.timeSlots.map((el) => ({
+        data: (dto.timeSlots ?? []).map((el) => ({
           timeStart: el.timeStart,
           timeEnd: el.timeEnd,
         })),
@@ -29,15 +29,15 @@ export function mapUpdateScheduleDtoToPrismaInput(
   const { timeSlots, ...rest } = dto;
   return {
     ...rest,
-    startDate: stringToDate(dto.startDate),
-    stopDate: stringToDate(dto.stopDate),
+    ...(dto.startDate ? { startDate: stringToDate(dto.startDate) } : {}),
+    ...(dto.stopDate ? { stopDate: stringToDate(dto.stopDate) } : {}),
     timeSlots: {
       deleteMany: {
         id: {
-          notIn: timeSlots.map((el) => el.id).filter((el) => !!el),
+          notIn: (timeSlots ?? []).map((el) => el.id).filter((el) => !!el),
         },
       },
-      upsert: timeSlots.map((el) => ({
+      upsert: (timeSlots ?? []).map((el) => ({
         where: {
           id: el.id,
         },

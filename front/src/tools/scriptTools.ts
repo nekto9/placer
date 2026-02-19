@@ -10,11 +10,11 @@ export const connectScript = ({
   const script = document.getElementById(id);
   if (!script) {
     const node = document.getElementsByTagName(
-      'script'
+      "script"
     )[0] as HTMLScriptElement;
 
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
+    const s = document.createElement("script");
+    s.type = "text/javascript";
     s.src = src;
     s.async = true;
     s.id = id;

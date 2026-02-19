@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { ToastProps, useToaster } from '@gravity-ui/uikit';
+import { useCallback } from "react";
+import { ToastProps, useToaster } from "@gravity-ui/uikit";
 
 export interface NotificationOptions {
   title?: string;
@@ -20,7 +20,7 @@ export const useNotification = () => {
    * Базовая функция для создания уведомления с использованием только Gravity UI Toast типов
    */
   const createNotification = useCallback(
-    (theme: ToastProps['theme'], options: NotificationOptions) => {
+    (theme: ToastProps["theme"], options: NotificationOptions) => {
       const {
         title,
         message,
@@ -41,7 +41,7 @@ export const useNotification = () => {
       if (showRetry && onRetry) {
         toastConfig.actions = [
           {
-            label: 'Повторить',
+            label: "Повторить",
             onClick: onRetry,
           },
         ];
@@ -57,8 +57,8 @@ export const useNotification = () => {
    */
   const showError = useCallback(
     (options: NotificationOptions) => {
-      createNotification('danger', {
-        title: 'Ошибка',
+      createNotification("danger", {
+        title: "Ошибка",
         ...options,
       });
     },
@@ -69,9 +69,9 @@ export const useNotification = () => {
    * Показать предупреждение
    */
   const showWarning = useCallback(
-    (options: Omit<NotificationOptions, 'showRetry' | 'onRetry'>) => {
-      createNotification('warning', {
-        title: 'Предупреждение',
+    (options: Omit<NotificationOptions, "showRetry" | "onRetry">) => {
+      createNotification("warning", {
+        title: "Предупреждение",
         autoHiding: 4000,
         ...options,
       });
@@ -83,9 +83,9 @@ export const useNotification = () => {
    * Показать информационное сообщение
    */
   const showInfo = useCallback(
-    (options: Omit<NotificationOptions, 'showRetry' | 'onRetry'>) => {
-      createNotification('info', {
-        title: 'Информация',
+    (options: Omit<NotificationOptions, "showRetry" | "onRetry">) => {
+      createNotification("info", {
+        title: "Информация",
         autoHiding: 3000,
         ...options,
       });
@@ -97,9 +97,9 @@ export const useNotification = () => {
    * Показать сообщение об успехе
    */
   const showSuccess = useCallback(
-    (options: Omit<NotificationOptions, 'showRetry' | 'onRetry'>) => {
-      createNotification('success', {
-        title: 'Успешно',
+    (options: Omit<NotificationOptions, "showRetry" | "onRetry">) => {
+      createNotification("success", {
+        title: "Успешно",
         autoHiding: 3000,
         ...options,
       });

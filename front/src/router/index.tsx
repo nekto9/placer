@@ -1,7 +1,7 @@
-import { createBrowserRouter } from 'react-router';
-import { DefaultLayout } from '@/layouts/DefaultLayout';
-import { routes } from '@/router/routes';
-import { RoutesList } from './routesList';
+import { createBrowserRouter } from "react-router";
+import { DefaultLayout } from "@/layouts/DefaultLayout";
+import { routes } from "@/router/routes";
+import { RoutesList } from "./routesList";
 
 export const getRouter = () =>
   createBrowserRouter([

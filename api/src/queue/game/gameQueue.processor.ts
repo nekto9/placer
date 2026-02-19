@@ -1,49 +1,109 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { Job } from 'bullmq';
-import { GameService } from '@/modules/game/game.service';
-import { UserService } from '@/modules/user/user.service';
-import { $Enums } from '@/prismaClient';
-import { TelegramService } from '@/telegram/telegram.service';
-import { EmailQueueService } from '../email/emailQueue.service';
+import { Processor, WorkerHost } from "@nestjs/bullmq";
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  Logger,
+  Optional,
+} from "@nestjs/common";
+import { Job } from "bullmq";
+import { PrismaService } from "@/database/prisma.service";
+import { GameService } from "@/modules/game/game.service";
+import { UserService } from "@/modules/user/user.service";
+import { $Enums } from "@/prismaClient";
+import { TelegramService } from "@/telegram/telegram.service";
+import { EmailQueueService } from "../email/emailQueue.service";
 import {
   GAME_JOB_NAMES,
   GAME_JOB_RESULT_STATUSES,
   GAME_QUEUE_NAMES,
-} from './constants/game.constants';
+} from "./constants/game.constants";
 import {
+  GameCancelReservationJobData,
   GameCheckForResetJobData,
   GameJobResult,
   GameSendInviteJobData,
   GameSendMemberMessageJobData,
-} from './interfaces/gameJob.interface';
+} from "./interfaces/gameJob.interface";
 
 @Processor(GAME_QUEUE_NAMES.GAME)
 @Injectable()
 export class GameQueueProcessor extends WorkerHost {
+  private readonly logger = new Logger(GameQueueProcessor.name);
+
   constructor(
     @Inject(forwardRef(() => GameService))
     private readonly gameService: GameService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    private readonly prisma: PrismaService,
     private readonly emailQueueService: EmailQueueService,
-    private readonly telegramService: TelegramService
+    @Optional() private readonly telegramService?: TelegramService
   ) {
     super();
+
+    if (!this.telegramService) {
+      this.logger.warn(
+        "TelegramService недоступен, Telegram уведомления будут пропущены"
+      );
+    }
+  }
+
+  /**
+   * Безопасная отправка Telegram сообщения
+   */
+  private async safeTelegramSend(
+    method: keyof TelegramService,
+    ...args: any[]
+  ): Promise<void> {
+    if (!this.telegramService) {
+      this.logger.debug(`Telegram недоступен, пропускаем ${method}`);
+      return;
+    }
+
+    try {
+      await (this.telegramService[method] as any)(...args);
+    } catch (error) {
+      this.logger.error(`Ошибка Telegram ${method}:`, error);
+      // Не выбрасываем ошибку, чтобы не блокировать основную логику
+    }
+  }
+
+  /**
+   * Безопасная отправка сообщения с информацией об игре
+   */
+  private async safeTelegramGameMessage(
+    telegramId: string,
+    game: any,
+    text: string
+  ): Promise<void> {
+    if (!this.telegramService) {
+      this.logger.debug("Telegram недоступен, пропускаем отправку сообщения");
+      return;
+    }
+
+    try {
+      const gameInfo = await this.telegramService.getGameInfo(game);
+      const message = gameInfo + `\n${text}`;
+      await this.telegramService.sendMessage(telegramId, message);
+    } catch (error) {
+      this.logger.error("Ошибка отправки Telegram сообщения:", error);
+    }
   }
 
   async process(
     job: Job<
       | GameCheckForResetJobData
       | GameSendInviteJobData
-      | GameSendMemberMessageJobData,
+      | GameSendMemberMessageJobData
+      | GameCancelReservationJobData,
       GameJobResult,
       string
     >
   ): Promise<GameJobResult> {
     // Валидация входных данных
     if (!job.data?.gameId) {
-      throw new Error('Game ID is required');
+      throw new Error("Game ID is required");
     }
 
     try {
@@ -55,6 +115,11 @@ export class GameQueueProcessor extends WorkerHost {
         case GAME_JOB_NAMES.CHECK_GAME_FOR_RESET:
           result = await this.checkGameForReset(
             job.data as GameCheckForResetJobData
+          );
+          break;
+        case GAME_JOB_NAMES.CANCEL_RESERVATION:
+          result = await this.cancelReservation(
+            job.data as GameCancelReservationJobData
           );
           break;
         case GAME_JOB_NAMES.SEND_INVITE:
@@ -124,7 +189,9 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(`Failed to reset game ${data.gameId}: ${error.message}`);
+      this.logger.error(
+        `Failed to reset game ${data.gameId}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -155,10 +222,10 @@ export class GameQueueProcessor extends WorkerHost {
 
           // Если привязан телеграм, отправляем туда
           if (user.telegramId) {
-            await this.telegramService.sendInvite(user.telegramId, game);
+            await this.safeTelegramSend("sendInvite", user.telegramId, game);
           }
         } catch (messageError) {
-          console.error(
+          this.logger.error(
             `Failed to send invite message to user ${user.id}: ${messageError.message}`
           );
           // Продолжаем отправку остальным пользователям
@@ -171,7 +238,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send invite messages for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -214,15 +281,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Приглашение принято',
+          "Приглашение принято",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -231,7 +297,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send ConfirmInvite for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -274,15 +340,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Приглашение оклонено',
+          "Приглашение оклонено",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -291,7 +356,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send ConfirmInvite for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -338,16 +403,13 @@ export class GameQueueProcessor extends WorkerHost {
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        await this.telegramService.sendJoinRequest(
+        await this.safeTelegramSend(
+          "sendJoinRequest",
           user.telegramId,
           game,
           userMember
         );
       }
-      // отправляем мыло
-      // if (user.email) {
-      //   await this.emailService.sendJoinRequest(user.email, game, data.userId);
-      // }
 
       return {
         status: GAME_JOB_RESULT_STATUSES.SUCCESS,
@@ -355,7 +417,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send ConfirmInvite for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -388,15 +450,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Запрос на участие принят',
+          "Запрос на участие принят",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -405,7 +466,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send JoinAllow for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -438,15 +499,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Запрос на участие отклонен',
+          "Запрос на участие отклонен",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -455,7 +515,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send JoinAllow for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -498,15 +558,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Новый участник игры',
+          "Новый участник игры",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -515,7 +574,7 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send JoinNotification for game ${data.gameId}: ${error.message}`
       );
       throw error;
@@ -558,15 +617,14 @@ export class GameQueueProcessor extends WorkerHost {
         await this.emailQueueService.sendMessageForGame(
           user.email,
           text,
-          'Отказ участника от игры',
+          "Отказ участника от игры",
           game
         );
       }
 
       // Если привязан телеграм, отправляем туда
       if (user.telegramId) {
-        const message = this.telegramService.getGameInfo(game) + `\n${text}`;
-        await this.telegramService.sendMessage(user.telegramId, message);
+        await this.safeTelegramGameMessage(user.telegramId, game, text);
       }
 
       return {
@@ -575,10 +633,82 @@ export class GameQueueProcessor extends WorkerHost {
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to send UnJoinNotification for game ${data.gameId}: ${error.message}`
       );
       throw error;
+    }
+  }
+
+  /**
+   * Отмена бронирования игры
+   *
+   * Удаляет черновик игры после истечения времени бронирования.
+   * Вызывается автоматически из очереди.
+   */
+  private async cancelReservation(
+    data: GameCancelReservationJobData
+  ): Promise<GameJobResult> {
+    try {
+      // Получаем игру с пользователями, чтобы найти создателя
+      const game = await this.prisma.game.findFirst({
+        where: {
+          id: data.gameId,
+        },
+        include: {
+          users: {
+            where: {
+              role: $Enums.GameUserRole.CREATOR,
+            },
+            include: {
+              user: true,
+            },
+          },
+          place: true,
+        },
+      });
+
+      if (!game) {
+        // Игра уже удалена (например, вручную или завершена)
+        return {
+          status: GAME_JOB_RESULT_STATUSES.SUCCESS,
+          gameId: data.gameId,
+          timestamp: Date.now(),
+        };
+      }
+
+      if (game.status !== $Enums.GameStatus.DRAFT) {
+        // Игра уже была завершена или изменена
+        return {
+          status: GAME_JOB_RESULT_STATUSES.SUCCESS,
+          gameId: data.gameId,
+          timestamp: Date.now(),
+        };
+      }
+
+      // Получаем создателя для передачи в cancelReservation
+      const creator = game.users[0]?.user;
+      const requesterSub = creator?.keycloakId || "";
+
+      // Отменяем бронирование
+      await this.gameService.cancelReservation(data.gameId, requesterSub);
+
+      return {
+        status: GAME_JOB_RESULT_STATUSES.SUCCESS,
+        gameId: data.gameId,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(
+        `Failed to cancel reservation ${data.gameId}: ${error.message}`
+      );
+      // Не выбрасываем ошибку, чтобы не блокировать очередь
+      return {
+        status: GAME_JOB_RESULT_STATUSES.FAILED,
+        gameId: data.gameId,
+        error: error.message,
+        timestamp: Date.now(),
+      };
     }
   }
 }

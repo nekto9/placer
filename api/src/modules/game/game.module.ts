@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { PrismaModule } from '@/database/prisma.module';
+import { GameGatewayModule } from '@/gateway';
 import { GameQueueModule } from '@/queue/game/gameQueue.module';
 import { UserModule } from '../user/user.module';
 import { GameController } from './game.controller';
@@ -17,6 +18,7 @@ import { GameService } from './game.service';
     PrismaModule, // Доступ к базе данных
     forwardRef(() => UserModule),
     forwardRef(() => GameQueueModule), // Очередь для игровых уведомлений и задач
+    GameGatewayModule, // WebSocket шлюз для real-time событий
   ],
   controllers: [GameController], // REST API контроллер для игр
   providers: [GameService], // Бизнес-логика работы с играми

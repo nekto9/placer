@@ -1,6 +1,6 @@
-import { RouteObject } from 'react-router';
-import ProfilePage from '@/views/profile';
-import { RoutesList } from '../routesList';
+import { RouteObject } from "react-router";
+import ProfilePage from "@/views/profile";
+import { RoutesList } from "../routesList";
 
 /** Роуты для профиля пользователя */
 export const routesProfile: RouteObject[] = [

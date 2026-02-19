@@ -1,10 +1,10 @@
-import { UserRequestDto } from '@/modules/user/dto';
-import { Place, PlaceFavorite, Schedule } from '@/prismaClient';
-import { PlaceResponseDto, ScheduleShortResponseDto } from '../dto';
-import { PlaceMetaDto } from '../dto/PlaceMeta.dto';
+import { UserRequestDto } from "@/modules/user/dto";
+import { Place, PlaceFavorite, Schedule } from "@/prismaClient";
+import { PlaceResponseDto, ScheduleShortResponseDto } from "../dto";
+import { PlaceMetaDto } from "../dto/PlaceMeta.dto";
 
 const checkEditPermissions = (requestRoles?: string[]) => {
-  return !!requestRoles?.some((role) => role === 'place-manager');
+  return !!requestRoles?.some((role) => role === "place-manager");
 };
 
 export const mapPlaceToResponseDto = (
@@ -75,7 +75,7 @@ export const mapSchedulesToShortDto = (
       rank: schedule.rank,
       name: schedule.name,
       startDate: schedule.startDate.toISOString(),
-      stopDate: schedule.stopDate.toISOString(),
+      stopDate: schedule.stopDate ? schedule.stopDate.toISOString() : null,
       status: schedule.status,
     };
   });

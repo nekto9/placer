@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
 import {
   useGetScheduleByIdQuery,
   useUpdateScheduleMutation,
-} from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { ScheduleForm } from './components/ScheduleForm';
-import { convertToUpdateScheduleDto } from './mappers/convertFromViewModel';
-import { convertToScheduleViewModel } from './mappers/convertToViewModel';
-import { ScheduleViewModel } from './types';
+} from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { ScheduleForm } from "./components/ScheduleForm";
+import { convertToUpdateScheduleDto } from "./mappers/convertFromViewModel";
+import { convertToScheduleViewModel } from "./mappers/convertToViewModel";
+import { ScheduleViewModel } from "./types";
 
 /** Редактирование расписания */
 export const ScheduleUpdatePage = () => {
@@ -41,7 +41,7 @@ export const ScheduleUpdatePage = () => {
   }, [updateScheduleState.isSuccess]);
 
   useSetPageData({
-    title: 'Изменение шаблона',
+    title: "Изменение шаблона",
     backLink: RoutesList.Place.getPlaceScheduleTemplates(placeId),
   });
 

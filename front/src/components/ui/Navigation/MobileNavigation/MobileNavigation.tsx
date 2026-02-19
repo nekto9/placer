@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router';
-import { House } from '@gravity-ui/icons';
-import { MenuItem } from '@gravity-ui/navigation';
-import { Flex, Icon, Text } from '@gravity-ui/uikit';
-import { RoutesList } from '@/router/routesList';
+import { useNavigate } from "react-router";
+import { House } from "@gravity-ui/icons";
+import { MenuItem } from "@gravity-ui/navigation";
+import { Flex, Icon, Text } from "@gravity-ui/uikit";
+import { RoutesList } from "@/router/routesList";
 
 interface MobileNavigationProps {
   data: MenuItem[];
@@ -30,7 +30,7 @@ export const MobileNavigation = (props: MobileNavigationProps) => {
             <Text variant="caption-2">Настройки</Text>
           </div>
         </Card> */}
-        <div style={{ textAlign: 'center' }} onClick={homeClickHandler}>
+        <div style={{ textAlign: "center" }} onClick={homeClickHandler}>
           <Icon data={House} size={24} />
           <div>
             <Text variant="caption-2">Старт</Text>
@@ -39,7 +39,7 @@ export const MobileNavigation = (props: MobileNavigationProps) => {
         {props.data.map((item) => (
           <div
             key={item.id}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: "center" }}
             onClick={(e) => item.onItemClick(item, false, e)}
           >
             <Icon data={item.icon} size={24} />

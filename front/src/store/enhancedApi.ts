@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api } from "./api";
 import {
   getGameEndpoints,
   getManageEndpoints,
@@ -6,8 +6,8 @@ import {
   getScheduleEndpoints,
   getUploaderEndpoints,
   getUsersEndpoints,
-} from './endpoints';
-import { getTags } from './utils';
+} from "./endpoints";
+import { getTags } from "./utils";
 
 // https://redux-toolkit.js.org/rtk-query/api/created-api/code-splitting#enhanceendpoints
 

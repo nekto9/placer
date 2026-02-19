@@ -1,6 +1,6 @@
-import { UserList } from '@/components/ui/UserList';
-import { Loading } from '@/layouts/components';
-import { useGetUserFavoritesQuery } from '@/store/api';
+import { UserList } from "@/components/ui/UserList";
+import { Loading } from "@/layouts/components";
+import { useGetUserFavoritesQuery } from "@/store/api";
 
 interface FavoritesUserListProps {
   searchQuery?: string;

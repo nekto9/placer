@@ -1,6 +1,6 @@
-import { Flex } from '@gravity-ui/uikit';
-import UserCard from '@/components/ui/UserCard';
-import { GetUsersApiResponse, UserResponseDto } from '@/store/api';
+import { Flex } from "@gravity-ui/uikit";
+import UserCard from "@/components/ui/UserCard";
+import { GetUsersApiResponse, UserResponseDto } from "@/store/api";
 
 interface UserListProps {
   data: GetUsersApiResponse;

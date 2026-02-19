@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Button, TextInput } from '@gravity-ui/uikit';
-import { RoutesList } from '@/router/routesList';
-import { debounce } from '@/tools/debounce';
-import { useSetPageData } from '@/tools/hooks';
-import { AllUserList } from './components/AllUserList';
-import { FavoritesUserList } from './components/FavoritesUserList';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Button, TextInput } from "@gravity-ui/uikit";
+import { RoutesList } from "@/router/routesList";
+import { debounce } from "@/tools/debounce";
+import { useSetPageData } from "@/tools/hooks";
+import { AllUserList } from "./components/AllUserList";
+import { FavoritesUserList } from "./components/FavoritesUserList";
 
 interface UserListPageProps {
   isFavorites?: boolean;
 }
 export const UserListPage = (props: UserListPageProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = debounce(setSearchQuery, 500);
 
   /** Поле поиска */
@@ -36,7 +36,7 @@ export const UserListPage = (props: UserListPageProps) => {
     navigate(RoutesList.Users.getUserDetails(userId));
   };
 
-  useSetPageData({ title: 'Пользователи' });
+  useSetPageData({ title: "Пользователи" });
 
   return (
     <>
@@ -62,7 +62,7 @@ export const UserListPage = (props: UserListPageProps) => {
       </div>
       <TextInput
         onUpdate={searchChangeHandler}
-        placeholder={'Поиск'}
+        placeholder={"Поиск"}
         style={{ marginBottom: 20 }}
         size="xl"
       />

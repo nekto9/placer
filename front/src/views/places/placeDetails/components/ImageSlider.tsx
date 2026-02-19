@@ -1,24 +1,24 @@
-import { Navigation, Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/effect-fade';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import './style.styl';
-import { ChevronLeft, ChevronRight } from '@gravity-ui/icons';
-import { Button, Card, Icon } from '@gravity-ui/uikit';
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "./style.styl";
+import { ChevronLeft, ChevronRight } from "@gravity-ui/icons";
+import { Button, Card, Icon } from "@gravity-ui/uikit";
 
 interface ImageSliderProps {
   images: string[];
 }
 
 export const ImageSlider = (props: ImageSliderProps) => (
-  <Card type="container" view="outlined" style={{ overflow: 'hidden' }}>
+  <Card type="container" view="outlined" style={{ overflow: "hidden" }}>
     <Swiper
-      effect={'slide'}
+      effect={"slide"}
       navigation={{
-        nextEl: '.swiper-custom__next',
-        prevEl: '.swiper-custom__prev',
+        nextEl: ".swiper-custom__next",
+        prevEl: ".swiper-custom__prev",
       }}
       pagination={{
         clickable: true,

@@ -1,17 +1,17 @@
-import { CreateScheduleDto, UpdateScheduleDto } from '@/store/api';
-import { DATE_SERV_FORMAT } from '@/tools/constants';
-import { dateTimeConvertToMinutes } from '@/tools/dateTools';
+import { CreateScheduleDto, UpdateScheduleDto } from "@/store/api";
+import { DATE_SERV_FORMAT } from "@/tools/constants";
+import { dateTimeConvertToMinutes } from "@/tools/dateTools";
 import {
   parseEmptyNumberToUndefined,
   parseEmptyStringToUndefined,
-} from '@/tools/parse';
-import { ScheduleViewModel } from '../types';
+} from "@/tools/parse";
+import { ScheduleViewModel } from "../types";
 
 export const convertToCreateScheduleDto = (
   placeId: string,
   data: ScheduleViewModel
 ): CreateScheduleDto => {
-  const dtoData: CreateScheduleDto = {
+  const dtoData = {
     ...data,
     placeId,
     name: data.name,
@@ -20,8 +20,8 @@ export const convertToCreateScheduleDto = (
     status: data.status[0],
     rank: parseEmptyNumberToUndefined(data.rank),
     repeatStep: data.repeatStep,
-    startDate: data.startDate.format(DATE_SERV_FORMAT),
-    stopDate: data.stopDate.format(DATE_SERV_FORMAT),
+    startDate: data.startDate?.format(DATE_SERV_FORMAT),
+    stopDate: data.stopDate?.format(DATE_SERV_FORMAT),
 
     maxDurationHours: parseEmptyNumberToUndefined(data.maxDurationHours?.[0]),
     maxDurationMinutes: parseEmptyNumberToUndefined(
@@ -33,11 +33,11 @@ export const convertToCreateScheduleDto = (
     ),
     timeStart: parseEmptyNumberToUndefined(data.timeStart),
     timeSlots: data.timeSlots.map((slot) => ({
-      id: parseEmptyStringToUndefined(slot.id) || '',
+      id: parseEmptyStringToUndefined(slot.id) || "",
       timeStart: dateTimeConvertToMinutes(slot.timeStart),
       timeEnd: dateTimeConvertToMinutes(slot.timeEnd),
     })),
-  };
+  } as CreateScheduleDto;
 
   return dtoData;
 };
@@ -52,8 +52,8 @@ export const convertToUpdateScheduleDto = (
     status: data.status[0],
     rank: parseEmptyNumberToUndefined(data.rank),
     repeatStep: data.repeatStep,
-    startDate: data.startDate.format(DATE_SERV_FORMAT),
-    stopDate: data.stopDate.format(DATE_SERV_FORMAT),
+    startDate: data.startDate?.format(DATE_SERV_FORMAT),
+    stopDate: data.stopDate?.format(DATE_SERV_FORMAT),
 
     maxDurationHours: parseEmptyNumberToUndefined(data.maxDurationHours?.[0]),
     maxDurationMinutes: parseEmptyNumberToUndefined(
@@ -65,7 +65,7 @@ export const convertToUpdateScheduleDto = (
     ),
     timeStart: parseEmptyNumberToUndefined(data.timeStart),
     timeSlots: data.timeSlots.map((slot) => ({
-      id: parseEmptyStringToUndefined(slot.id) || '',
+      id: parseEmptyStringToUndefined(slot.id) || "",
       timeStart: dateTimeConvertToMinutes(slot.timeStart),
       timeEnd: dateTimeConvertToMinutes(slot.timeEnd),
     })),

@@ -1,5 +1,5 @@
-import { UserUpdateDto } from '@/store/api';
-import { UserProfileViewModel } from '../types';
+import { UserUpdateDto } from "@/store/api";
+import { UserProfileViewModel } from "../types";
 
 export const convertToUpdateDto = (
   data: UserProfileViewModel

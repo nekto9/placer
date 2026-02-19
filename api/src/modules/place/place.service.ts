@@ -1,28 +1,31 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { StaticPath } from '@/config/static.config';
-import { PrismaService } from '@/database/prisma.service';
-import { CalendarRepeatMode, WorkTimeMode } from '@/prismaClient';
-import { dateToString, getDateParams, stringToDate } from '@/tools/dateUtils';
-import dayjs from '@/tools/dayjs';
-import { mapGameToResponseDto } from '../game/mappers';
-import { UserService } from '../user/user.service';
-import { CreatePlaceDto, UpdatePlaceDto, UpdateScheduleRankDto } from './dto';
-import { GridDayResponseDto } from './dto/schedule/gridDayResponse.dto';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { StaticPath } from "@/config/static.config";
+import { PrismaService } from "@/database/prisma.service";
+import { WorkTimeMode } from "@/prismaClient";
+import { dateToString, stringToDate } from "@/tools/dateUtils";
+import dayjs from "@/tools/dayjs";
+import {
+  isScheduleActive,
+  isScheduleAppliedToDate,
+} from "@/tools/scheduleUtils";
+import { mapGameToResponseDto } from "../game/mappers";
+import { UserService } from "../user/user.service";
+import { CreatePlaceDto, UpdatePlaceDto, UpdateScheduleRankDto } from "./dto";
+import { GridDayResponseDto } from "./dto/schedule/gridDayResponse.dto";
 import {
   mapGridSlotsToDto,
   mapPlaceToResponseDto,
   mapSchedulesToShortDto,
-} from './mappers';
+} from "./mappers";
 import {
   mapCreatePlaceDtoToPrismaInput,
   mapUpdatePlaceDtoToPrismaInput,
-} from './mappers/query.mapper';
-import { splitTimeInterval } from './utils/splitTimeInterval';
+} from "./mappers/query.mapper";
+import { splitTimeInterval } from "./utils/splitTimeInterval";
 
 @Injectable()
 export class PlaceService {
-  // constructor(private repository: PlaceRepository) {}
   constructor(
     private prisma: PrismaService,
     @Inject(forwardRef(() => UserService))
@@ -32,7 +35,7 @@ export class PlaceService {
 
   /** Путь до файлов с обложками */
   private getCoverPath() {
-    return `${this.configService.get<string>('API_HOST')}/${StaticPath.COVER}`;
+    return `${this.configService.get<string>("API_HOST")}/${StaticPath.COVER}`;
   }
 
   /**
@@ -79,7 +82,7 @@ export class PlaceService {
       this.prisma.place.findMany({
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
           favoritedUsers: !!currenRequestUser,
           covers: true,
@@ -204,7 +207,12 @@ export class PlaceService {
         });
       }
 
-      // TODO: Добавить в bullMQ таску на удалене самих файлов
+      /**
+       * {@inheritDoc}
+       * @todo Добавить в bullMQ таску на удаление самих файлов
+       * @author Евгений
+       * @date 2026-02
+       */
 
       // 4. Добавляем новые связи
       if (coversToAdd.length > 0) {
@@ -254,7 +262,13 @@ export class PlaceService {
     const currenRequestUser = await this.userService.getUser({ requesterSub });
     const deletedPlace = await this.prisma.place.delete({ where: { id } });
 
-    // TODO: удаление обложек
+    /**
+     * {@inheritDoc}
+     * @todo Удаление обложек после удаления площадки
+     * @author Евгений
+     * @date 2026-02
+     */
+
     return mapPlaceToResponseDto(
       deletedPlace,
       this.getCoverPath(),
@@ -271,7 +285,7 @@ export class PlaceService {
       })
       .schedules({
         orderBy: {
-          rank: 'asc',
+          rank: "asc",
         },
       });
 
@@ -310,12 +324,7 @@ export class PlaceService {
     placeId: string,
     startDateInput: string,
     stopDateInput: string
-    // requesterSub?: string
   ) {
-    // TODO: на основе юзера нужно доделать права
-    // const currenRequestUser = await this.userService.getUser({ requesterSub });
-    // console.log(currenRequestUser);
-
     const startDate = stringToDate(startDateInput);
     const stopDate = stringToDate(stopDateInput);
 
@@ -359,131 +368,65 @@ export class PlaceService {
         timeSlots: true,
       },
       orderBy: {
-        rank: 'asc',
+        rank: "asc",
       },
     });
 
-    // дата при переборе диапазона
+    const activeSchedules = schedules.filter(isScheduleActive);
+
     let currentDate = startDate;
     while (currentDate <= stopDate) {
       const currentDateString = dateToString(currentDate);
+      const dayGames = bookedGames.filter(
+        (game) => dateToString(game.date) === currentDateString
+      );
+      const dayGamesDto = dayGames.map((game) => mapGameToResponseDto(game));
+      const matchedSchedule = activeSchedules.find((schedule) =>
+        isScheduleAppliedToDate(schedule, currentDate)
+      );
 
-      const currentDateDayjs = dayjs(currentDate);
+      if (matchedSchedule) {
+        const timeSlots =
+          matchedSchedule.workTimeMode === WorkTimeMode.CUSTOM
+            ? matchedSchedule.timeSlots.flatMap((workingTime) => {
+                const overlappingGames = dayGames.filter(
+                  (game) =>
+                    game.timeStart < workingTime.timeEnd &&
+                    game.timeEnd > workingTime.timeStart
+                );
 
-      const currentDateParams = getDateParams(currentDateDayjs);
+                return splitTimeInterval(
+                  workingTime,
+                  overlappingGames,
+                  matchedSchedule
+                ).map((slot) => ({
+                  ...workingTime,
+                  timeStart: slot.timeStart,
+                  timeEnd: slot.timeEnd,
+                }));
+              })
+            : matchedSchedule.timeSlots.map((timeSlot) => ({ ...timeSlot }));
 
-      const dayGames = bookedGames
-        .filter((game) => dateToString(game.date) === currentDateString)
-        .map((game) => mapGameToResponseDto(game));
+        days.push({
+          date: currentDateString,
+          workTimeMode: matchedSchedule.workTimeMode,
+          id: matchedSchedule.id,
+          timeSlots,
+          scheduleName: matchedSchedule.name,
+          games: dayGamesDto,
+        });
+      } else if (dayGamesDto.length) {
+        days.push({
+          date: currentDateString,
+          workTimeMode: WorkTimeMode.NONE,
+          id: dayGamesDto[0].id,
+          timeSlots: [],
+          scheduleName: "",
+          games: dayGamesDto,
+        });
+      }
 
-      // // День недели (1 - понедельник, 7 - воскресенье)
-      // const weekDay = dateDay.isoWeekday();
-      // // Число месяца
-      // const monthDay = dateDay.date();
-      // // Флаг последнего дня месяца
-      // const isLastMonthDay = dateDay.daysInMonth() === monthDay;
-      // // Номер недели в месяце
-      // // const monthWeek = dateDay.isoWeek;
-
-      // 2. Выбираем календарные расписания подходящие для даты
-      schedules.forEach((schedule) => {
-        // если на выбранную дату уже есть расписание, то идем дальше
-        if (days.some((o) => o.date === currentDateString)) {
-          return;
-        }
-
-        // если дата не подходит для диапазона конкретного рсписания
-        if (
-          (schedule.stopDate &&
-            currentDate.getTime() > schedule.stopDate.getTime()) ||
-          (schedule.startDate &&
-            currentDate.getTime() < schedule.startDate.getTime())
-        ) {
-          return;
-        }
-
-        const setGridDataForDay = () => {
-          const { id, timeSlots, name } = schedule;
-          days.push({
-            date: currentDateString,
-            workTimeMode: schedule.workTimeMode,
-            id,
-            timeSlots,
-            scheduleName: name,
-            games: dayGames,
-          });
-        };
-
-        const checkSplitSlots = () => {
-          if (
-            schedule.workTimeMode === WorkTimeMode.CUSTOM &&
-            dayGames.length
-          ) {
-            const workingTime = schedule.timeSlots[0];
-            schedule.timeSlots = splitTimeInterval(
-              workingTime,
-              dayGames,
-              schedule
-            ).map((slot) => ({
-              ...workingTime,
-              timeStart: slot.timeStart,
-              timeEnd: slot.timeEnd,
-            }));
-            // console.log('custom', {
-            //   currentDateString,
-            //   ts: schedule,
-            //   dayGames,
-            //   spl: splitTimeInterval(workingTime, dayGames, schedule),
-            // });
-          }
-        };
-
-        if (
-          // Однократное событие
-          schedule.repeatMode === CalendarRepeatMode.ONCE &&
-          schedule.startDate.getTime() === currentDate.getTime()
-        ) {
-          checkSplitSlots();
-          setGridDataForDay();
-        } else if (
-          // Ежедневное
-          schedule.repeatMode === CalendarRepeatMode.DAILY &&
-          (schedule.startDate === null ||
-            schedule.repeatStep === 1 ||
-            currentDateDayjs.diff(dayjs(schedule.startDate), 'day') %
-              schedule.repeatStep ===
-              0)
-        ) {
-          checkSplitSlots();
-          setGridDataForDay();
-        } else if (
-          // Еженедельное
-          schedule.repeatMode === CalendarRepeatMode.WEEKLY &&
-          (schedule[`wd${currentDateParams.weekDay}`] ||
-            Array.from(Array(7).keys()).every((i) => !schedule[`wd${i + 1}`]))
-        ) {
-          checkSplitSlots();
-          setGridDataForDay();
-        } else if (
-          // По календарным дням
-          schedule.repeatMode === CalendarRepeatMode.CALENDDAYS &&
-          (schedule[`d${currentDateParams.monthDay}`] ||
-            (currentDateParams.isLastMonthDay && schedule.dLast))
-        ) {
-          checkSplitSlots();
-          setGridDataForDay();
-        } else if (
-          // По дням недели
-          schedule.repeatMode === CalendarRepeatMode.WEEKDAYS &&
-          (schedule[`wd${currentDateParams.weekDay}`] ||
-            Array.from(Array(7).keys()).every((i) => !schedule[`wd${i + 1}`]))
-        ) {
-          checkSplitSlots();
-          setGridDataForDay();
-        }
-      });
-
-      currentDate = currentDateDayjs.add(1, 'day').toDate();
+      currentDate = dayjs(currentDate).add(1, "day").toDate();
     }
 
     return mapGridSlotsToDto({
@@ -513,7 +456,7 @@ export class PlaceService {
       });
     } catch (error) {
       // Если запись уже существует, игнорируем ошибку
-      if (error.code !== 'P2002') {
+      if (error.code !== "P2002") {
         throw error;
       }
     }
@@ -612,7 +555,7 @@ export class PlaceService {
 
     // Построение условий поиска
     const searchCondition = text
-      ? { name: { contains: text, mode: 'insensitive' as const } }
+      ? { name: { contains: text, mode: "insensitive" as const } }
       : undefined;
 
     // Использование транзакции для атомарного получения данных и подсчета
@@ -639,7 +582,7 @@ export class PlaceService {
         },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }, // Сортировка по дате создания (новые первыми)
+        orderBy: { createdAt: "desc" }, // Сортировка по дате создания (новые первыми)
       }),
       // Подсчет общего количества пользователей
       this.prisma.placeFavorite.count({

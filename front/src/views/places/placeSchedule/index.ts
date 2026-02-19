@@ -1,3 +1,3 @@
-export { ScheduleCreatePage } from './ScheduleCreatePage';
-export { ScheduleUpdatePage } from './ScheduleUpdatePage';
-export { ScheduleTemplatesPage } from './ScheduleTemplatesPage';
+export { ScheduleCreatePage } from "./ScheduleCreatePage";
+export { ScheduleUpdatePage } from "./ScheduleUpdatePage";
+export { ScheduleTemplatesPage } from "./ScheduleTemplatesPage";

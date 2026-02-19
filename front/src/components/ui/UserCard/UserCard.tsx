@@ -1,9 +1,5 @@
-import { Card, User } from '@gravity-ui/uikit';
-import {
-  // useAddUserToFavoritesMutation,
-  // useRemoveUserFromFavoritesMutation,
-  UserResponseDto,
-} from '@/store/api';
+import { Card, User } from "@gravity-ui/uikit";
+import { UserResponseDto } from "@/store/api";
 
 interface UserCardProps {
   user: UserResponseDto;
@@ -34,7 +30,7 @@ export const UserCard = (props: UserCardProps) => {
         avatar={
           props.user.avatar
             ? { imgUrl: props.user.avatar.fileUrl }
-            : { text: props.user.username, theme: 'brand' }
+            : { text: props.user.username, theme: "brand" }
         }
         name={props.user.username}
         size="xl"

@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
-import { Button, Dialog, Flex, Sheet } from '@gravity-ui/uikit';
-import { isDesktop } from '@/store/slices/viewportSlice';
+import { ReactNode } from "react";
+import { useSelector } from "react-redux";
+import { Button, Dialog, Flex, Sheet } from "@gravity-ui/uikit";
+import { isDesktop } from "@/store/slices/viewportSlice";
 
 interface ConfirmModalProps {
   open: boolean;

@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Star, StarFill } from '@gravity-ui/icons';
-import { Button, Flex, Icon } from '@gravity-ui/uikit';
-import { ConfirmModal } from '@/components/modal/ConfirmModal';
-import { PageBlock } from '@/components/ui/PageBlock';
-import UserCard from '@/components/ui/UserCard';
-import { useAuthContext } from '@/context/useAuthContext';
-import { RoutesList } from '@/router/routesList';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Star, StarFill } from "@gravity-ui/icons";
+import { Button, Flex, Icon } from "@gravity-ui/uikit";
+import { ConfirmModal } from "@/components/modal/ConfirmModal";
+import { PageBlock } from "@/components/ui/PageBlock";
+import UserCard from "@/components/ui/UserCard";
+import { useAuthContext } from "@/context/useAuthContext";
+import { RoutesList } from "@/router/routesList";
 import {
   useAddUserToFavoritesMutation,
   useRemoveUserFromFavoritesMutation,
-} from '@/store/api';
-import { UserViewModel } from '../../common/types';
+} from "@/store/api";
+import { UserViewModel } from "../../common/types";
 
 interface UserDetailsProps {
   data: UserViewModel;
@@ -91,8 +91,8 @@ export const UserDetails = (props: UserDetailsProps) => {
                 size={18}
               />
               {props.data.meta?.isFavorite
-                ? 'Удалить из избранного'
-                : 'Добавить в избранное'}
+                ? "Удалить из избранного"
+                : "Добавить в избранное"}
             </Button>
 
             {!!props.onEditClick && (

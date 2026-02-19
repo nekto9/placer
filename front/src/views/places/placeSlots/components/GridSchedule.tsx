@@ -1,18 +1,20 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { RangeDatePicker, RangeValue } from '@gravity-ui/date-components';
-import { dateTime, DateTime } from '@gravity-ui/date-utils';
-import { Card } from '@gravity-ui/uikit';
-import { Loading } from '@/layouts/components/Loading';
-import { RoutesList } from '@/router/routesList';
-import { GridDayResponseDto, useGetPlaceSlotsQuery } from '@/store/api';
-import { DATE_SERV_FORMAT, DATE_VIEW_FORMAT } from '@/tools/constants';
-import { GridSlot } from '../types';
-import { GridSlots } from './GridSlots';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { RangeDatePicker, RangeValue } from "@gravity-ui/date-components";
+import { dateTime, DateTime } from "@gravity-ui/date-utils";
+import { Card } from "@gravity-ui/uikit";
+import { Loading } from "@/layouts/components/Loading";
+import { RoutesList } from "@/router/routesList";
+import { GridDayResponseDto, useGetPlaceSlotsQuery } from "@/store/api";
+import { DATE_SERV_FORMAT, DATE_VIEW_FORMAT } from "@/tools/constants";
+import { GridSlot } from "../types";
+import { GridSlots } from "./GridSlots";
 
 interface GridScheduleProps {
   /** Идентификатор площадки */
   placeId: string;
+  /** Токен принудительного обновления */
+  refreshToken?: number;
   /** Клик по слоту, если задан, то игнорируем внутреннюю логику компонента */
   onClick?: (day: GridDayResponseDto, slot: GridSlot) => void;
 }
@@ -20,17 +22,23 @@ interface GridScheduleProps {
 /** Дни со слотами расписания */
 export const GridSchedule = (props: GridScheduleProps) => {
   const startDate = dateTime();
-  const stopDate = startDate.add(6, 'day');
+  const stopDate = startDate.add(6, "day");
   const [range, setRange] = useState<RangeValue<DateTime>>({
     start: startDate,
     end: stopDate,
   });
 
   const placeSlotsGetSate = useGetPlaceSlotsQuery({
-    id: props.placeId,
-    startDate: range.start.format(DATE_SERV_FORMAT),
-    stopDate: range.end.format(DATE_SERV_FORMAT),
+    id: props.placeId || "",
+    startDate: range.start?.format(DATE_SERV_FORMAT) || "",
+    stopDate: range.end?.format(DATE_SERV_FORMAT) || "",
   });
+
+  useEffect(() => {
+    if (props.refreshToken) {
+      placeSlotsGetSate.refetch();
+    }
+  }, [placeSlotsGetSate.refetch, props.refreshToken]);
 
   const updateRangeDateHandler = (value: RangeValue<DateTime>) => {
     setRange(value);
@@ -61,11 +69,11 @@ export const GridSchedule = (props: GridScheduleProps) => {
           <Card style={{ marginTop: 10 }} key={day.date}>
             <div style={{ padding: 10 }}>
               <strong
-                style={day.timeSlots.length ? undefined : { color: 'red' }}
+                style={day.timeSlots.length ? undefined : { color: "red" }}
               >
-                {dateTime({ input: day.date }).format('LL')}
+                {dateTime({ input: day.date }).format("LL")}
               </strong>
-              <div>{dateTime({ input: day.date }).format('dddd')}</div>
+              <div>{dateTime({ input: day.date }).format("dddd")}</div>
               <GridSlots
                 day={day}
                 placeId={props.placeId}

@@ -1,6 +1,6 @@
-import { dateTime, DateTime } from '@gravity-ui/date-utils';
-import dayjs from '@gravity-ui/date-utils/build/dayjs';
-import { DATE_VIEW_FORMAT } from './constants';
+import { dateTime, DateTime } from "@gravity-ui/date-utils";
+import dayjs from "@gravity-ui/date-utils/build/dayjs";
+import { DATE_VIEW_FORMAT } from "./constants";
 
 /** Выделение из даты ТОЛЬКО времени и преобразование его в минуты */
 export const dateTimeConvertToMinutes = (time: DateTime) => {
@@ -14,7 +14,9 @@ export const dateTimeConvertToMinutes = (time: DateTime) => {
 export const timeConvertToFormattedString = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, "0")}:${mins
+    .toString()
+    .padStart(2, "0")}`;
 };
 
 /** Преобразование минут в формат даты gravity */
@@ -22,7 +24,7 @@ export const timeConvertToDateTime = (minutes: number | null) => {
   return minutes !== null
     ? dateTime({
         input: timeConvertToFormattedString(minutes),
-        format: 'HH:mm',
+        format: "HH:mm",
       })
     : dateTime();
 };

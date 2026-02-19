@@ -1,6 +1,6 @@
-import { CreatePlaceDto, UpdatePlaceDto } from '@/store/api';
-import { parseBool } from '@/tools/parse';
-import { PlaceViewModel } from '../types';
+import { CreatePlaceDto, UpdatePlaceDto } from "@/store/api";
+import { parseBool } from "@/tools/parse";
+import { PlaceViewModel } from "../types";
 
 export const convertToCreateDto = (data: PlaceViewModel): CreatePlaceDto => {
   const dtoData: CreatePlaceDto = {
@@ -30,7 +30,7 @@ export const convertToUpdateDto = (data: PlaceViewModel): UpdatePlaceDto => {
     longitude: data.longitude,
     covers:
       data.coverFiles
-        ?.filter((el) => el.status !== 'deleted')
+        ?.filter((el) => el.status !== "deleted")
         .map((el) => el.id) || [],
   };
 

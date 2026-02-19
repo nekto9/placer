@@ -1,4 +1,4 @@
-import { RoutesConst } from '../routeConstant';
+import { RoutesConst } from "../routeConstant";
 
 // /users
 const mainUsersURL = `${RoutesConst.ROOT}${RoutesConst.USERS}`;

@@ -1,28 +1,28 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { RouterProvider } from 'react-router';
-import { ApiErrorHandler } from './components/Notify';
-import { AuthProvider } from './context/AuthContext';
-import { LoadingOverlay } from './layouts/components';
-import { getRouter } from './router';
-import './styles/index.styl';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { RouterProvider } from "react-router";
+import { ApiErrorHandler } from "./components/Notify";
+import { AuthProvider } from "./context/AuthContext";
+import { LoadingOverlay } from "./layouts/components";
+import { getRouter } from "./router";
+import "./styles/index.styl";
 // gravity-ui config
-import { settings as settingsGravityDate } from '@gravity-ui/date-utils';
+import { settings as settingsGravityDate } from "@gravity-ui/date-utils";
 import {
   configure as configGravityUI,
   ThemeProvider,
   Toaster,
   ToasterComponent,
   ToasterProvider,
-} from '@gravity-ui/uikit';
-import { store } from './store/store';
+} from "@gravity-ui/uikit";
+import { store } from "./store/store";
 
 configGravityUI({
-  lang: 'ru',
+  lang: "ru",
 });
-settingsGravityDate.loadLocale('ru').then(() => {
-  settingsGravityDate.setLocale('ru');
+settingsGravityDate.loadLocale("ru").then(() => {
+  settingsGravityDate.setLocale("ru");
 });
 
 /**
@@ -50,7 +50,7 @@ const App: React.FC = () => {
 
 /** Рендер приложения */
 export const bootApp = () => {
-  const rootNode = document.getElementById('root');
+  const rootNode = document.getElementById("root");
   const root = createRoot(rootNode!);
 
   root.render(

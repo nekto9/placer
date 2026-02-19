@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Loading } from '@/layouts/components/Loading';
-import { RoutesList } from '@/router/routesList';
-import { useDeleteUserMutation, useGetUserByIdQuery } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { convertToViewModel } from '../common/mappers';
-import { UserDetails } from './components/UserDetails';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "@/layouts/components/Loading";
+import { RoutesList } from "@/router/routesList";
+import { useDeleteUserMutation, useGetUserByIdQuery } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { convertToViewModel } from "../common/mappers";
+import { UserDetails } from "./components/UserDetails";
 
 export const UserDetailsPage = () => {
   const { userId } = useParams();
@@ -31,7 +31,7 @@ export const UserDetailsPage = () => {
     }
   }, [userDeleteState.isSuccess]);
 
-  useSetPageData({ title: 'Пользователь' });
+  useSetPageData({ title: "Пользователь" });
 
   const isLoading = userGetState.isLoading || userDeleteState.isLoading;
 

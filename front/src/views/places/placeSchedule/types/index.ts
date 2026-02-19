@@ -1,10 +1,10 @@
-import { DateTime } from '@gravity-ui/date-utils';
+import { DateTime } from "@gravity-ui/date-utils";
 import {
   CalendarRepeatMode,
   ScheduleResponseDto,
   ScheduleStatus,
   WorkTimeMode,
-} from '@/store/api';
+} from "@/store/api";
 
 export type ScheduleViewModel = {
   /** Дата начала */
@@ -25,17 +25,17 @@ export type ScheduleViewModel = {
   timeSlots: TimeSlotViewModel[];
 } & Omit<
   ScheduleResponseDto,
-  | 'startDate'
-  | 'stopDate'
-  | 'repeatMode'
-  | 'workTimeMode'
-  | 'status'
-  | 'id'
-  | 'minDurationHours'
-  | 'minDurationMinutes'
-  | 'maxDurationHours'
-  | 'maxDurationMinutes'
-  | 'timeSlots'
+  | "startDate"
+  | "stopDate"
+  | "repeatMode"
+  | "workTimeMode"
+  | "status"
+  | "id"
+  | "minDurationHours"
+  | "minDurationMinutes"
+  | "maxDurationHours"
+  | "maxDurationMinutes"
+  | "timeSlots"
 >;
 
 export type TimeSlotViewModel = {

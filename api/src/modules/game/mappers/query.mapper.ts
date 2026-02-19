@@ -1,4 +1,5 @@
 import {
+  $Enums,
   GameStatus,
   GameUserRole,
   GameUserStatus,
@@ -32,6 +33,12 @@ export const mapUpdateGameDtoToPrismaInput = (
   dto: UpdateGameDto
 ): Prisma.GameUpdateInput => {
   const { placeId, sportId, gameUsers: _gameUsers, ...rest } = dto;
+  
+  // placeId обязателен для обновления игры
+  if (!placeId) {
+    throw new Error('placeId обязателен для обновления игры');
+  }
+  
   return {
     ...rest,
     date: stringToDate(dto.date),

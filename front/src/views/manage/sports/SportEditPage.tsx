@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { RoutesList } from '@/router/routesList';
-import { useGetSportByIdQuery, useUpdateSportMutation } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { SportEditForm } from './components/SportEditForm';
-import { convertToUpdateDto } from './mappers';
-import { SportViewModel } from './types';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { RoutesList } from "@/router/routesList";
+import { useGetSportByIdQuery, useUpdateSportMutation } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { SportEditForm } from "./components/SportEditForm";
+import { convertToUpdateDto } from "./mappers";
+import { SportViewModel } from "./types";
 
 export const SportEditPage = () => {
   const { sportId } = useParams();
@@ -36,7 +36,7 @@ export const SportEditPage = () => {
     }
   }, [sportUpdateState.isSuccess]);
 
-  useSetPageData({ title: 'Вид спорта' });
+  useSetPageData({ title: "Вид спорта" });
 
   return (
     sportGetState.isSuccess && (

@@ -1,18 +1,18 @@
-import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { useNotification } from '@/components/Notify';
-import { useImageResize } from '@/workers/useImageResize';
-import { FileUpload } from '../FileUpload';
-import { UploadedFile } from '../types';
+import React from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { useNotification } from "@/components/Notify";
+import { useImageResize } from "@/workers/useImageResize";
+import { FileUpload } from "../FileUpload";
+import { UploadedFile } from "../types";
 
 // Мокаем хук для worker
-jest.mock('@/workers/useImageResize', () => ({
+jest.mock("@/workers/useImageResize", () => ({
   useImageResize: jest.fn(),
 }));
 
 // Мокаем хук уведомлений
-jest.mock('@/components/Notify/useNotification', () => ({
+jest.mock("@/components/Notify/useNotification", () => ({
   useNotification: jest.fn(),
 }));
 
@@ -20,30 +20,30 @@ const mockShowSuccess = jest.fn();
 const mockShowError = jest.fn();
 
 // Мокаем crypto.randomUUID
-Object.defineProperty(globalThis, 'crypto', {
+Object.defineProperty(globalThis, "crypto", {
   value: {
-    randomUUID: jest.fn().mockReturnValue('mock-uuid'),
+    randomUUID: jest.fn().mockReturnValue("mock-uuid"),
   },
 });
 
 // Мокаем URL.createObjectURL и URL.revokeObjectURL
-const mockCreateObjectURL = jest.fn(() => 'blob:mock-url');
+const mockCreateObjectURL = jest.fn(() => "blob:mock-url");
 const mockRevokeObjectURL = jest.fn();
 
-Object.defineProperty(window.URL, 'createObjectURL', {
+Object.defineProperty(window.URL, "createObjectURL", {
   writable: true,
   value: mockCreateObjectURL,
 });
-Object.defineProperty(window.URL, 'revokeObjectURL', {
+Object.defineProperty(window.URL, "revokeObjectURL", {
   writable: true,
   value: mockRevokeObjectURL,
 });
 
 // Мок файла
-const createMockFile = (name: string, type = 'image/png') =>
-  new File([''], name, { type });
+const createMockFile = (name: string, type = "image/png") =>
+  new File([""], name, { type });
 
-describe('Компонент FileUpload', () => {
+describe("Компонент FileUpload", () => {
   const defaultProps = {
     imageWidth: 800,
     imageHeight: 600,
@@ -54,7 +54,7 @@ describe('Компонент FileUpload', () => {
     (useImageResize as jest.Mock).mockReturnValue({
       processImage: jest.fn().mockResolvedValue({
         buffer: new ArrayBuffer(100),
-        mimeType: 'image/jpeg',
+        mimeType: "image/jpeg",
       }),
     });
 
@@ -65,20 +65,20 @@ describe('Компонент FileUpload', () => {
     });
   });
 
-  it('Рендер компонента с кнопкой добавления', () => {
+  it("Рендер компонента с кнопкой добавления", () => {
     render(<FileUpload {...defaultProps} />);
-    expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument();
   });
 
-  it('Отображение ранее загруженных файлов', () => {
+  it("Отображение ранее загруженных файлов", () => {
     const initialFiles: UploadedFile[] = [
       {
-        id: '1',
-        name: 'exist.jpg',
+        id: "1",
+        name: "exist.jpg",
         size: 12345,
-        type: 'image/jpeg',
-        url: '/exist.jpg',
-        status: 'uploaded',
+        type: "image/jpeg",
+        url: "/exist.jpg",
+        status: "uploaded",
       },
     ];
 
@@ -88,7 +88,7 @@ describe('Компонент FileUpload', () => {
     expect(img).toBeInTheDocument();
   });
 
-  it('Выбор одного файла, если multiple=false', async () => {
+  it("Выбор одного файла, если multiple=false", async () => {
     const onChange = jest.fn();
     render(
       <FileUpload {...defaultProps} multiple={false} onChange={onChange} />
@@ -97,15 +97,15 @@ describe('Компонент FileUpload', () => {
     const uploadInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLElement;
-    const file = createMockFile('test.png');
+    const file = createMockFile("test.png");
     await userEvent.upload(uploadInput, file);
 
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            name: 'test.png',
-            status: 'added',
+            name: "test.png",
+            status: "added",
             isResized: false,
           }),
         ])
@@ -113,7 +113,7 @@ describe('Компонент FileUpload', () => {
     });
   });
 
-  it('Проверка максимального количества файлов', async () => {
+  it("Проверка максимального количества файлов", async () => {
     const onChange = jest.fn();
     render(
       <FileUpload {...defaultProps} maxFiles={2} multiple onChange={onChange} />
@@ -123,9 +123,9 @@ describe('Компонент FileUpload', () => {
       'input[type="file"]'
     ) as HTMLElement;
 
-    const file1 = createMockFile('1.png');
-    const file2 = createMockFile('2.png');
-    const file3 = createMockFile('3.png');
+    const file1 = createMockFile("1.png");
+    const file2 = createMockFile("2.png");
+    const file3 = createMockFile("3.png");
 
     // Добавляем разрешенное количество
     await userEvent.upload(uploadInput, [file1, file2]);
@@ -133,8 +133,8 @@ describe('Компонент FileUpload', () => {
     await waitFor(() => {
       expect(onChange).toHaveBeenLastCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ name: '1.png' }),
-          expect.objectContaining({ name: '2.png' }),
+          expect.objectContaining({ name: "1.png" }),
+          expect.objectContaining({ name: "2.png" }),
         ])
       );
     });
@@ -144,19 +144,19 @@ describe('Компонент FileUpload', () => {
 
     expect(mockShowError).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'Максимум 2 файлов',
+        message: "Максимум 2 файлов",
       })
     );
   });
 
-  it('Ресайз изображений после добавления', async () => {
+  it("Ресайз изображений после добавления", async () => {
     const onChange = jest.fn();
     render(<FileUpload {...defaultProps} onChange={onChange} />);
 
     const uploadInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLElement;
-    const file = createMockFile('resize-test.png');
+    const file = createMockFile("resize-test.png");
     await userEvent.upload(uploadInput, file);
 
     // Вызываем хук для передачи данных в воркер
@@ -176,21 +176,21 @@ describe('Компонент FileUpload', () => {
         expect.arrayContaining([
           expect.objectContaining({
             isResized: true,
-            url: 'blob:mock-url',
+            url: "blob:mock-url",
           }),
         ])
       );
     });
   });
 
-  it('Удаление свежедобавленных файлов', async () => {
+  it("Удаление свежедобавленных файлов", async () => {
     const onChange = jest.fn();
     render(<FileUpload {...defaultProps} onChange={onChange} />);
 
     const uploadInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLElement;
-    const file = createMockFile('to-delete.png');
+    const file = createMockFile("to-delete.png");
     await userEvent.upload(uploadInput, file);
 
     await userEvent.upload(uploadInput, [file]);
@@ -198,34 +198,34 @@ describe('Компонент FileUpload', () => {
     await waitFor(() => {
       expect(onChange).toHaveBeenLastCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ name: 'to-delete.png' }),
+          expect.objectContaining({ name: "to-delete.png" }),
         ])
       );
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /remove/i }));
+    fireEvent.click(screen.getByRole("button", { name: /remove/i }));
 
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith(
         expect.not.arrayContaining([
           expect.objectContaining({
-            name: 'to-delete.png',
-            status: 'deleted',
+            name: "to-delete.png",
+            status: "deleted",
           }),
         ])
       );
     });
   });
 
-  it('Пометка на удаление ранее загруженных файлов', async () => {
+  it("Пометка на удаление ранее загруженных файлов", async () => {
     const initialFiles: UploadedFile[] = [
       {
-        id: 'pre-1',
-        name: 'pre.jpg',
+        id: "pre-1",
+        name: "pre.jpg",
         size: 100,
-        type: 'image/jpeg',
-        url: '/pre.jpg',
-        status: 'uploaded',
+        type: "image/jpeg",
+        url: "/pre.jpg",
+        status: "uploaded",
       },
     ];
     const onChange = jest.fn();
@@ -237,29 +237,29 @@ describe('Компонент FileUpload', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /remove/i }));
+    fireEvent.click(screen.getByRole("button", { name: /remove/i }));
 
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            id: 'pre-1',
-            status: 'deleted',
+            id: "pre-1",
+            status: "deleted",
           }),
         ])
       );
     });
   });
 
-  it('Восстаноление помеченных на удаление файлов', async () => {
+  it("Восстаноление помеченных на удаление файлов", async () => {
     const initialFiles: UploadedFile[] = [
       {
-        id: 'pre-1',
-        name: 'pre.jpg',
+        id: "pre-1",
+        name: "pre.jpg",
         size: 100,
-        type: 'image/jpeg',
-        url: '/pre.jpg',
-        status: 'uploaded',
+        type: "image/jpeg",
+        url: "/pre.jpg",
+        status: "uploaded",
       },
     ];
     const onChange = jest.fn();
@@ -272,31 +272,31 @@ describe('Компонент FileUpload', () => {
     );
 
     // Delete
-    fireEvent.click(screen.getByRole('button', { name: /remove/i }));
+    fireEvent.click(screen.getByRole("button", { name: /remove/i }));
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith(
-        expect.arrayContaining([expect.objectContaining({ status: 'deleted' })])
+        expect.arrayContaining([expect.objectContaining({ status: "deleted" })])
       );
     });
 
     // Restore
-    fireEvent.click(screen.getByRole('button', { name: /restore/i }));
+    fireEvent.click(screen.getByRole("button", { name: /restore/i }));
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ status: 'uploaded' }),
+          expect.objectContaining({ status: "uploaded" }),
         ])
       );
     });
   });
 
-  it('Очистка blob URLs при размонтировании', async () => {
+  it("Очистка blob URLs при размонтировании", async () => {
     const { unmount } = render(<FileUpload {...defaultProps} />);
 
     const uploadInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLElement;
-    const file = createMockFile('cleanup.png');
+    const file = createMockFile("cleanup.png");
     await userEvent.upload(uploadInput, file);
 
     // Wait until resize happens and blob URL is created
@@ -306,6 +306,6 @@ describe('Компонент FileUpload', () => {
 
     unmount();
 
-    expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+    expect(mockRevokeObjectURL).toHaveBeenCalledWith("blob:mock-url");
   });
 });

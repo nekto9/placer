@@ -1,7 +1,7 @@
-import { GamesList } from '@/components/ui/GameList';
-import { useAuthContext } from '@/context/useAuthContext';
-import { Loading } from '@/layouts/components';
-import { GameTimeFrame, useGetUserGamesQuery } from '@/store/api';
+import { GamesList } from "@/components/ui/GameList";
+import { useAuthContext } from "@/context/useAuthContext";
+import { Loading } from "@/layouts/components";
+import { GameTimeFrame, useGetUserGamesQuery } from "@/store/api";
 
 interface PersonalGamesListProps {
   timeFrame?: GameTimeFrame;

@@ -1,4 +1,5 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { MailSenderService } from '@/mailSender/mailSender.service';
 import {
@@ -10,10 +11,11 @@ import { EmailJobData, EmailJobResult } from './interfaces/emailJob.interface';
 
 @Processor(QUEUE_NAMES.EMAIL)
 export class EmailQueueProcessor extends WorkerHost {
+  private readonly logger = new Logger(EmailQueueProcessor.name);
+
   constructor(private readonly emailService: MailSenderService) {
     super();
   }
-  // private readonly logger = new Logger(EmailProcessor.name);
 
   async process(
     job: Job<EmailJobData, EmailJobResult, string>
@@ -42,7 +44,7 @@ export class EmailQueueProcessor extends WorkerHost {
 
       return result;
     } catch (error) {
-      console.error(`Job ${job.id} failed: ${error.message}`);
+      this.logger.error(`Job ${job.id} failed: ${error.message}`);
       throw error;
     }
   }

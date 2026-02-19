@@ -1,6 +1,6 @@
-import { ArrowUturnCcwLeft, Plus, TrashBin } from '@gravity-ui/icons';
-import { Button, Flex, Icon } from '@gravity-ui/uikit';
-import { FileItem } from './types';
+import { ArrowUturnCcwLeft, Plus, TrashBin } from "@gravity-ui/icons";
+import { Button, Flex, Icon } from "@gravity-ui/uikit";
+import { FileItem } from "./types";
 
 interface FileUploadPreviewProps {
   files: FileItem[];
@@ -17,7 +17,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
     <Flex
       gap={4}
       wrap="wrap"
-      className={`upload-preview${props.cssClass ? ` ${props.cssClass}` : ''}`}
+      className={`upload-preview${props.cssClass ? ` ${props.cssClass}` : ""}`}
     >
       {props.files.map((fileItem) => (
         <div
@@ -25,7 +25,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
           key={fileItem.id}
         >
           <div className="upload-preview__preview">
-            {fileItem.type.startsWith('image') && fileItem.url ? (
+            {fileItem.type.startsWith("image") && fileItem.url ? (
               <img
                 className="upload-preview__image"
                 src={fileItem.url}
@@ -36,7 +36,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
             )}
           </div>
           <div className="upload-preview__buttons">
-            {fileItem.status !== 'deleted' && (
+            {fileItem.status !== "deleted" && (
               <Button
                 aria-label="Remove file"
                 onClick={() => props.onRemove(fileItem.id)}
@@ -48,7 +48,7 @@ export const FileUploadPreview = (props: FileUploadPreviewProps) => {
                 <Icon data={TrashBin} size={24} />
               </Button>
             )}
-            {fileItem.status === 'deleted' && (
+            {fileItem.status === "deleted" && (
               <Button
                 aria-label="Restore file"
                 onClick={() => props.onRestore(fileItem.id)}

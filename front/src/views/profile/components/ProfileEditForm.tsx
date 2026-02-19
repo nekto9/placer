@@ -1,12 +1,12 @@
-import { FormEvent } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { Button, Flex } from '@gravity-ui/uikit';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { FileUpload } from '@/components/FileUpload';
-import { FileItem } from '@/components/FileUpload/types';
-import { FormTextInput } from '@/components/formUi';
-import { UserProfileViewModel } from '../types';
-import { validationSchema } from './formRules';
+import { FormEvent } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { Button, Flex } from "@gravity-ui/uikit";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FileUpload } from "@/components/FileUpload";
+import { FileItem } from "@/components/FileUpload/types";
+import { FormTextInput } from "@/components/formUi";
+import { UserProfileViewModel } from "../types";
+import { validationSchema } from "./formRules";
 
 interface ProfileEditFormProps {
   onSave: (data: UserProfileViewModel) => void;
@@ -34,8 +34,8 @@ export const ProfileEditForm = (props: ProfileEditFormProps) => {
   };
 
   const avatarChangeHandler = (filesForUpload: FileItem[]) => {
-    const avatarFile = filesForUpload.find((el) => el.status !== 'deleted');
-    formMethods.setValue('avatar', avatarFile, {
+    const avatarFile = filesForUpload.find((el) => el.status !== "deleted");
+    formMethods.setValue("avatar", avatarFile, {
       shouldDirty: true,
     });
   };
@@ -52,9 +52,9 @@ export const ProfileEditForm = (props: ProfileEditFormProps) => {
               ? [
                   {
                     id: props.data.avatar.id,
-                    status: 'uploaded',
+                    status: "uploaded",
                     url: props.data.avatar.url,
-                    type: 'image',
+                    type: "image",
                   },
                 ]
               : []

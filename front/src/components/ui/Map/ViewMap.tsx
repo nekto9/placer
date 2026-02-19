@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import { connectScript } from '@/tools/scriptTools';
-import { MapPoint } from './types';
+import { useEffect, useRef } from "react";
+import { connectScript } from "@/tools/scriptTools";
+import { MapPoint } from "./types";
 
 interface ViewMapProps {
   point?: MapPoint;
@@ -8,7 +8,7 @@ interface ViewMapProps {
   className?: string;
 }
 
-const YANDEX_MAPS_API_KEY = '1254ae24-4f80-4784-9792-c3d1870cd4f4';
+const YANDEX_MAPS_API_KEY = "1254ae24-4f80-4784-9792-c3d1870cd4f4";
 
 /** Отображение гео-точки с расположением площадки */
 export const ViewMap = (props: ViewMapProps) => {
@@ -30,7 +30,7 @@ export const ViewMap = (props: ViewMapProps) => {
             ? [props.point.latitude, props.point.longitude]
             : [59.127507, 37.902208],
           zoom: 16,
-          controls: ['zoomControl'],
+          controls: ["zoomControl"],
         },
         {
           maxZoom: 16,
@@ -42,12 +42,12 @@ export const ViewMap = (props: ViewMapProps) => {
         const placemark = new window.ymaps.Placemark(
           [props.point.latitude, props.point.longitude],
           { balloonContent: props.text },
-          { preset: 'islands#redDotIcon' }
+          { preset: "islands#redDotIcon" }
         );
 
         map.geoObjects.add(placemark);
 
-        map.behaviors.disable('scrollZoom');
+        map.behaviors.disable("scrollZoom");
       }
     });
   };
@@ -60,7 +60,7 @@ export const ViewMap = (props: ViewMapProps) => {
 
     connectScript({
       src: `https://api-maps.yandex.ru/2.1/?apikey=${YANDEX_MAPS_API_KEY}&lang=ru_RU`,
-      id: 'yandex-map-script',
+      id: "yandex-map-script",
       onload: initMap,
     });
   }, []);
@@ -68,7 +68,7 @@ export const ViewMap = (props: ViewMapProps) => {
   return (
     <div
       ref={mapRef}
-      style={{ width: '100%', height: 300 }}
+      style={{ width: "100%", height: 300 }}
       className={props.className}
     />
   );

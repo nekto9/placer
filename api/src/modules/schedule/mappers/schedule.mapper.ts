@@ -1,6 +1,6 @@
-import { Schedule, TimeSlot } from '@/prismaClient';
-import { ScheduleResponseDto } from '../dto';
-import { mapTimeSlotToResponseDto } from './timeSlot.mapper';
+import { Schedule, TimeSlot } from "@/prismaClient";
+import { ScheduleResponseDto } from "../dto";
+import { mapTimeSlotToResponseDto } from "./timeSlot.mapper";
 
 export const mapScheduleToResponseDto = (
   schedule: Schedule & { timeSlots: TimeSlot[] }
@@ -11,7 +11,7 @@ export const mapScheduleToResponseDto = (
     name: schedule.name,
     repeatMode: schedule.repeatMode,
     startDate: schedule.startDate.toISOString(),
-    stopDate: schedule.stopDate.toISOString(),
+    stopDate: schedule.stopDate ? schedule.stopDate.toISOString() : null,
     repeatStep: schedule.repeatStep,
     m1: schedule.m1,
     m2: schedule.m2,

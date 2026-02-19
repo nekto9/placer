@@ -1,18 +1,19 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { AddedFile } from "@/components/FileUpload/types";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
 import {
   useCreatePlaceMutation,
   useGetCitiesQuery,
   useGetSportsQuery,
   useUploadCoverMutation,
-} from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { convertToCreateDto } from '../common/mappers/convertFromViewModel';
-import { getEmptyPlace } from '../common/mappers/getEmptyPlace';
-import { PlaceViewModel } from '../common/types';
-import { PlaceEditForm } from './components/PlaceEditForm';
+} from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { convertToCreateDto } from "../common/mappers/convertFromViewModel";
+import { getEmptyPlace } from "../common/mappers/getEmptyPlace";
+import { PlaceViewModel } from "../common/types";
+import { PlaceEditForm } from "./components/PlaceEditForm";
 
 export const PlaceCreatePage = () => {
   const [placeCreateAction, placeCreateState] = useCreatePlaceMutation();
@@ -31,12 +32,12 @@ export const PlaceCreatePage = () => {
 
       // файлы для загрузки
       const uploadFiles = Array.from(data.coverFiles).filter(
-        (el) => el.status === 'added'
+        (el) => el.status === "added"
       );
       if (uploadFiles.length) {
         uploadCoverAction({
           body: {
-            cover: uploadFiles.map((el) => el.file),
+            cover: uploadFiles.map((el: AddedFile) => el.file),
             fileIds: uploadFiles.map((el) => el.id),
           },
         });
@@ -54,7 +55,7 @@ export const PlaceCreatePage = () => {
     }
   }, [placeCreateState.isSuccess]);
 
-  useSetPageData({ title: 'Новая площадка' });
+  useSetPageData({ title: "Новая площадка" });
 
   return (
     <>

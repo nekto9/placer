@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import { RoutesList } from '@/router/routesList';
-import { useCreateSportMutation } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { SportEditForm } from './components/SportEditForm';
-import { convertToCreateDto } from './mappers/convertToCreateDto';
-import { getEmptySport } from './mappers/getEmptySport';
-import { SportViewModel } from './types';
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { RoutesList } from "@/router/routesList";
+import { useCreateSportMutation } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { SportEditForm } from "./components/SportEditForm";
+import { convertToCreateDto } from "./mappers/convertToCreateDto";
+import { getEmptySport } from "./mappers/getEmptySport";
+import { SportViewModel } from "./types";
 
 export const SportCreatePage = () => {
   const [sportCreateAction, sportCreateState] = useCreateSportMutation();
@@ -33,7 +33,7 @@ export const SportCreatePage = () => {
     }
   }, [sportCreateState.isSuccess]);
 
-  useSetPageData({ title: 'Вид спорта' });
+  useSetPageData({ title: "Вид спорта" });
 
   return (
     <SportEditForm

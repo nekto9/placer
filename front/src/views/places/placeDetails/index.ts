@@ -1,3 +1,3 @@
-import { PlaceDetailsPage } from './PlaceDetailsPage';
+import { PlaceDetailsPage } from "./PlaceDetailsPage";
 
 export default PlaceDetailsPage;

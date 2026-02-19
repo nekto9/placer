@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Dialog, TextInput } from '@gravity-ui/uikit';
-import { Loading } from '@/layouts/components';
+import { useState } from "react";
+import { Dialog, TextInput } from "@gravity-ui/uikit";
+import { Loading } from "@/layouts/components";
 import {
   GameUserDto,
   GameUserRole,
   GameUserStatus,
   useGetUsersQuery,
   UserResponseDto,
-} from '@/store/api';
-import { debounce } from '@/tools/debounce';
+} from "@/store/api";
+import { debounce } from "@/tools/debounce";
 
 interface UserSearchModalProps {
   open: boolean;
@@ -18,9 +18,9 @@ interface UserSearchModalProps {
 }
 
 export const UserSearchModal = (props: UserSearchModalProps) => {
-  const dialogTitleId = 'app-confirmation-dialog-title';
+  const dialogTitleId = "app-confirmation-dialog-title";
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = debounce(setSearchQuery, 500);
 
   const searchChangeHandler = (value: string) => {
@@ -54,7 +54,7 @@ export const UserSearchModal = (props: UserSearchModalProps) => {
       <Dialog.Body>
         <TextInput
           onUpdate={searchChangeHandler}
-          placeholder={'Поиск'}
+          placeholder={"Поиск"}
           style={{ marginBottom: 20 }}
         />
         <Loading isActive={userListGetState.isFetching} loadingKey="userList" />

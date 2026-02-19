@@ -3,6 +3,11 @@ export interface GameCheckForResetJobData {
   gameId: string;
 }
 
+/** Отмена бронирования игры */
+export interface GameCancelReservationJobData {
+  gameId: string;
+}
+
 /** Отправка приглашений нескольким юзерам */
 export interface GameSendInviteJobData {
   gameId: string;

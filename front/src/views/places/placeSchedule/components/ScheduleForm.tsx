@@ -1,24 +1,27 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from "react";
 import {
   FormProvider,
+  Resolver,
   useFieldArray,
   useForm,
   useWatch,
-} from 'react-hook-form';
-import { FormRow } from '@gravity-ui/components';
-import { Button, Flex, Select } from '@gravity-ui/uikit';
-import { FormRadioButton } from '@/components/formUi';
-import { FormCheckbox } from '@/components/formUi/FormCheckbox';
-import { FormDatePicker } from '@/components/formUi/FormDatePicker';
-import { FormSelect } from '@/components/formUi/FormSelect';
-import { FormTextInput } from '@/components/formUi/FormTextInput';
-import { CalendarRepeatMode, ScheduleStatus, WorkTimeMode } from '@/store/api';
-import { MONTHS_LIST } from '@/tools/constants';
-import { EditFormMode } from '@/types';
-import { getEmptyTimeSlot } from '../mappers/getEmptySchedule';
-import { getTextResult } from '../mappers/getTextResult';
-import { ScheduleViewModel } from '../types';
-import { TimeSlotsComponent } from './TimeSlotsComponent';
+} from "react-hook-form";
+import { FormRow } from "@gravity-ui/components";
+import { Button, Flex, Select } from "@gravity-ui/uikit";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormRadioButton } from "@/components/formUi";
+import { FormCheckbox } from "@/components/formUi/FormCheckbox";
+import { FormDatePicker } from "@/components/formUi/FormDatePicker";
+import { FormSelect } from "@/components/formUi/FormSelect";
+import { FormTextInput } from "@/components/formUi/FormTextInput";
+import { CalendarRepeatMode, ScheduleStatus, WorkTimeMode } from "@/store/api";
+import { MONTHS_LIST } from "@/tools/constants";
+import { EditFormMode } from "@/types";
+import { getEmptyTimeSlot } from "../mappers/getEmptySchedule";
+import { getTextResult } from "../mappers/getTextResult";
+import { ScheduleViewModel } from "../types";
+import { validationSchema } from "./formRules";
+import { TimeSlotsComponent } from "./TimeSlotsComponent";
 
 interface ScheduleFormProps {
   data: ScheduleViewModel;
@@ -27,8 +30,11 @@ interface ScheduleFormProps {
 }
 
 export const ScheduleForm = (props: ScheduleFormProps) => {
-  const formMethods = useForm({
+  const formMethods = useForm<ScheduleViewModel>({
     defaultValues: props.data,
+    resolver: yupResolver(
+      validationSchema
+    ) as unknown as Resolver<ScheduleViewModel>,
   });
 
   const { handleSubmit, formState, reset, control, getValues } = formMethods;
@@ -39,10 +45,10 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
 
   const repeatMode = useWatch({
     control,
-    name: 'repeatMode',
+    name: "repeatMode",
   });
 
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState("");
 
   const changeHandler = () => {
     setResult(getTextResult(getValues()));
@@ -53,13 +59,14 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
 
   const resetFormHandler = () => {
     reset();
+    setResult(getTextResult(props.data));
   };
 
   ///////////////
 
   const workTimeMode = useWatch({
     control,
-    name: 'workTimeMode',
+    name: "workTimeMode",
   });
 
   const {
@@ -67,7 +74,7 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
     append: appendTimeSlot,
     remove: removeTimeSlot,
     replace: replaceTimeSlot,
-  } = useFieldArray({ name: 'timeSlots', control });
+  } = useFieldArray({ name: "timeSlots", control });
 
   const addTimeSlotHandler = () => {
     appendTimeSlot(getEmptyTimeSlot());
@@ -221,13 +228,11 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
           )}
 
           {repeatMode[0] === CalendarRepeatMode.Weekdays && (
-            <FormRow direction="row" label="Недели">
-              {[
-                'Первая неделя',
-                'Вторая неделя',
-                'Третья неделя',
-                'Четвертая неделя',
-              ].map((w, idx) => (
+            <FormRow
+              direction="row"
+              label="Номер дня недели в месяце (первый вторник, последняя пятница и т.п.)"
+            >
+              {["первый", "второй", "третий", "четвертый"].map((w, idx) => (
                 <FormCheckbox
                   key={idx}
                   name={`w${idx + 1}` as keyof ScheduleViewModel}
@@ -238,7 +243,7 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
                 </FormCheckbox>
               ))}
               <FormCheckbox name="wLast" onUpdate={changeHandler}>
-                Последняя неделя
+                последний
               </FormCheckbox>
             </FormRow>
           )}
@@ -248,49 +253,49 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
           ) && (
             <FormRow direction="row" label="Дни недели">
               <FormCheckbox
-                name={'wd1'}
+                name={"wd1"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Пн
               </FormCheckbox>
               <FormCheckbox
-                name={'wd2'}
+                name={"wd2"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Вт
               </FormCheckbox>
               <FormCheckbox
-                name={'wd3'}
+                name={"wd3"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Ср
               </FormCheckbox>
               <FormCheckbox
-                name={'wd4'}
+                name={"wd4"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Чт
               </FormCheckbox>
               <FormCheckbox
-                name={'wd5'}
+                name={"wd5"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Пт
               </FormCheckbox>
               <FormCheckbox
-                name={'wd6'}
+                name={"wd6"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
                 Сб
               </FormCheckbox>
               <FormCheckbox
-                name={'wd7'}
+                name={"wd7"}
                 style={{ marginRight: 8 }}
                 onUpdate={changeHandler}
               >
@@ -374,10 +379,10 @@ export const ScheduleForm = (props: ScheduleFormProps) => {
               <FormRadioButton
                 name="timeStart"
                 options={[
-                  { value: '0', content: 'ХХ:00' },
-                  { value: '15', content: 'ХХ:15' },
-                  { value: '30', content: 'ХХ:30' },
-                  { value: '45', content: 'ХХ:45' },
+                  { value: "0", content: "ХХ:00" },
+                  { value: "15", content: "ХХ:15" },
+                  { value: "30", content: "ХХ:30" },
+                  { value: "45", content: "ХХ:45" },
                 ]}
               />
             </FormRow>

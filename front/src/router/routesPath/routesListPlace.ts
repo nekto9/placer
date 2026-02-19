@@ -1,4 +1,4 @@
-import { RoutesConst } from '../routeConstant';
+import { RoutesConst } from "../routeConstant";
 
 // /places
 const mainPlacesURL = `${RoutesConst.ROOT}${RoutesConst.PLACES}`;

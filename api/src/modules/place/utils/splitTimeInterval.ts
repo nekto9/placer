@@ -1,50 +1,136 @@
-import { Schedule } from '@/prismaClient';
-
 interface TimeInterval {
   timeStart: number;
   timeEnd: number;
 }
 
-/** Разбивка единого временного интервала на набор временных интервалов */
+interface ScheduleLike {
+  timeStart?: number | null;
+}
+
+const normalizeStartMinute = (value?: number | null) => {
+  if (value == null || Number.isNaN(value)) {
+    return 0;
+  }
+
+  const normalized = value % 60;
+  return normalized >= 0 ? normalized : normalized + 60;
+};
+
+const alignToNextAllowedStart = (
+  timeInMinutes: number,
+  startMinute: number
+) => {
+  const hourStart = Math.floor(timeInMinutes / 60) * 60;
+  const minute = timeInMinutes % 60;
+
+  if (minute === startMinute) {
+    return timeInMinutes;
+  }
+
+  if (minute < startMinute) {
+    return hourStart + startMinute;
+  }
+
+  return hourStart + 60 + startMinute;
+};
+
+const buildAvailableSegment = (
+  timeStart: number,
+  timeEnd: number,
+  startMinute: number
+) => {
+  const alignedStart = alignToNextAllowedStart(timeStart, startMinute);
+
+  if (alignedStart >= timeEnd) {
+    return null;
+  }
+
+  return {
+    timeStart: alignedStart,
+    timeEnd,
+  };
+};
+
+const mergeIntervals = (intervals: TimeInterval[]) => {
+  if (!intervals.length) {
+    return [];
+  }
+
+  const sortedIntervals = [...intervals].sort(
+    (left, right) => left.timeStart - right.timeStart
+  );
+  const mergedIntervals: TimeInterval[] = [sortedIntervals[0]];
+
+  for (const interval of sortedIntervals.slice(1)) {
+    const lastInterval = mergedIntervals[mergedIntervals.length - 1];
+
+    if (interval.timeStart <= lastInterval.timeEnd) {
+      lastInterval.timeEnd = Math.max(lastInterval.timeEnd, interval.timeEnd);
+      continue;
+    }
+
+    mergedIntervals.push({ ...interval });
+  }
+
+  return mergedIntervals;
+};
+
+/** Разбивает рабочий интервал на свободные подинтервалы между занятыми диапазонами. */
 export const splitTimeInterval = (
   parentInterval: TimeInterval,
   childSegments: TimeInterval[],
-  scheduleTemplate: Schedule
+  scheduleTemplate: ScheduleLike
 ) => {
-  const { timeStart, timeEnd } = parentInterval;
+  const startMinute = normalizeStartMinute(scheduleTemplate.timeStart);
+  const busyIntervals = mergeIntervals(
+    childSegments
+      .filter(
+        (segment) =>
+          segment.timeStart < parentInterval.timeEnd &&
+          segment.timeEnd > parentInterval.timeStart
+      )
+      .map((segment) => ({
+        timeStart: Math.max(segment.timeStart, parentInterval.timeStart),
+        timeEnd: Math.min(segment.timeEnd, parentInterval.timeEnd),
+      }))
+  );
 
-  // Добавляем границы интервала, если их нет в точках
-  const allPoints = [
-    ...new Set([
-      timeStart,
-      ...childSegments.map((p) => p.timeStart),
-      ...childSegments.map((p) => p.timeEnd),
-      timeEnd,
-    ]),
-  ];
+  if (!busyIntervals.length) {
+    const availableSegment = buildAvailableSegment(
+      parentInterval.timeStart,
+      parentInterval.timeEnd,
+      startMinute
+    );
 
-  // Сортируем точки
-  allPoints.sort((a, b) => a - b);
-
-  // Создаём подотрезки между соседними точками
-  const segments: TimeInterval[] = [];
-  for (let i = 0; i < allPoints.length - 1; i++) {
-    // Начало слота (минуты в часе)
-    const startMinutes = new Date(
-      new Date().setHours(0, allPoints[i])
-    ).getMinutes();
-    const diffStartSlot = (scheduleTemplate.timeStart || 60) - startMinutes;
-
-    const resultStart =
-      allPoints[i] + diffStartSlot - (diffStartSlot === 60 ? 60 : 0);
-
-    if (resultStart !== allPoints[i + 1]) {
-      segments.push({
-        timeStart: resultStart,
-        timeEnd: allPoints[i + 1],
-      });
-    }
+    return availableSegment ? [availableSegment] : [];
   }
 
-  return segments;
+  const availableSegments: TimeInterval[] = [];
+  let currentStart = parentInterval.timeStart;
+
+  for (const busyInterval of busyIntervals) {
+    const availableSegment = buildAvailableSegment(
+      currentStart,
+      busyInterval.timeStart,
+      startMinute
+    );
+
+    if (availableSegment) {
+      availableSegments.push(availableSegment);
+    }
+
+    currentStart = Math.max(currentStart, busyInterval.timeEnd);
+  }
+
+  const tailSegment = buildAvailableSegment(
+    currentStart,
+    parentInterval.timeEnd,
+    startMinute
+  );
+
+  if (tailSegment) {
+    availableSegments.push(tailSegment);
+  }
+
+  return availableSegments;
 };

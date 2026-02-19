@@ -1,10 +1,10 @@
-import { CalendarRepeatMode, ScheduleStatus, WorkTimeMode } from '@/store/api';
-import { ScheduleViewModel, TimeSlotViewModel } from '../types';
+import { CalendarRepeatMode, ScheduleStatus, WorkTimeMode } from "@/store/api";
+import { ScheduleViewModel, TimeSlotViewModel } from "../types";
 
 export const getEmptySchedule = (placeId: string): ScheduleViewModel => {
   const resultViewData: ScheduleViewModel = {
     placeId,
-    name: '',
+    name: "",
     repeatMode: [CalendarRepeatMode.Weekdays],
     startDate: null,
     stopDate: null,
@@ -88,7 +88,7 @@ export const getEmptySchedule = (placeId: string): ScheduleViewModel => {
 
 export const getEmptyTimeSlot = (): TimeSlotViewModel => {
   return {
-    id: '',
+    id: "",
     timeEnd: null,
     timeStart: null,
   };

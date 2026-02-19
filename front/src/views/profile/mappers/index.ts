@@ -1,2 +1,2 @@
-export * from './convertToViewModel';
-export * from './convertFromViewModel';
+export * from "./convertToViewModel";
+export * from "./convertFromViewModel";

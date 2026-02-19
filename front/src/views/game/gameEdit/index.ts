@@ -1,3 +1,3 @@
-import { GameEditPage } from './GameEditPage';
+import { GameEditPage } from "./GameEditPage";
 
 export default GameEditPage;

@@ -1,3 +1,3 @@
-import { GameDetailsPage } from './GameDetailsPage';
+import { GameDetailsPage } from "./GameDetailsPage";
 
 export default GameDetailsPage;

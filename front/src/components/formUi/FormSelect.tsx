@@ -1,6 +1,6 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import { Select, SelectProps } from '@gravity-ui/uikit';
-import { LocalFormUi } from './types';
+import { Controller, useFormContext } from "react-hook-form";
+import { Select, SelectProps } from "@gravity-ui/uikit";
+import { LocalFormUi } from "./types";
 
 type FormSelectProps<T> = LocalFormUi<T, SelectProps>;
 
@@ -19,7 +19,7 @@ export const FormSelect = <T,>(props: FormSelectProps<T>) => {
             value={field.value as string[]}
             id={props.name}
             errorMessage={fieldState?.error?.message}
-            validationState={fieldState?.error ? 'invalid' : undefined}
+            validationState={fieldState?.error ? "invalid" : undefined}
             onUpdate={(value: string[]) => {
               field.onChange(value);
               props.onUpdate?.(value);

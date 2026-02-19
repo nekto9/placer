@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { CircleRuble } from '@gravity-ui/icons';
-import { Button, Flex, Icon, Label, Text } from '@gravity-ui/uikit';
-import { ConfirmModal } from '@/components/modal/ConfirmModal';
+import { useState } from "react";
+import { CircleRuble } from "@gravity-ui/icons";
+import { Button, Flex, Icon, Label, Text } from "@gravity-ui/uikit";
+import { ConfirmModal } from "@/components/modal/ConfirmModal";
 import {
   formatDate,
   getGameLevelLabel,
   getMemberStatusLabel,
   getRequestModeLabel,
   weekdayDate,
-} from '@/components/ui/GameCard/utils';
-import { PageBlock } from '@/components/ui/PageBlock';
-import { GameLevel, GameUserStatus } from '@/store/api';
-import { timeConvertToFormattedString } from '@/tools/dateTools';
-import { GameViewModel } from '../../common/types';
-import { GameMembers } from './GameMembers';
+} from "@/components/ui/GameCard/utils";
+import { PageBlock } from "@/components/ui/PageBlock";
+import { GameLevel, GameUserStatus } from "@/store/api";
+import { timeConvertToFormattedString } from "@/tools/dateTools";
+import { GameViewModel } from "../../common/types";
+import { GameMembers } from "./GameMembers";
 
 interface GameDetailsProps {
   data: GameViewModel;
@@ -98,7 +98,7 @@ export const GameDetails = (props: GameDetailsProps) => {
               Время
             </Text>
             <Text>
-              {timeConvertToFormattedString(props.data.timeStart)} -{' '}
+              {timeConvertToFormattedString(props.data.timeStart)} -{" "}
               {timeConvertToFormattedString(props.data.timeEnd)}
             </Text>
           </Flex>

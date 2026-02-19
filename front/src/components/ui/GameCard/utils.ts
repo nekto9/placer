@@ -1,44 +1,44 @@
-import { DateTime, dateTime } from '@gravity-ui/date-utils';
-import { LabelProps } from '@gravity-ui/uikit';
+import { DateTime, dateTime } from "@gravity-ui/date-utils";
+import { LabelProps } from "@gravity-ui/uikit";
 import {
   GameLevel,
   GameStatus,
   GameUserRole,
   GameUserStatus,
   RequestMode,
-} from '@/store/api';
+} from "@/store/api";
 
 /** Название для enum с именем цветовой темы от Gravity */
 interface EnumLabelWithTheme {
   text: string;
-  theme: LabelProps['theme'];
+  theme: LabelProps["theme"];
 }
 
 /** Формат: 1 января 2025 */
 const formatDate = (dateString: string | DateTime): string => {
-  return dateTime({ input: dateString }).format('LL');
+  return dateTime({ input: dateString }).format("LL");
 };
 
 /** День недели для даты: понедельник */
 const weekdayDate = (dateString: string | DateTime): string => {
-  return dateTime({ input: dateString }).format('dddd');
+  return dateTime({ input: dateString }).format("dddd");
 };
 
 /** Статус участия в игре */
 const getMemberStatusLabel = (status: GameUserStatus): EnumLabelWithTheme => {
   switch (status) {
     case GameUserStatus.Invited:
-      return { text: 'Приглашен', theme: 'info' };
+      return { text: "Приглашен", theme: "info" };
     case GameUserStatus.Requested:
-      return { text: 'Запрос', theme: 'warning' };
+      return { text: "Запрос", theme: "warning" };
     case GameUserStatus.Allowed:
-      return { text: 'Одобрен', theme: 'success' };
+      return { text: "Одобрен", theme: "success" };
     case GameUserStatus.Declined:
-      return { text: 'Отклонен', theme: 'danger' };
+      return { text: "Отклонен", theme: "danger" };
     case GameUserStatus.Confirmed:
-      return { text: 'Подтвержден', theme: 'normal' };
+      return { text: "Подтвержден", theme: "normal" };
     default:
-      return { text: status, theme: 'unknown' };
+      return { text: status, theme: "unknown" };
   }
 };
 
@@ -46,11 +46,11 @@ const getMemberStatusLabel = (status: GameUserStatus): EnumLabelWithTheme => {
 const getGameStatusLabel = (status: GameStatus): EnumLabelWithTheme => {
   switch (status) {
     case GameStatus.Draft:
-      return { text: 'Черновик', theme: 'warning' };
+      return { text: "Черновик", theme: "warning" };
     case GameStatus.Aproved:
-      return { text: 'Подтверждена', theme: 'success' };
+      return { text: "Подтверждена", theme: "success" };
     default:
-      return { text: status, theme: 'unknown' };
+      return { text: status, theme: "unknown" };
   }
 };
 
@@ -58,11 +58,11 @@ const getGameStatusLabel = (status: GameStatus): EnumLabelWithTheme => {
 const getRoleLabel = (role: GameUserRole): EnumLabelWithTheme => {
   switch (role) {
     case GameUserRole.Creator:
-      return { text: 'Создатель', theme: 'clear' };
+      return { text: "Создатель", theme: "clear" };
     case GameUserRole.Member:
-      return { text: 'Участник', theme: 'clear' };
+      return { text: "Участник", theme: "clear" };
     default:
-      return { text: role, theme: 'unknown' };
+      return { text: role, theme: "unknown" };
   }
 };
 
@@ -70,13 +70,13 @@ const getRoleLabel = (role: GameUserRole): EnumLabelWithTheme => {
 const getGameLevelLabel = (level: GameLevel): EnumLabelWithTheme => {
   switch (level) {
     case GameLevel.Easy:
-      return { text: 'Простой', theme: 'success' };
+      return { text: "Простой", theme: "success" };
     case GameLevel.Medium:
-      return { text: 'Средний', theme: 'warning' };
+      return { text: "Средний", theme: "warning" };
     case GameLevel.Hard:
-      return { text: 'Сложный', theme: 'danger' };
+      return { text: "Сложный", theme: "danger" };
     default:
-      return { text: level, theme: 'unknown' };
+      return { text: level, theme: "unknown" };
   }
 };
 
@@ -84,13 +84,13 @@ const getGameLevelLabel = (level: GameLevel): EnumLabelWithTheme => {
 const getRequestModeLabel = (mode: RequestMode): EnumLabelWithTheme => {
   switch (mode) {
     case RequestMode.Private:
-      return { text: 'Приватная игра', theme: 'info' };
+      return { text: "Приватная игра", theme: "info" };
     case RequestMode.Moderate:
-      return { text: 'По запросу', theme: 'warning' };
+      return { text: "По запросу", theme: "warning" };
     case RequestMode.Public:
-      return { text: 'Открыто для всех', theme: 'success' };
+      return { text: "Открыто для всех", theme: "success" };
     default:
-      return { text: mode, theme: 'unknown' };
+      return { text: mode, theme: "unknown" };
   }
 };
 

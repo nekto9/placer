@@ -1,6 +1,6 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import { Checkbox, CheckboxProps } from '@gravity-ui/uikit';
-import { LocalFormUi } from './types';
+import { Controller, useFormContext } from "react-hook-form";
+import { Checkbox, CheckboxProps } from "@gravity-ui/uikit";
+import { LocalFormUi } from "./types";
 
 type FormCheckboxProps<T> = LocalFormUi<T, CheckboxProps>;
 

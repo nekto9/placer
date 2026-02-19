@@ -1,15 +1,15 @@
-import { CircleRuble } from '@gravity-ui/icons';
-import { Card, Flex, Icon, Label, Text } from '@gravity-ui/uikit';
-import { GameResponseDto } from '@/store/api';
-import { timeConvertToFormattedString } from '@/tools/dateTools';
-import { MemberStatus } from './components/MemberStatus';
-import { UsersStatInfo } from './components/UsersStatInfo';
+import { CircleRuble } from "@gravity-ui/icons";
+import { Card, Flex, Icon, Label, Text } from "@gravity-ui/uikit";
+import { GameResponseDto } from "@/store/api";
+import { timeConvertToFormattedString } from "@/tools/dateTools";
+import { MemberStatus } from "./components/MemberStatus";
+import { UsersStatInfo } from "./components/UsersStatInfo";
 import {
   formatDate,
   getGameLevelLabel,
   getRequestModeLabel,
   weekdayDate,
-} from './utils';
+} from "./utils";
 
 interface GameCardProps {
   game: GameResponseDto;
@@ -54,7 +54,7 @@ export const GameCard = (props: GameCardProps) => {
             Время
           </Text>
           <Text>
-            {timeConvertToFormattedString(props.game.timeStart)} -{' '}
+            {timeConvertToFormattedString(props.game.timeStart)} -{" "}
             {timeConvertToFormattedString(props.game.timeEnd)}
           </Text>
         </Flex>

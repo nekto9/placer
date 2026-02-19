@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Loader, Overlay } from '@gravity-ui/uikit';
-import { eventBus } from '@/context/shared/eventBus';
-import { newGuid } from '@/tools/guid';
+import { useEffect, useMemo, useState } from "react";
+import { Loader, Overlay } from "@gravity-ui/uikit";
+import { eventBus } from "@/context/shared/eventBus";
+import { newGuid } from "@/tools/guid";
 
 /** Отображение лоадера поверх контента */
 export const LoadingOverlay = () => {
@@ -17,12 +17,12 @@ export const LoadingOverlay = () => {
   };
 
   useEffect(() => {
-    eventBus.on('pendingStart', startLoadingHandler);
-    eventBus.on('pendingStop', stopLoadingHandler);
+    eventBus.on("pendingStart", startLoadingHandler);
+    eventBus.on("pendingStop", stopLoadingHandler);
 
     return () => {
-      eventBus.off('pendingStart', startLoadingHandler);
-      eventBus.off('pendingStop', stopLoadingHandler);
+      eventBus.off("pendingStart", startLoadingHandler);
+      eventBus.off("pendingStop", stopLoadingHandler);
       setQueue([]);
     };
   }, []);
@@ -49,16 +49,16 @@ export const Loading = (props: LoadingProps): null => {
 
   useEffect(() => {
     if (queueKey && props.isActive !== false) {
-      eventBus.emit('pendingStart', queueKey);
+      eventBus.emit("pendingStart", queueKey);
     }
 
     if (queueKey && props.isActive === false) {
-      eventBus.emit('pendingStop', queueKey);
+      eventBus.emit("pendingStop", queueKey);
     }
 
     return () => {
       if (queueKey) {
-        eventBus.emit('pendingStop', queueKey);
+        eventBus.emit("pendingStop", queueKey);
       }
     };
   }, [queueKey, props.isActive]);

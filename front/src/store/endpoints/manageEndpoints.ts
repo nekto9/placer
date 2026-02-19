@@ -1,31 +1,31 @@
-import { ApiType, updateHandler } from '../utils';
+import { ApiType, updateHandler } from "../utils";
 
 export const getManageEndpoints = (api: ApiType) => ({
   getSports: {
-    providesTags: ['getSports'],
+    providesTags: ["getSports"],
   },
   updateSport: {
-    invalidatesTags: ['getPlaces', 'getSports'],
-    onQueryStarted: updateHandler('getSportById', 'id', api),
+    invalidatesTags: ["getPlaces", "getSports"],
+    onQueryStarted: updateHandler("getSportById", "id", api),
   },
   createSport: {
-    invalidatesTags: ['getSports'],
+    invalidatesTags: ["getSports"],
   },
   deleteSport: {
-    invalidatesTags: ['getSports'],
+    invalidatesTags: ["getSports"],
   },
 
   getCities: {
-    providesTags: ['getCities'],
+    providesTags: ["getCities"],
   },
   updateCity: {
-    invalidatesTags: ['getPlaces', 'getCities'],
-    onQueryStarted: updateHandler('getCityById', 'id', api),
+    invalidatesTags: ["getPlaces", "getCities"],
+    onQueryStarted: updateHandler("getCityById", "id", api),
   },
   createCity: {
-    invalidatesTags: ['getCities'],
+    invalidatesTags: ["getCities"],
   },
   deleteCity: {
-    invalidatesTags: ['getCities'],
+    invalidatesTags: ["getCities"],
   },
 });

@@ -1,8 +1,10 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+
+const logger = new Logger('Bootstrap');
 
 /**
  * Функция инициализации и запуска приложения Placer API
@@ -69,11 +71,10 @@ async function bootstrap(): Promise<void> {
 
   // Запуск HTTP сервера на порту 3000
   await app.listen(3000, '0.0.0.0');
-  // console.log('Swagger - http://localhost:3000/api');
 }
 
 // Запуск приложения с обработкой ошибок
 bootstrap().catch((error) => {
-  console.error('Ошибка при запуске приложения:', error);
+  logger.error('Ошибка при запуске приложения:', error);
   process.exit(1);
 });

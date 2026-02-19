@@ -1,3 +1,3 @@
-import './style.styl';
+import "./style.styl";
 
-export * from './MobileNavigation';
+export * from "./MobileNavigation";

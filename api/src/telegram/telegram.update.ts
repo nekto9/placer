@@ -1,4 +1,4 @@
-import { forwardRef, Inject } from '@nestjs/common';
+import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { Action, Ctx, Start, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { CallbackQuery, Message } from 'telegraf/typings/core/types/typegram';
@@ -15,6 +15,8 @@ import { TelegramService } from './telegram.service';
  */
 @Update()
 export class TelegramUpdate {
+  private readonly logger = new Logger(TelegramUpdate.name);
+
   constructor(
     private readonly telegramService: TelegramService,
     @Inject(forwardRef(() => GameService))
@@ -82,7 +84,7 @@ export class TelegramUpdate {
         // Обновляем текст сообщения
         await ctx.editMessageText(`${gameInfo}\n✅ Вы подтвердили участие`);
       } catch (error) {
-        console.error('Error confirming participation:', error);
+        this.logger.error('Error confirming participation:', error);
         await ctx.answerCbQuery('Произошла ошибка. Попробуйте позже.');
       }
     }
@@ -116,7 +118,7 @@ export class TelegramUpdate {
       // Обновляем текст сообщения
       await ctx.editMessageText(`${gameInfo}\n❌ Вы отказались от участия`);
     } catch (error) {
-      console.error('Error rejecting participation:', error);
+      this.logger.error('Error rejecting participation:', error);
       await ctx.answerCbQuery('Произошла ошибка. Попробуйте позже.');
     }
   }
@@ -150,7 +152,7 @@ export class TelegramUpdate {
         `${gameInfo}\n✅ ${user.username} добавлен в участники`
       );
     } catch (error) {
-      console.error('Error allowing participation:', error);
+      this.logger.error('Error allowing participation:', error);
       await ctx.answerCbQuery('Произошла ошибка. Попробуйте позже.');
     }
   }
@@ -184,7 +186,7 @@ export class TelegramUpdate {
         `${gameInfo}\n❌ Пользователю ${user.username} в участии отказано`
       );
     } catch (error) {
-      console.error('Error allowing participation:', error);
+      this.logger.error('Error allowing participation:', error);
       await ctx.answerCbQuery('Произошла ошибка. Попробуйте позже.');
     }
   }

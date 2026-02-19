@@ -1,13 +1,13 @@
 /// <reference lib="webworker" />
 
-import { ImageData } from './types';
+import { ImageData } from "./types";
 
 self.onmessage = async (event: MessageEvent<ImageData>) => {
   const { sourceFile, outputWidth, outputHeight } = event.data;
 
   try {
-    if (!sourceFile.type.startsWith('image/')) {
-      throw new Error('File is not an image');
+    if (!sourceFile.type.startsWith("image/")) {
+      throw new Error("File is not an image");
     }
 
     // Читаем файл как ArrayBuffer
@@ -40,8 +40,8 @@ self.onmessage = async (event: MessageEvent<ImageData>) => {
 
     // Создаём OffscreenCanvas нужного размера
     const canvas = new OffscreenCanvas(outputWidth, outputHeight);
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('2D context not available');
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("2D context not available");
 
     // Рисуем обрезанную и масштабированную область
     ctx.drawImage(
@@ -58,7 +58,7 @@ self.onmessage = async (event: MessageEvent<ImageData>) => {
 
     // Создаем сжатый JPEG Blob
     const compressedBlob = await canvas.convertToBlob({
-      type: 'image/jpeg',
+      type: "image/jpeg",
       quality: 0.8,
     });
 

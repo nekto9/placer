@@ -1,6 +1,6 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import { TextArea, TextAreaProps } from '@gravity-ui/uikit';
-import { LocalFormUi } from './types';
+import { Controller, useFormContext } from "react-hook-form";
+import { TextArea, TextAreaProps } from "@gravity-ui/uikit";
+import { LocalFormUi } from "./types";
 
 type FormTextAreaProps<T> = LocalFormUi<T, TextAreaProps>;
 
@@ -19,7 +19,7 @@ export const FormTextArea = <T,>(props: FormTextAreaProps<T>) => {
             value={field.value as string}
             id={props.name}
             errorMessage={fieldState?.error?.message}
-            validationState={fieldState?.error ? 'invalid' : undefined}
+            validationState={fieldState?.error ? "invalid" : undefined}
             onUpdate={(value: string) => {
               field.onChange(value);
               props.onUpdate?.(value);

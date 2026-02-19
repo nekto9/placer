@@ -1,3 +1,3 @@
-import './style.styl';
+import "./style.styl";
 
-export * from './Header';
+export * from "./Header";

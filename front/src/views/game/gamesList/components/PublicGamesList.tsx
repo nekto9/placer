@@ -1,6 +1,6 @@
-import { GamesList } from '@/components/ui/GameList';
-import { Loading } from '@/layouts/components';
-import { GameTimeFrame, useGetGamesQuery } from '@/store/api';
+import { GamesList } from "@/components/ui/GameList";
+import { Loading } from "@/layouts/components";
+import { GameTimeFrame, useGetGamesQuery } from "@/store/api";
 
 interface PublicGamesListProps {
   timeFrame?: GameTimeFrame;

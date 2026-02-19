@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router';
-import { Button } from '@gravity-ui/uikit';
-import { RoutesList } from '@/router/routesList';
-import { useSetPageData } from '@/tools/hooks';
+import { useNavigate } from "react-router";
+import { Button } from "@gravity-ui/uikit";
+import { RoutesList } from "@/router/routesList";
+import { useSetPageData } from "@/tools/hooks";
 
 export const ManagePage = () => {
   const navigate = useNavigate();
 
-  useSetPageData({ title: 'Управление' });
+  useSetPageData({ title: "Управление" });
 
   return (
     <div>

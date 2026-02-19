@@ -1,4 +1,3 @@
-import './style.styl';
+import "./style.styl";
 
-export * from './PlaceCard';
-export * from './PlaceCardShort';
+export * from "./PlaceCardShort";

@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Button, TextInput } from '@gravity-ui/uikit';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
-import { useGetSportsQuery } from '@/store/api';
-import { debounce } from '@/tools/debounce';
-import { useSetPageData } from '@/tools/hooks';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Button, TextInput } from "@gravity-ui/uikit";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
+import { useGetSportsQuery } from "@/store/api";
+import { debounce } from "@/tools/debounce";
+import { useSetPageData } from "@/tools/hooks";
 
 export const SportListPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = debounce(setSearchQuery, 500);
 
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export const SportListPage = () => {
 
   const sportListGetState = useGetSportsQuery({ text: searchQuery });
 
-  useSetPageData({ title: 'Вида спорта' });
+  useSetPageData({ title: "Вида спорта" });
   return (
     <>
       <Loading
@@ -39,7 +39,7 @@ export const SportListPage = () => {
 
       <TextInput
         onUpdate={searchChangeHandler}
-        placeholder={'Поиск'}
+        placeholder={"Поиск"}
         style={{ marginBottom: 20 }}
         size="xl"
       />

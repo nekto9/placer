@@ -1,7 +1,7 @@
-import { dateTime } from '@gravity-ui/date-utils';
-import { ScheduleResponseDto } from '@/store/api';
-import { timeConvertToDateTime } from '@/tools/dateTools';
-import { ScheduleViewModel } from '../types';
+import { dateTime } from "@gravity-ui/date-utils";
+import { ScheduleResponseDto } from "@/store/api";
+import { timeConvertToDateTime } from "@/tools/dateTools";
+import { ScheduleViewModel } from "../types";
 
 export const convertToScheduleViewModel = (
   data: ScheduleResponseDto
@@ -9,10 +9,8 @@ export const convertToScheduleViewModel = (
   const viewData: ScheduleViewModel = {
     ...data,
     repeatMode: [data.repeatMode],
-    startDate: data.startDate
-      ? dateTime({ input: data.startDate })
-      : dateTime(),
-    stopDate: data.stopDate ? dateTime({ input: data.stopDate }) : dateTime(),
+    startDate: data.startDate ? dateTime({ input: data.startDate }) : null,
+    stopDate: data.stopDate ? dateTime({ input: data.stopDate }) : null,
 
     workTimeMode: [data.workTimeMode],
     maxDurationHours: [String(data.maxDurationHours)],

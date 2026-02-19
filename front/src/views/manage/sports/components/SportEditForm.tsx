@@ -1,10 +1,10 @@
-import { FormEvent } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { Button, Flex } from '@gravity-ui/uikit';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { FormTextInput } from '@/components/formUi';
-import { SportViewModel } from '../types';
-import { validationSchema } from './formRules';
+import { FormEvent } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { Button, Flex } from "@gravity-ui/uikit";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormTextInput } from "@/components/formUi";
+import { SportViewModel } from "../types";
+import { validationSchema } from "./formRules";
 
 interface SportEditFormProps {
   isCreate?: boolean;

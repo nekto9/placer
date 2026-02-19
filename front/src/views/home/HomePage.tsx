@@ -1,14 +1,14 @@
-import { useAuthContext } from '@/context/useAuthContext';
-import { Loading } from '@/layouts/components';
+import { useAuthContext } from "@/context/useAuthContext";
+import { Loading } from "@/layouts/components";
 import {
   GameTimeFrame,
   GameUserStatus,
   useGetPlaceFavoritesQuery,
   useGetUserGamesQuery,
-} from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { GameList } from './components/GameList';
-import { Places } from './components/Places';
+} from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { GameList } from "./components/GameList";
+import { Places } from "./components/Places";
 
 // import { Upcoming } from './components/Upcoming';
 
@@ -37,7 +37,7 @@ export const HomePage = () => {
     limit: 3,
   });
 
-  useSetPageData({ title: 'Старт' });
+  useSetPageData({ title: "Старт" });
 
   const isLoading =
     gameListGetState.isLoading ||

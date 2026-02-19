@@ -1,4 +1,4 @@
-import { reactHooksModuleName } from '@reduxjs/toolkit/dist/query/react';
+import { reactHooksModuleName } from "@reduxjs/toolkit/dist/query/react";
 import {
   Api,
   BaseQueryApi,
@@ -6,7 +6,7 @@ import {
   FetchBaseQueryError,
   FetchBaseQueryMeta,
   QueryReturnValue,
-} from '@reduxjs/toolkit/query';
+} from "@reduxjs/toolkit/query";
 
 export type ApiType = Api<
   (
@@ -18,7 +18,7 @@ export type ApiType = Api<
   >,
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   {},
-  'api',
+  "api",
   never,
   typeof coreModuleName | typeof reactHooksModuleName
 >;
@@ -73,7 +73,7 @@ export const updateHandler = (
 
       dispatch(
         api.util.updateQueryData(
-          detailsEndpointName as keyof ApiType['endpoints'],
+          detailsEndpointName as keyof ApiType["endpoints"],
           args as never, // Cast to never to satisfy TypeScript
           (draft: Record<string, unknown>) => {
             Object.assign(draft, data);
@@ -81,7 +81,7 @@ export const updateHandler = (
         )
       );
     } catch (error) {
-      console.error('Failed to update query data:', error);
+      console.error("Failed to update query data:", error);
     }
   };
 };

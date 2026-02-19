@@ -1,22 +1,23 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { staticFolderOptions } from './config/static.config';
-import { PrismaModule } from './database/prisma.module';
-import { KeycloakModule } from './keycloak/keycloak.module';
-import { MailSenderModule } from './mailSender/mailSender.module';
-import { CityModule } from './modules/city/city.module';
-import { GameModule } from './modules/game/game.module';
-import { PlaceModule } from './modules/place/place.module';
-import { ScheduleModule } from './modules/schedule/schedule.module';
-import { SportModule } from './modules/sport/sport.module';
-import { UploaderModule } from './modules/uploader/uploader.module';
-import { UserModule } from './modules/user/user.module';
-import { BullMQModule } from './queue/bullmq/bullmq.module';
-import { EmailQueueModule } from './queue/email/emailQueue.module';
-import { GameQueueModule } from './queue/game/gameQueue.module';
-import { HelperQueueModule } from './queue/helper/helperQueue.module';
-import { TelegramModule } from './telegram/telegram.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { staticFolderOptions } from "./config/static.config";
+import { PrismaModule } from "./database/prisma.module";
+import { GameGatewayModule } from "./gateway";
+import { KeycloakModule } from "./keycloak/keycloak.module";
+import { MailSenderModule } from "./mailSender/mailSender.module";
+import { CityModule } from "./modules/city/city.module";
+import { GameModule } from "./modules/game/game.module";
+import { PlaceModule } from "./modules/place/place.module";
+import { ScheduleModule } from "./modules/schedule/schedule.module";
+import { SportModule } from "./modules/sport/sport.module";
+import { UploaderModule } from "./modules/uploader/uploader.module";
+import { UserModule } from "./modules/user/user.module";
+import { BullMQModule } from "./queue/bullmq/bullmq.module";
+import { EmailQueueModule } from "./queue/email/emailQueue.module";
+import { GameQueueModule } from "./queue/game/gameQueue.module";
+import { HelperQueueModule } from "./queue/helper/helperQueue.module";
+import { TelegramModule } from "./telegram/telegram.module";
 
 @Module({
   imports: [
@@ -41,6 +42,9 @@ import { TelegramModule } from './telegram/telegram.module';
     // Модуль работы с базой данных через Prisma ORM
     PrismaModule,
 
+    // WebSocket шлюз для real-time событий
+    GameGatewayModule,
+
     // Бизнес-модули приложения
     PlaceModule, // Управление игровыми площадками
     ScheduleModule, // Управление расписанием и временными слотами
@@ -60,7 +64,7 @@ import { TelegramModule } from './telegram/telegram.module';
     HelperQueueModule, // Очередь вспомогательных задач (очистка данных)
 
     // Интеграция с внешними сервисами
-    TelegramModule, // Telegram Bot для уведомлений
+    TelegramModule.forRoot(), // Telegram Bot для уведомлений (с обработкой ошибок подключения)
     MailSenderModule, // отправка электропочты
   ],
 })

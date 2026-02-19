@@ -1,8 +1,8 @@
-import React from 'react';
-import { useNavigate } from 'react-router';
-import { Aperture } from '@gravity-ui/icons';
-import { MenuItem, PageLayoutAside } from '@gravity-ui/navigation';
-import { RoutesList } from '@/router/routesList';
+import React from "react";
+import { useNavigate } from "react-router";
+import { Aperture } from "@gravity-ui/icons";
+import { MenuItem, PageLayoutAside } from "@gravity-ui/navigation";
+import { RoutesList } from "@/router/routesList";
 
 interface DesktopNavigationProps {
   onSwitch: () => void;
@@ -20,7 +20,7 @@ export const DesktopNavigation = (props: DesktopNavigationProps) => {
   return (
     <PageLayoutAside
       logo={{
-        text: 'Placer',
+        text: "Placer",
         icon: Aperture,
         onClick: homeClickHandler,
       }}

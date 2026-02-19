@@ -1,21 +1,32 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma.service';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { PrismaService } from "@/database/prisma.service";
+import { GameGateway } from "@/gateway/game.gateway";
 import {
   $Enums,
   GameLevel,
   GameStatus,
   GameTimeFrame,
   GameUserStatus,
-} from '@/prismaClient';
-import { GameQueueService } from '@/queue/game/gameQueue.service';
-import { getTimeFromDateInMunutes, stringToDate } from '@/tools/dateUtils';
-import { UserService } from '../user/user.service';
-import { CreateGameDto, UpdateGameDto } from './dto';
+  WorkTimeMode,
+} from "@/prismaClient";
+import { GameQueueService } from "@/queue/game/gameQueue.service";
+import {
+  dateToString,
+  getTimeFromDateInMunutes,
+  stringToDate,
+} from "@/tools/dateUtils";
+import {
+  isScheduleActive,
+  isScheduleAppliedToDate,
+} from "@/tools/scheduleUtils";
+import { splitTimeInterval } from "../place/utils/splitTimeInterval";
+import { UserService } from "../user/user.service";
+import { CreateGameDto, ExtendReservationDto, UpdateGameDto } from "./dto";
 import {
   mapCreateGameDtoToPrismaInput,
   mapGameToResponseDto,
   mapUpdateGameDtoToPrismaInput,
-} from './mappers';
+} from "./mappers";
 
 /**
  * Сервис для управления играми
@@ -27,7 +38,8 @@ export class GameService {
     @Inject(forwardRef(() => GameQueueService))
     private gameQueueService: GameQueueService,
     @Inject(forwardRef(() => UserService))
-    private userService: UserService
+    private userService: UserService,
+    private gameGateway: GameGateway
   ) {}
 
   /**
@@ -44,13 +56,27 @@ export class GameService {
     dateInput: string,
     requesterSub: string
   ) {
+    const gameDate = stringToDate(dateInput);
+
     // Получаем данные временного слота
     const timeSlot = await this.prisma.timeSlot.findUnique({
       where: { id: slotId },
+      include: {
+        schedule: true,
+      },
     });
 
     if (!timeSlot) {
-      throw new Error(`Time slot with id ${slotId} not found`);
+      throw new Error(`Временной слот с id ${slotId} не найден`);
+    }
+
+    if (
+      timeSlot.schedule.placeId !== placeId ||
+      timeSlot.schedule.workTimeMode !== WorkTimeMode.TIMEGRID ||
+      !isScheduleActive(timeSlot.schedule) ||
+      !isScheduleAppliedToDate(timeSlot.schedule, gameDate)
+    ) {
+      throw new Error("Выбранный слот недоступен для указанной даты");
     }
 
     const user = await this.userService.getUser({
@@ -58,7 +84,42 @@ export class GameService {
     });
 
     if (!user) {
-      throw new Error(`User with keycloak id ${requesterSub} not found`);
+      throw new Error(`Пользователь с keycloak id ${requesterSub} не найден`);
+    }
+
+    // Проверяем, нет ли пересечений с существующими играми/бронированиями
+    const hasConflict = await this.prisma.game.findFirst({
+      where: {
+        placeId,
+        date: gameDate,
+        status: {
+          in: [GameStatus.DRAFT, GameStatus.APROVED],
+        },
+        OR: [
+          {
+            AND: [
+              { timeStart: { lte: timeSlot.timeStart } },
+              { timeEnd: { gt: timeSlot.timeStart } },
+            ],
+          },
+          {
+            AND: [
+              { timeStart: { lt: timeSlot.timeEnd } },
+              { timeEnd: { gte: timeSlot.timeEnd } },
+            ],
+          },
+          {
+            AND: [
+              { timeStart: { gte: timeSlot.timeStart } },
+              { timeEnd: { lte: timeSlot.timeEnd } },
+            ],
+          },
+        ],
+      },
+    });
+
+    if (hasConflict) {
+      throw new Error("Выбранный слот уже забронирован или занят");
     }
 
     // Подготавливаем данные для создания игры
@@ -82,8 +143,23 @@ export class GameService {
       },
     });
 
-    // Добавляем задачу на автоматическую проверку и удаление неактивных игр
-    await this.gameQueueService.checkGameForReset(createdGame.id);
+    // Добавляем задачу на автоматическое удаление через TTL (из env)
+    const ttlMinutes = process.env.GAME_RESERVATION_TTL_MINUTES
+      ? parseInt(process.env.GAME_RESERVATION_TTL_MINUTES, 10)
+      : 15;
+
+    await this.gameQueueService.scheduleReservationCancel(
+      createdGame.id,
+      ttlMinutes
+    );
+
+    // Отправляем WebSocket событие о бронировании
+    this.gameGateway.sendGameReserved(placeId, {
+      gameId: createdGame.id,
+      date: dateInput,
+      timeStart: timeSlot.timeStart,
+      timeEnd: timeSlot.timeEnd,
+    });
 
     return mapGameToResponseDto(createdGame, user);
   }
@@ -100,12 +176,115 @@ export class GameService {
     requesterSub: string,
     dto: CreateGameDto
   ) {
+    const gameDate = stringToDate(dto.date);
+
     const user = await this.userService.getUser({
       requesterSub,
     });
 
     if (!user) {
-      throw new Error(`User with keycloak id ${requesterSub} not found`);
+      throw new Error(`Пользователь с keycloak id ${requesterSub} не найден`);
+    }
+
+    const schedules = await this.prisma.schedule.findMany({
+      where: {
+        placeId,
+        OR: [
+          {
+            startDate: { lte: gameDate },
+            stopDate: { gte: gameDate },
+          },
+          {
+            startDate: null,
+            stopDate: { gte: gameDate },
+          },
+          {
+            startDate: { lte: gameDate },
+            stopDate: null,
+          },
+          {
+            startDate: null,
+            stopDate: null,
+          },
+        ],
+      },
+      include: {
+        timeSlots: true,
+      },
+      orderBy: {
+        rank: "asc",
+      },
+    });
+
+    const matchedSchedule = schedules
+      .filter(isScheduleActive)
+      .find((schedule) => isScheduleAppliedToDate(schedule, gameDate));
+
+    if (
+      !matchedSchedule ||
+      matchedSchedule.workTimeMode !== WorkTimeMode.CUSTOM
+    ) {
+      throw new Error("Выбранный слот недоступен для указанной даты");
+    }
+
+    if (dto.timeStart >= dto.timeEnd) {
+      throw new Error("Некорректный временной диапазон");
+    }
+
+    const startMinuteInHour = ((dto.timeStart % 60) + 60) % 60;
+    const allowedStartMinute =
+      (((matchedSchedule.timeStart ?? 0) % 60) + 60) % 60;
+
+    if (startMinuteInHour !== allowedStartMinute) {
+      throw new Error("Время начала не соответствует правилам расписания");
+    }
+
+    const bookedGames = await this.prisma.game.findMany({
+      where: {
+        placeId,
+        date: gameDate,
+        status: {
+          in: [GameStatus.DRAFT, GameStatus.APROVED],
+        },
+      },
+      select: {
+        id: true,
+        timeStart: true,
+        timeEnd: true,
+      },
+    });
+
+    const hasConflict = bookedGames.some(
+      (game) => game.timeStart < dto.timeEnd && game.timeEnd > dto.timeStart
+    );
+
+    if (hasConflict) {
+      throw new Error("Выбранный слот уже забронирован или занят");
+    }
+
+    const availableTimeRanges = matchedSchedule.timeSlots.flatMap(
+      (workingTime) => {
+        const overlappingGames = bookedGames.filter(
+          (game) =>
+            game.timeStart < workingTime.timeEnd &&
+            game.timeEnd > workingTime.timeStart
+        );
+
+        return splitTimeInterval(
+          workingTime,
+          overlappingGames,
+          matchedSchedule
+        );
+      }
+    );
+
+    const isWithinAvailableRange = availableTimeRanges.some(
+      (timeRange) =>
+        dto.timeStart >= timeRange.timeStart && dto.timeEnd <= timeRange.timeEnd
+    );
+
+    if (!isWithinAvailableRange) {
+      throw new Error("Выбранный слот недоступен для указанной даты");
     }
 
     // Подготавливаем данные для создания игры с кастомным временем
@@ -120,8 +299,23 @@ export class GameService {
       include: { place: true, sport: true, users: { include: { user: true } } },
     });
 
-    // Добавляем задачу на автоматическую проверку и удаление неактивных игр
-    await this.gameQueueService.checkGameForReset(createdGame.id);
+    // Добавляем задачу на автоматическое удаление через TTL (из env)
+    const ttlMinutes = process.env.GAME_RESERVATION_TTL_MINUTES
+      ? parseInt(process.env.GAME_RESERVATION_TTL_MINUTES, 10)
+      : 15;
+
+    await this.gameQueueService.scheduleReservationCancel(
+      createdGame.id,
+      ttlMinutes
+    );
+
+    // Отправляем WebSocket событие о бронировании
+    this.gameGateway.sendGameReserved(placeId, {
+      gameId: createdGame.id,
+      date: dto.date,
+      timeStart: dto.timeStart,
+      timeEnd: dto.timeEnd,
+    });
 
     return mapGameToResponseDto(createdGame, user);
   }
@@ -142,9 +336,7 @@ export class GameService {
       return null;
     }
 
-    // Обновляем игру в базе данных
-    const updatedGame = await this.prisma.$transaction(async (tx) => {
-      // ищем игру и проверяем на доступ юзера
+    const updateResult = await this.prisma.$transaction(async (tx) => {
       const game = await tx.game.findFirst({
         where: {
           id,
@@ -158,52 +350,98 @@ export class GameService {
       });
 
       if (!game) {
-        throw new Error('Game not found or not in permissions');
+        throw new Error("Игра не найдена или недостаточно прав");
       }
 
-      // Если дошли до сюда, то обновляем
+      const nextPlaceId = dto.placeId ?? game.placeId;
+      const nextDate = dto.date ? stringToDate(dto.date) : game.date;
+      const nextTimeStart = dto.timeStart ?? game.timeStart;
+      const nextTimeEnd = dto.timeEnd ?? game.timeEnd;
 
-      // 1. Получаем текущие связи с пользователями
-      const currentUsers = await tx.gameUser.findMany({
-        where: { gameId: id },
-        select: { userId: true },
-      });
+      const hasSlotChanged =
+        nextPlaceId !== game.placeId ||
+        dateToString(nextDate) !== dateToString(game.date) ||
+        nextTimeStart !== game.timeStart ||
+        nextTimeEnd !== game.timeEnd;
 
-      const currentUserIds = currentUsers.map((s) => s.userId);
-
-      // 2. Определяем что добавить, что удалить
-      const usersToAdd = dto.gameUsers.filter(
-        (user) => !currentUserIds.includes(user.userId)
-      );
-      const usersToRemove = currentUserIds.filter(
-        (id) => !dto.gameUsers.map((u) => u.userId).includes(id)
-      );
-
-      // 3. Удаляем ненужные связи
-      if (usersToRemove.length > 0) {
-        await tx.gameUser.deleteMany({
+      if (hasSlotChanged) {
+        const hasConflict = await tx.game.findFirst({
           where: {
-            gameId: id,
-            userId: { in: usersToRemove },
+            id: { not: id },
+            placeId: nextPlaceId,
+            date: nextDate,
+            status: {
+              in: [GameStatus.DRAFT, GameStatus.APROVED],
+            },
+            OR: [
+              {
+                AND: [
+                  { timeStart: { lte: nextTimeStart } },
+                  { timeEnd: { gt: nextTimeStart } },
+                ],
+              },
+              {
+                AND: [
+                  { timeStart: { lt: nextTimeEnd } },
+                  { timeEnd: { gte: nextTimeEnd } },
+                ],
+              },
+              {
+                AND: [
+                  { timeStart: { gte: nextTimeStart } },
+                  { timeEnd: { lte: nextTimeEnd } },
+                ],
+              },
+            ],
           },
         });
+
+        if (hasConflict) {
+          throw new Error("Выбранный слот уже забронирован или занят");
+        }
       }
 
-      // 4. Добавляем новые связи
-      if (usersToAdd.length > 0) {
-        await tx.gameUser.createMany({
-          data: usersToAdd.map((user) => ({
-            userId: user.userId,
-            gameId: id,
-            role: user.role,
-            status: user.status,
-          })),
+      if (dto.gameUsers?.length) {
+        const currentUsers = await tx.gameUser.findMany({
+          where: { gameId: id },
+          select: { userId: true },
         });
+
+        const currentUserIds = currentUsers.map((s) => s.userId);
+
+        const usersToAdd = dto.gameUsers.filter(
+          (item) => !currentUserIds.includes(item.userId)
+        );
+        const usersToRemove = currentUserIds.filter(
+          (currentUserId) =>
+            !dto.gameUsers.map((item) => item.userId).includes(currentUserId)
+        );
+
+        if (usersToRemove.length > 0) {
+          await tx.gameUser.deleteMany({
+            where: {
+              gameId: id,
+              userId: { in: usersToRemove },
+            },
+          });
+        }
+
+        if (usersToAdd.length > 0) {
+          await tx.gameUser.createMany({
+            data: usersToAdd.map((item) => ({
+              userId: item.userId,
+              gameId: id,
+              role: item.role,
+              status: item.status,
+            })),
+          });
+        }
+      } else {
+        dto.gameUsers = [];
       }
 
       const updateGameData = mapUpdateGameDtoToPrismaInput(dto);
 
-      // 5. Обновляем игру
       const currentGame = await tx.game.update({
         where: { id },
         data: updateGameData,
@@ -218,23 +456,51 @@ export class GameService {
         },
       });
 
-      return currentGame;
+      return {
+        previousGame: game,
+        updatedGame: currentGame,
+      };
     });
 
-    // Если игра была обновлена и есть пользователи для приглашения
+    const { previousGame, updatedGame } = updateResult;
+
     if (updatedGame.users?.length) {
-      // Фильтруем только приглашенных пользователей
       const userIds = updatedGame.users
         .filter((gameUser) => gameUser.status === GameUserStatus.INVITED)
         .map((gameUser) => gameUser.user.id);
 
       if (userIds?.length) {
-        // Добавляем задачу на отправку приглашений в очередь
         await this.gameQueueService.sendInvite(updatedGame.id, userIds);
       }
-
-      // TODO: Добавить уведомления остальным участникам об изменении игры
     }
+
+    const hasSlotChanged =
+      updatedGame.placeId !== previousGame.placeId ||
+      dateToString(updatedGame.date) !== dateToString(previousGame.date) ||
+      updatedGame.timeStart !== previousGame.timeStart ||
+      updatedGame.timeEnd !== previousGame.timeEnd;
+
+    if (hasSlotChanged) {
+      this.gameGateway.sendGameReleased(previousGame.placeId, {
+        gameId: previousGame.id,
+        date: dateToString(previousGame.date),
+      });
+
+      this.gameGateway.sendGameReserved(updatedGame.placeId, {
+        gameId: updatedGame.id,
+        date: dateToString(updatedGame.date),
+        timeStart: updatedGame.timeStart,
+        timeEnd: updatedGame.timeEnd,
+      });
+    }
+
+    this.gameGateway.sendGameUpdated(updatedGame.placeId, {
+      gameId: updatedGame.id,
+      date: dateToString(updatedGame.date),
+      timeStart: updatedGame.timeStart,
+      timeEnd: updatedGame.timeEnd,
+      status: updatedGame.status,
+    });
 
     return mapGameToResponseDto(updatedGame, user);
   }
@@ -270,7 +536,7 @@ export class GameService {
       });
 
       if (!game) {
-        throw new Error('Game not found or not in permissions');
+        throw new Error("Игра не найдена или недостаточно прав");
       }
 
       // удаляем игру
@@ -281,7 +547,17 @@ export class GameService {
       return game;
     });
 
-    // TODO: Добавить уведомления участникам об отмене игры
+    this.gameGateway.sendGameReleased(deletedGame.placeId, {
+      gameId: deletedGame.id,
+      date: dateToString(deletedGame.date),
+    });
+
+    /**
+     * {@inheritDoc}
+     * @todo Добавить уведомления участникам об отмене игры
+     * @author Евгений
+     * @date 2026-02
+     */
 
     return mapGameToResponseDto(deletedGame);
   }
@@ -300,7 +576,7 @@ export class GameService {
       });
 
       if (!game) {
-        throw new Error('Game not found or not in DRAFT status');
+        throw new Error("Игра не найдена или не находится в статусе DRAFT");
       }
 
       // удаляем игру
@@ -309,6 +585,11 @@ export class GameService {
       });
 
       return game;
+    });
+
+    this.gameGateway.sendGameReleased(deletedGame.placeId, {
+      gameId: deletedGame.id,
+      date: dateToString(deletedGame.date),
     });
 
     return deletedGame;
@@ -366,7 +647,12 @@ export class GameService {
 
     // Если даты не заданы, смотрим фрейм
     if (!startDatePrepared && !stopDatePrepared) {
-      // TODO: Тут из-за utc возможен косяк, нужно проверить
+      /**
+       * {@inheritDoc}
+       * @todo Проверить работу с UTC из-за возможной ошибки
+       * @author Евгений
+       * @date 2026-02
+       */
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0);
 
@@ -461,8 +747,8 @@ export class GameService {
       (!data.timeframe || data.timeframe === GameTimeFrame.UPCOMING) &&
       startDatePrepared &&
       !stopDatePrepared
-        ? 'asc'
-        : 'desc';
+        ? "asc"
+        : "desc";
 
     const [items, total] = await this.prisma.$transaction([
       this.prisma.game.findMany({
@@ -807,5 +1093,118 @@ export class GameService {
 
     // Возвращаем обновленную игру
     return this.getGameById(data.gameId, data.requesterSub);
+  }
+
+  /**
+   * Продление бронирования игры
+   *
+   * Продлевает время жизни черновика игры. Используется при активности пользователя
+   * в процессе заполнения данных игры.
+   *
+   * @param gameId ID игры
+   * @param dto DTO продления (extendMinutes)
+   * @param requesterSub Keycloak ID пользователя
+   */
+  async extendReservation(
+    gameId: string,
+    dto: ExtendReservationDto,
+    requesterSub: string
+  ) {
+    const user = await this.userService.getUser({
+      requesterSub,
+    });
+
+    if (!user) {
+      throw new Error(`Пользователь с keycloak id ${requesterSub} не найден`);
+    }
+
+    // Проверяем, что игра существует и в статусе DRAFT
+    // Проверяем, что пользователь является создателем (через связь GameUser)
+    const game = await this.prisma.game.findFirst({
+      where: {
+        id: gameId,
+        status: GameStatus.DRAFT,
+        users: {
+          some: {
+            userId: user.id,
+            role: $Enums.GameUserRole.CREATOR,
+          },
+        },
+      },
+      include: {
+        place: true,
+        users: { include: { user: true } },
+      },
+    });
+
+    if (!game) {
+      throw new Error(
+        "Игра не найдена, не в статусе бронирования или вы не являетесь создателем"
+      );
+    }
+
+    // Продлеваем бронирование (пересоздаём задачу в очереди)
+    const ttlMinutes = dto.extendMinutes ?? 15;
+
+    await this.gameQueueService.scheduleReservationCancel(
+      gameId,
+      ttlMinutes,
+      true
+    );
+
+    return mapGameToResponseDto(game, user);
+  }
+
+  /**
+   * Отмена бронирования игры
+   *
+   * Удаляет черновик игры и освобождает слот.
+   *
+   * @param gameId ID игры
+   * @param requesterSub Keycloak ID пользователя
+   */
+  async cancelReservation(gameId: string, requesterSub: string) {
+    const user = await this.userService.getUser({
+      requesterSub,
+    });
+
+    if (!user) {
+      throw new Error(`Пользователь с keycloak id ${requesterSub} не найден`);
+    }
+
+    // Проверяем, что игра существует и в статусе DRAFT
+    // Проверяем, что пользователь является создателем (через связь GameUser)
+    const game = await this.prisma.game.findFirst({
+      where: {
+        id: gameId,
+        status: GameStatus.DRAFT,
+        users: {
+          some: {
+            userId: user.id,
+            role: $Enums.GameUserRole.CREATOR,
+          },
+        },
+      },
+      include: { place: true, users: true },
+    });
+
+    if (!game) {
+      throw new Error(
+        "Игра не найдена, не в статусе бронирования или вы не являетесь создателем"
+      );
+    }
+
+    // Удаляем игру
+    await this.prisma.game.delete({
+      where: { id: gameId },
+    });
+
+    // Отправляем WebSocket событие об освобождении слота
+    this.gameGateway.sendGameReleased(game.placeId, {
+      gameId: game.id,
+      date: dateToString(game.date),
+    });
+
+    return mapGameToResponseDto(game, user);
   }
 }

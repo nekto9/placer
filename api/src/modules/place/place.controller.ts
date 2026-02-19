@@ -182,15 +182,11 @@ export class PlaceController {
   @ApiBody(placeDecor.updateRankPlaceSchedules.body)
   async updateRankPlaceSchedules(
     @Param('id') id: string,
-    @Body()
-    body: UpdateScheduleRankDto[]
-    // @Req()
-    // request: AuthenticatedRequest
+    @Body() body: UpdateScheduleRankDto[]
   ): Promise<ScheduleShortResponseDto[]> {
     const schedules = await this.placeService.updateRankPlaceSchedules(
       id,
       body
-      // request.user.sub
     );
     if (!schedules) throw new NotFoundException('Schedules not found');
     return schedules;
@@ -207,15 +203,8 @@ export class PlaceController {
     @Param('id') id: string,
     @Query('startDate') startDate: string,
     @Query('stopDate') stopDate: string
-    // @Req()
-    // request: AuthenticatedRequest
   ): Promise<GridScheduleResponseDto> {
-    const grid = await this.placeService.getPlaceSlots(
-      id,
-      startDate,
-      stopDate
-      // request.user.sub
-    );
+    const grid = await this.placeService.getPlaceSlots(id, startDate, stopDate);
     if (!grid) throw new NotFoundException('Place not found');
     return grid;
   }

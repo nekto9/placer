@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { RangeValue } from '@gravity-ui/date-components';
-import { DateTime } from '@gravity-ui/date-utils';
-import { Button, ButtonView } from '@gravity-ui/uikit';
-import { ConfirmModal } from '@/components/modal/ConfirmModal';
-import { TooltipWrap } from '@/components/TooltipWrap';
+import { useEffect, useRef, useState } from "react";
+import { RangeValue } from "@gravity-ui/date-components";
+import { DateTime } from "@gravity-ui/date-utils";
+import { Button, ButtonView } from "@gravity-ui/uikit";
+import { ConfirmModal } from "@/components/modal/ConfirmModal";
+import { TooltipWrap } from "@/components/TooltipWrap";
 import {
   GameStatus,
   GridDayResponseDto,
@@ -11,14 +11,14 @@ import {
   useCreateGameForSlotMutation,
   useDeleteGameMutation,
   WorkTimeMode,
-} from '@/store/api';
+} from "@/store/api";
 import {
   dateTimeConvertToMinutes,
   timeConvertToFormattedString,
-} from '@/tools/dateTools';
-import { GridSlot } from '../types';
-import { InfoModal } from './InfoModal';
-import { WorktimeModal } from './WorktimeModal';
+} from "@/tools/dateTools";
+import { GridSlot } from "../types";
+import { InfoModal } from "./InfoModal";
+import { WorktimeModal } from "./WorktimeModal";
 
 interface GridSlotsProps {
   /** День */
@@ -231,10 +231,9 @@ export const GridSlots = (props: GridSlotsProps) => {
     });
 
     setGridSlots(result);
-  }, []);
+  }, [props.day]);
 
   const slotClickHandler = (slot: GridSlot) => {
-    // console.log('slotClickHandler', !!props.onClick, props.day.mode, slot);
     // Если обработчик клика задан снаружи, то игнорируем внутреннюю логику компонента
     if (props.onClick) {
       props.onClick(slot);
@@ -254,20 +253,20 @@ export const GridSlots = (props: GridSlotsProps) => {
     const result: { tooltip: string; view: ButtonView; selected: boolean } = {
       tooltip:
         gameId && slotGameId && gameId !== slotGameId
-          ? 'Слот занят'
+          ? "Слот занят"
           : slotGameId
-            ? gameId
-              ? 'Текущий выбор'
-              : 'Слот занят'
-            : 'Доступен для выбора',
+          ? gameId
+            ? "Текущий выбор"
+            : "Слот занят"
+          : "Доступен для выбора",
       view:
         gameId && slotGameId && gameId !== slotGameId
-          ? 'outlined-utility'
+          ? "outlined-utility"
           : slotGameId
-            ? gameId
-              ? 'outlined-info'
-              : 'outlined-utility'
-            : 'outlined-success',
+          ? gameId
+            ? "outlined-info"
+            : "outlined-utility"
+          : "outlined-success",
       selected: !!slotGameId || (gameId && slotGameId && gameId !== slotGameId),
     };
     return result;
@@ -293,7 +292,7 @@ export const GridSlots = (props: GridSlotsProps) => {
                 view={slotState.view}
                 selected={slotState.selected}
               >
-                {timeConvertToFormattedString(slot.timeStart)} -{' '}
+                {timeConvertToFormattedString(slot.timeStart)} -{" "}
                 {timeConvertToFormattedString(slot.timeEnd)}
                 {/* [{slot.timeStart} - {slot.timeEnd}] */}
               </Button>
@@ -304,7 +303,7 @@ export const GridSlots = (props: GridSlotsProps) => {
           <Button
             view="flat"
             loading
-            style={{ marginLeft: 8, marginTop: 8, visibility: 'hidden' }}
+            style={{ marginLeft: 8, marginTop: 8, visibility: "hidden" }}
           >
             загрузка...
           </Button>

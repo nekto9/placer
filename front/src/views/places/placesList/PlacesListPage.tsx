@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
-import { useGetPlacesQuery } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { PlacesList } from './components/PlacesList';
+import { useNavigate } from "react-router";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
+import { useGetPlacesQuery } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { PlacesList } from "./components/PlacesList";
 
 export const PlacesListPage = () => {
   const placeListGetState = useGetPlacesQuery({});
@@ -22,7 +22,7 @@ export const PlacesListPage = () => {
     navigate(RoutesList.Place.getPlaceSchedules(placeId));
   };
 
-  useSetPageData({ title: 'Список площадок' });
+  useSetPageData({ title: "Список площадок" });
 
   return (
     <div>

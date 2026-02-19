@@ -1,2 +1,2 @@
-export * from './placeDetails';
-export * from './placesList';
+export * from "./placeDetails";
+export * from "./placesList";

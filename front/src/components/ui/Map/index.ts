@@ -1,2 +1,2 @@
-export * from './ViewMap';
-export * from './EditMap';
+export * from "./ViewMap";
+export * from "./EditMap";

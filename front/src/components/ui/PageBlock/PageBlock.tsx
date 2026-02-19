@@ -1,4 +1,4 @@
-import { Card, Text } from '@gravity-ui/uikit';
+import { Card, Text } from "@gravity-ui/uikit";
 
 interface PageBlockProps {
   children: React.ReactNode;

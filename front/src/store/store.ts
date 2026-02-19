@@ -1,7 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { enhancedApi } from './enhancedApi';
-import profileReducer from './slices/profileSlice';
-import viewportReducer from './slices/viewportSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { enhancedApi } from "./enhancedApi";
+import profileReducer from "./slices/profileSlice";
+import viewportReducer from "./slices/viewportSlice";
 
 export const store = configureStore({
   reducer: {

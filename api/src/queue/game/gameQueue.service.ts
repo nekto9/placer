@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { getDateTimeKey } from '../common/tools';
 import {
-  DELAY_FOR_GAME_DELETE,
   GAME_JOB_NAMES,
   GAME_QUEUE_NAMES,
 } from './constants/game.constants';
@@ -12,6 +11,11 @@ import {
   GameSendInviteJobData,
   GameSendMemberMessageJobData,
 } from './interfaces/gameJob.interface';
+
+/** Данные для задачи отмены бронирования */
+export interface GameCancelReservationJobData {
+  gameId: string;
+}
 
 /**
  * Сервис для управления очередью игровых задач
@@ -37,8 +41,45 @@ export class GameQueueService {
 
     return this.gameQueue.add(GAME_JOB_NAMES.CHECK_GAME_FOR_RESET, jobData, {
       jobId: `check-game-for-reset-${gameId}-${getDateTimeKey()}`,
-      delay: DELAY_FOR_GAME_DELETE, // Отложенное выполнение через заданный интервал
+      delay: 15 * 60 * 1000, // Отложенное выполнение через 15 минут
     });
+  }
+
+  /**
+   * Планирование отмены бронирования игры
+   *
+   * Создает задачу для автоматического удаления черновика игры
+   * после истечения времени бронирования.
+   *
+   * @param gameId ID игры
+   * @param delayMinutes Задержка в минутах перед удалением
+   * @param replaceExisting Заменить существующую задачу (для продления)
+   */
+  async scheduleReservationCancel(
+    gameId: string,
+    delayMinutes: number,
+    replaceExisting: boolean = false
+  ) {
+    const jobData: GameCancelReservationJobData = {
+      gameId,
+    };
+
+    const jobId = `cancel-reservation-${gameId}`;
+
+    // Если replaceExisting=true, удаляем старую задачу
+    if (replaceExisting) {
+      await this.gameQueue.remove(jobId);
+    }
+
+    return this.gameQueue.add(
+      GAME_JOB_NAMES.CANCEL_RESERVATION,
+      jobData,
+      {
+        jobId,
+        delay: delayMinutes * 60 * 1000, // Конвертируем минуты в миллисекунды
+        priority: 1, // Высокий приоритет
+      }
+    );
   }
 
   /**

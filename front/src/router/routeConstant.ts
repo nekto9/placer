@@ -1,48 +1,48 @@
 export enum RoutesConst {
-  ROOT = '/',
+  ROOT = "/",
 
   /** Профиль пользователя */
-  PROFILE = 'profile',
+  PROFILE = "profile",
 
   /** Площадки */
-  PLACES = 'places',
+  PLACES = "places",
 
   /** Расписания */
-  SCHEDULES = 'schedule',
+  SCHEDULES = "schedule",
 
   /** Шаблоны рсписаний */
-  SCHEDULE_TEMPLATES = 'templates',
+  SCHEDULE_TEMPLATES = "templates",
 
   /** Календарные расписания */
-  CALENDAR = 'calendar',
+  CALENDAR = "calendar",
 
   /** Суточные расписания площадки */
-  TIME = 'time',
+  TIME = "time",
 
   /** Игры */
-  GAMES = 'games',
+  GAMES = "games",
 
   /** Пользователи */
-  USERS = 'users',
+  USERS = "users",
 
   /** Управление */
-  MANAGE = 'manage',
+  MANAGE = "manage",
 
   // /////////////////
   /** Виды спорта */
-  SPORTS = 'sports',
+  SPORTS = "sports",
 
   /** Города */
-  CITIES = 'cities',
+  CITIES = "cities",
 
   // //////////
-  ADD = 'add',
-  EDIT = 'edit',
+  ADD = "add",
+  EDIT = "edit",
 
   // Тайм-фрейм для списков игр
-  ALL = 'all',
-  PAST = 'past',
+  ALL = "all",
+  PAST = "past",
 
   // Типы игр (общие, личные)
-  PERSONAL = 'personal',
+  PERSONAL = "personal",
 }

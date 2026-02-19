@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { RoutesList } from '@/router/routesList';
-import { useCreateScheduleMutation } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { ScheduleForm } from './components/ScheduleForm';
-import { convertToCreateScheduleDto } from './mappers/convertFromViewModel';
-import { getEmptySchedule } from './mappers/getEmptySchedule';
-import { ScheduleViewModel } from './types';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { RoutesList } from "@/router/routesList";
+import { useCreateScheduleMutation } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { ScheduleForm } from "./components/ScheduleForm";
+import { convertToCreateScheduleDto } from "./mappers/convertFromViewModel";
+import { getEmptySchedule } from "./mappers/getEmptySchedule";
+import { ScheduleViewModel } from "./types";
 
 /** Добавление расписания */
 export const ScheduleCreatePage = () => {
@@ -33,7 +33,7 @@ export const ScheduleCreatePage = () => {
   }, [createScheduleState.isSuccess]);
 
   useSetPageData({
-    title: 'Новый шаблон',
+    title: "Новый шаблон",
     backLink: RoutesList.Place.getPlaceScheduleTemplates(placeId),
   });
 

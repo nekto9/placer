@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router';
-import { Flex } from '@gravity-ui/uikit';
-import GameCard from '@/components/ui/GameCard';
-import { RoutesList } from '@/router/routesList';
-import { GameResponseDto } from '@/store/api';
+import { useNavigate } from "react-router";
+import { Flex } from "@gravity-ui/uikit";
+import GameCard from "@/components/ui/GameCard";
+import { RoutesList } from "@/router/routesList";
+import { GameResponseDto } from "@/store/api";
 
 interface GamesListProps {
   data: GameResponseDto[];

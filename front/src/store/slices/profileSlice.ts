@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
-import { UserResponseDto } from '@/store/api';
+import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
+import { UserResponseDto } from "@/store/api";
 
 const initialState: {
   user?: UserResponseDto;
@@ -7,7 +7,7 @@ const initialState: {
 
 /** Залогиненного пользователя храним без хуков */
 export const profileSlice = createSlice({
-  name: 'authUser',
+  name: "authUser",
   initialState,
   reducers: {
     setAuthUser: (state, action: PayloadAction<UserResponseDto>) => {

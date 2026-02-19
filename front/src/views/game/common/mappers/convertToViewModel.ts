@@ -1,12 +1,12 @@
-import { dateTime } from '@gravity-ui/date-utils';
+import { dateTime } from "@gravity-ui/date-utils";
 import {
   GameResponseDto,
   GameUserDto,
   GameUserRole,
   GameUserStatus,
-} from '@/store/api';
-import { parseEmptyString } from '@/tools/parse';
-import { GameUserViewModel, GameViewModel } from '../types';
+} from "@/store/api";
+import { parseEmptyString } from "@/tools/parse";
+import { GameUserViewModel, GameViewModel } from "../types";
 
 /** Модель игрока для игры */
 export const convertGameUserToViewModel = (

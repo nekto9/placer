@@ -1,6 +1,6 @@
-import { UserResponseDto } from '@/store/api';
-import { parseEmptyStringToUndefined } from '@/tools/parse';
-import { UserProfileViewModel } from '../types';
+import { UserResponseDto } from "@/store/api";
+import { parseEmptyStringToUndefined } from "@/tools/parse";
+import { UserProfileViewModel } from "../types";
 
 export const convertToViewModel = (
   data: UserResponseDto
@@ -9,14 +9,14 @@ export const convertToViewModel = (
 
   return {
     ...rest,
-    email: parseEmptyStringToUndefined(email) || '',
-    username: parseEmptyStringToUndefined(username) || '',
+    email: parseEmptyStringToUndefined(email) || "",
+    username: parseEmptyStringToUndefined(username) || "",
     avatar: avatar
       ? {
           id: avatar.fileId,
           url: avatar.fileUrl,
-          status: 'uploaded',
-          type: 'image/',
+          status: "uploaded",
+          type: "image/",
         }
       : undefined,
   };

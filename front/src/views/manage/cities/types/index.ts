@@ -1,3 +1,3 @@
-import { CityResponseDto } from '@/store/api';
+import { CityResponseDto } from "@/store/api";
 
 export type CityViewModel = CityResponseDto;

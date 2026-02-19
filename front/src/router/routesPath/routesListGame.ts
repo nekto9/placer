@@ -1,4 +1,4 @@
-import { RoutesConst } from '../routeConstant';
+import { RoutesConst } from "../routeConstant";
 
 // /games
 const mainGameURL = `${RoutesConst.ROOT}${RoutesConst.GAMES}`;

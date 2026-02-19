@@ -1,11 +1,10 @@
-import { templateApi as api } from '../../openapi/templateApi';
-
+import { templateApi as api } from "../../openapi/templateApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     createPlace: build.mutation<CreatePlaceApiResponse, CreatePlaceApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/places`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createPlaceDto,
       }),
     }),
@@ -21,14 +20,14 @@ const injectedRtkApi = api.injectEndpoints({
     updatePlace: build.mutation<UpdatePlaceApiResponse, UpdatePlaceApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/places/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.updatePlaceDto,
       }),
     }),
     deletePlace: build.mutation<DeletePlaceApiResponse, DeletePlaceApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/places/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getPlaceSchedules: build.query<
@@ -43,7 +42,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/places/${queryArg.id}/schedules`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.body,
       }),
     }),
@@ -59,7 +58,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/places/favorites/${queryArg.favoriteId}`,
-        method: 'POST',
+        method: "POST",
       }),
     }),
     removePlaceFromFavorites: build.mutation<
@@ -68,7 +67,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/places/favorites/${queryArg.favoriteId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getPlaceFavorites: build.query<
@@ -102,7 +101,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.placeId}/slot/${queryArg.slotId}/${queryArg.date}`,
-        method: 'POST',
+        method: "POST",
       }),
     }),
     createGameForCustomSlot: build.mutation<
@@ -111,21 +110,21 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.placeId}/customslot`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createGameDto,
       }),
     }),
     updateGame: build.mutation<UpdateGameApiResponse, UpdateGameApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.updateGameDto,
       }),
     }),
     deleteGame: build.mutation<DeleteGameApiResponse, DeleteGameApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getGameById: build.query<GetGameByIdApiResponse, GetGameByIdApiArg>({
@@ -146,43 +145,62 @@ const injectedRtkApi = api.injectEndpoints({
     acceptInvite: build.mutation<AcceptInviteApiResponse, AcceptInviteApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/accept`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     rejectInvite: build.mutation<RejectInviteApiResponse, RejectInviteApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/reject`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     requestJoin: build.mutation<RequestJoinApiResponse, RequestJoinApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/request`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     declineJoin: build.mutation<DeclineJoinApiResponse, DeclineJoinApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/decline/${queryArg.userId}`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     allowJoin: build.mutation<AllowJoinApiResponse, AllowJoinApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/allow/${queryArg.userId}`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     unJoin: build.mutation<UnJoinApiResponse, UnJoinApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/unjoin`,
-        method: 'PATCH',
+        method: "PATCH",
       }),
     }),
     join: build.mutation<JoinApiResponse, JoinApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/games/${queryArg.id}/join`,
-        method: 'PATCH',
+        method: "PATCH",
+      }),
+    }),
+    extendReservation: build.mutation<
+      ExtendReservationApiResponse,
+      ExtendReservationApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/games/${queryArg.id}/extend-reservation`,
+        method: "PATCH",
+        body: queryArg.extendReservationDto,
+      }),
+    }),
+    cancelReservation: build.mutation<
+      CancelReservationApiResponse,
+      CancelReservationApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/v1/games/${queryArg.id}/reservation`,
+        method: "DELETE",
       }),
     }),
     getUserById: build.query<GetUserByIdApiResponse, GetUserByIdApiArg>({
@@ -191,20 +209,20 @@ const injectedRtkApi = api.injectEndpoints({
     deleteUser: build.mutation<DeleteUserApiResponse, DeleteUserApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/users/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     updateUser: build.mutation<UpdateUserApiResponse, UpdateUserApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/users/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.userUpdateDto,
       }),
     }),
     linkAuthUser: build.mutation<LinkAuthUserApiResponse, LinkAuthUserApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/users`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.userAuthLinkDto,
       }),
     }),
@@ -219,10 +237,10 @@ const injectedRtkApi = api.injectEndpoints({
       }),
     }),
     deepLink: build.mutation<DeepLinkApiResponse, DeepLinkApiArg>({
-      query: () => ({ url: `/api/v1/users/deepLink`, method: 'POST' }),
+      query: () => ({ url: `/api/v1/users/deepLink`, method: "POST" }),
     }),
     removeTgLink: build.mutation<RemoveTgLinkApiResponse, RemoveTgLinkApiArg>({
-      query: () => ({ url: `/api/v1/users/removeTgLink`, method: 'PATCH' }),
+      query: () => ({ url: `/api/v1/users/removeTgLink`, method: "PATCH" }),
     }),
     addUserToFavorites: build.mutation<
       AddUserToFavoritesApiResponse,
@@ -230,7 +248,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/users/favorites/${queryArg.favoriteId}`,
-        method: 'POST',
+        method: "POST",
       }),
     }),
     removeUserFromFavorites: build.mutation<
@@ -239,7 +257,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/users/favorites/${queryArg.favoriteId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getUserFavorites: build.query<
@@ -280,7 +298,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/schedules/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.updateScheduleDto,
       }),
     }),
@@ -290,7 +308,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/schedules/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     createSchedule: build.mutation<
@@ -299,14 +317,14 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/api/v1/schedules`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createScheduleDto,
       }),
     }),
     createSport: build.mutation<CreateSportApiResponse, CreateSportApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/sports`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createSportDto,
       }),
     }),
@@ -326,20 +344,20 @@ const injectedRtkApi = api.injectEndpoints({
     updateSport: build.mutation<UpdateSportApiResponse, UpdateSportApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/sports/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.updateSportDto,
       }),
     }),
     deleteSport: build.mutation<DeleteSportApiResponse, DeleteSportApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/sports/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     createCity: build.mutation<CreateCityApiResponse, CreateCityApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/cities`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createCityDto,
       }),
     }),
@@ -359,27 +377,27 @@ const injectedRtkApi = api.injectEndpoints({
     updateCity: build.mutation<UpdateCityApiResponse, UpdateCityApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/cities/${queryArg.id}`,
-        method: 'PATCH',
+        method: "PATCH",
         body: queryArg.updateCityDto,
       }),
     }),
     deleteCity: build.mutation<DeleteCityApiResponse, DeleteCityApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/cities/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     uploadAvatar: build.mutation<UploadAvatarApiResponse, UploadAvatarApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/upload/avatar`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.body,
       }),
     }),
     uploadCover: build.mutation<UploadCoverApiResponse, UploadCoverApiArg>({
       query: (queryArg) => ({
         url: `/api/v1/upload/cover`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.body,
       }),
     }),
@@ -569,6 +587,17 @@ export type UnJoinApiArg = {
 };
 export type JoinApiResponse = /** status 200  */ GameResponseDto;
 export type JoinApiArg = {
+  /** ID игры */
+  id: string;
+};
+export type ExtendReservationApiResponse = /** status 200  */ GameResponseDto;
+export type ExtendReservationApiArg = {
+  /** ID игры */
+  id: string;
+  extendReservationDto: ExtendReservationDto;
+};
+export type CancelReservationApiResponse = /** status 200  */ GameResponseDto;
+export type CancelReservationApiArg = {
   /** ID игры */
   id: string;
 };
@@ -880,7 +909,7 @@ export type ScheduleShortResponseDto = {
   /** Дата начала действия расписания */
   startDate: string;
   /** Дата окончания действия расписания */
-  stopDate: string;
+  stopDate?: string | null;
   /** Название расписания */
   name: string;
   /** Вес расписания (чем меньше цифра, тем выше приоритет) */
@@ -1000,7 +1029,7 @@ export type UpdateGameDto = {
   /** ID игры */
   id: string;
   /** ID площадки */
-  placeId?: string;
+  placeId: string;
   /** ID вида спорта */
   sportId?: string;
   /** Время начала (в минутах от начала дня) */
@@ -1023,6 +1052,10 @@ export type UpdateGameDto = {
   description?: string;
   /** Режим принятия запросов на участие */
   requestMode: RequestMode;
+};
+export type ExtendReservationDto = {
+  /** Время продления в минутах (по умолчанию 15) */
+  extendMinutes?: number;
 };
 export type UserMetaDto = {
   /** Права на редактирование */
@@ -1076,7 +1109,7 @@ export type ScheduleResponseDto = {
   /** Дата начала */
   startDate: string;
   /** Дата окончания */
-  stopDate: string;
+  stopDate?: string | null;
   /** Шаг повтора */
   repeatStep: number;
   /** Январь */
@@ -1300,7 +1333,7 @@ export type CreateScheduleDto = {
   /** Дата начала действия расписания */
   startDate: string;
   /** Дата окончания действия расписания */
-  stopDate: string;
+  stopDate?: string;
   /** Шаг повтора (например, каждые 2 недели) */
   repeatStep: number;
   /** Январь */
@@ -1395,52 +1428,52 @@ export type UpdateCityDto = {
   name?: string;
 };
 export enum ScheduleStatus {
-  Active = 'ACTIVE',
-  Disabled = 'DISABLED',
+  Active = "ACTIVE",
+  Disabled = "DISABLED",
 }
 export enum WorkTimeMode {
-  Timegrid = 'TIMEGRID',
-  Custom = 'CUSTOM',
-  Daily = 'DAILY',
-  None = 'NONE',
+  Timegrid = "TIMEGRID",
+  Custom = "CUSTOM",
+  Daily = "DAILY",
+  None = "NONE",
 }
 export enum GameStatus {
-  Draft = 'DRAFT',
-  Aproved = 'APROVED',
+  Draft = "DRAFT",
+  Aproved = "APROVED",
 }
 export enum GameUserRole {
-  Member = 'MEMBER',
-  Creator = 'CREATOR',
+  Member = "MEMBER",
+  Creator = "CREATOR",
 }
 export enum GameUserStatus {
-  Invited = 'INVITED',
-  Confirmed = 'CONFIRMED',
-  Rejected = 'REJECTED',
-  Requested = 'REQUESTED',
-  Allowed = 'ALLOWED',
-  Declined = 'DECLINED',
+  Invited = "INVITED",
+  Confirmed = "CONFIRMED",
+  Rejected = "REJECTED",
+  Requested = "REQUESTED",
+  Allowed = "ALLOWED",
+  Declined = "DECLINED",
 }
 export enum GameLevel {
-  Easy = 'EASY',
-  Medium = 'MEDIUM',
-  Hard = 'HARD',
+  Easy = "EASY",
+  Medium = "MEDIUM",
+  Hard = "HARD",
 }
 export enum RequestMode {
-  Private = 'PRIVATE',
-  Moderate = 'MODERATE',
-  Public = 'PUBLIC',
+  Private = "PRIVATE",
+  Moderate = "MODERATE",
+  Public = "PUBLIC",
 }
 export enum GameTimeFrame {
-  Upcoming = 'UPCOMING',
-  Past = 'PAST',
-  All = 'ALL',
+  Upcoming = "UPCOMING",
+  Past = "PAST",
+  All = "ALL",
 }
 export enum CalendarRepeatMode {
-  Once = 'ONCE',
-  Daily = 'DAILY',
-  Weekly = 'WEEKLY',
-  Calenddays = 'CALENDDAYS',
-  Weekdays = 'WEEKDAYS',
+  Once = "ONCE",
+  Daily = "DAILY",
+  Weekly = "WEEKLY",
+  Calenddays = "CALENDDAYS",
+  Weekdays = "WEEKDAYS",
 }
 export const {
   useCreatePlaceMutation,
@@ -1468,6 +1501,8 @@ export const {
   useAllowJoinMutation,
   useUnJoinMutation,
   useJoinMutation,
+  useExtendReservationMutation,
+  useCancelReservationMutation,
   useGetUserByIdQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,

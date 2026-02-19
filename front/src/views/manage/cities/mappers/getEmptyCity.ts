@@ -1,9 +1,9 @@
-import { CityViewModel } from '../types';
+import { CityViewModel } from "../types";
 
 export const getEmptyCity = (): CityViewModel => {
   const resultViewData: CityViewModel = {
-    id: '',
-    name: '',
+    id: "",
+    name: "",
   };
 
   return resultViewData;

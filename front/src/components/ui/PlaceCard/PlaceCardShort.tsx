@@ -1,5 +1,5 @@
-import { Card, Text, User } from '@gravity-ui/uikit';
-import { PlaceResponseDto } from '@/store/api';
+import { Card, Text, User } from "@gravity-ui/uikit";
+import { PlaceResponseDto } from "@/store/api";
 
 interface PlaceCardShortProps {
   place: PlaceResponseDto;
@@ -18,8 +18,8 @@ export const PlaceCardShort = (props: PlaceCardShortProps) => {
       <User
         avatar={
           props.place.covers?.length > 0
-            ? { imgUrl: props.place.covers[0].fileUrl, shape: 'square' }
-            : { text: props.place.name, theme: 'brand', shape: 'square' }
+            ? { imgUrl: props.place.covers[0].fileUrl, shape: "square" }
+            : { text: props.place.name, theme: "brand", shape: "square" }
         }
         name={<Text variant="header-1">{props.place.name}</Text>}
         description={props.place.city.name}

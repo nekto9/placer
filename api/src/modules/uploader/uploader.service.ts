@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import sharp from 'sharp';
 import { StaticPath } from '@/config/static.config';
 import { PlaceService } from '@/modules/place/place.service';
@@ -10,14 +14,22 @@ import { getFileExtension } from '@/tools/file';
 const AVATAR_SIZE = 150;
 const COVER_WIDTH = 1200;
 const COVER_HEIGHT = 400;
+
+/**
+ * Сервис для загрузки и обработки файлов
+ */
 @Injectable()
 export class UploaderService {
+  private readonly logger = new Logger(UploaderService.name);
+
   constructor(
     private userService: UserService,
     private placeService: PlaceService
   ) {}
 
-  /** Загрузка автатара */
+  /**
+   * Загрузка аватара пользователя
+   */
   async uploadAvatar(
     file: Express.Multer.File,
     fileId: string
@@ -72,12 +84,14 @@ export class UploaderService {
 
       return fileUniqueId;
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException('File upload failed');
     }
   }
 
-  /** Загрузка обложки */
+  /**
+   * Загрузка обложки площадки
+   */
   async uploadCover(
     files: Express.Multer.File[],
     fileIds: string[]
@@ -138,7 +152,7 @@ export class UploaderService {
 
       return result;
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException('File upload failed');
     }
   }

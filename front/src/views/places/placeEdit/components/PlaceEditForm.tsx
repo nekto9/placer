@@ -1,26 +1,26 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState } from "react";
 import {
   FormProvider,
   useFieldArray,
   useForm,
   useWatch,
-} from 'react-hook-form';
-import { FormRow } from '@gravity-ui/components';
-import { Button, Checkbox, Flex, Select } from '@gravity-ui/uikit';
+} from "react-hook-form";
+import { FormRow } from "@gravity-ui/components";
+import { Button, Checkbox, Flex, Select } from "@gravity-ui/uikit";
 // import { CoverUpload } from '@/components/CoverUpload';
-import { FileUpload } from '@/components/FileUpload';
-import { FileItem } from '@/components/FileUpload/types';
+import { FileUpload } from "@/components/FileUpload";
+import { FileItem } from "@/components/FileUpload/types";
 import {
   FormRadioButton,
   FormSelect,
   FormTextArea,
   FormTextInput,
-} from '@/components/formUi';
-import { EditMap } from '@/components/ui/Map';
-import { MapPoint } from '@/components/ui/Map/types';
-import { CityResponseDto, SportResponseDto } from '@/store/api';
-import { EditFormMode } from '@/types';
-import { PlaceViewModel } from '../../common/types';
+} from "@/components/formUi";
+import { EditMap } from "@/components/ui/Map";
+import { MapPoint } from "@/components/ui/Map/types";
+import { CityResponseDto, SportResponseDto } from "@/store/api";
+import { EditFormMode } from "@/types";
+import { PlaceViewModel } from "../../common/types";
 
 interface PlaceEditFormModel {
   data: PlaceViewModel;
@@ -48,12 +48,12 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
     fields: placeSports,
     append: appendPlaceSport,
     remove: removePlaceSport,
-  } = useFieldArray({ control, name: 'sports', keyName: '_itemId' });
+  } = useFieldArray({ control, name: "sports", keyName: "_itemId" });
 
   const { fields: placeCovers, replace: replaceCovers } = useFieldArray({
     control,
-    name: 'coverFiles',
-    keyName: '_itemId',
+    name: "coverFiles",
+    keyName: "_itemId",
   });
 
   const submitHandler = (event: FormEvent) => {
@@ -76,8 +76,8 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
   };
 
   const geoChangeHandler = (point: MapPoint) => {
-    formMethods.setValue('latitude', point.latitude, { shouldDirty: true });
-    formMethods.setValue('longitude', point.longitude, { shouldDirty: true });
+    formMethods.setValue("latitude", point.latitude, { shouldDirty: true });
+    formMethods.setValue("longitude", point.longitude, { shouldDirty: true });
   };
 
   const coversChangeHandler = (files: FileItem[]) => {
@@ -88,11 +88,11 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
     const cityId = value[0];
     const cityName = cityId
       ? props.citiesDict.find((el) => el.id === cityId).name
-      : '';
-    formMethods.setValue('cityName', cityName);
+      : "";
+    formMethods.setValue("cityName", cityName);
   };
 
-  const cityName = useWatch({ name: 'cityName', control });
+  const cityName = useWatch({ name: "cityName", control });
 
   return (
     <FormProvider {...formMethods}>
@@ -124,8 +124,8 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
               control={control}
               name="isIndoor"
               options={[
-                { value: 'true', content: 'Крытая' },
-                { value: 'false', content: 'Открытая' },
+                { value: "true", content: "Крытая" },
+                { value: "false", content: "Открытая" },
               ]}
             />
           </FormRow>
@@ -134,8 +134,8 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
               control={control}
               name="isFree"
               options={[
-                { value: 'true', content: 'Да' },
-                { value: 'false', content: 'Нет' },
+                { value: "true", content: "Да" },
+                { value: "false", content: "Нет" },
               ]}
             />
           </FormRow>
@@ -179,10 +179,10 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
             key={rndKey}
             onChange={geoChangeHandler}
             point={
-              props.mode === 'update'
+              props.mode === "update"
                 ? {
-                    latitude: formMethods.getValues('latitude'),
-                    longitude: formMethods.getValues('longitude'),
+                    latitude: formMethods.getValues("latitude"),
+                    longitude: formMethods.getValues("longitude"),
                   }
                 : undefined
             }
@@ -196,9 +196,9 @@ export const PlaceEditForm = (props: PlaceEditFormModel) => {
           multiple
           initialFiles={placeCovers.map((f) => ({
             id: f.id,
-            status: 'uploaded',
+            status: "uploaded",
             url: f.url,
-            type: 'image',
+            type: "image",
           }))}
           onChange={coversChangeHandler}
           maxFiles={10}

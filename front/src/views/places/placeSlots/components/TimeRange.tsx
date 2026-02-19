@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
-import { Path } from 'react-hook-form';
-import { RangeValue } from '@gravity-ui/date-components';
-import { DateTime, dateTime } from '@gravity-ui/date-utils';
-import { BaseSliderRefType, Slider } from '@gravity-ui/uikit';
+import { useRef, useState } from "react";
+import { Path } from "react-hook-form";
+import { RangeValue } from "@gravity-ui/date-components";
+import { DateTime, dateTime } from "@gravity-ui/date-utils";
+import { BaseSliderRefType, Slider } from "@gravity-ui/uikit";
 
 /** Длительность слота */
 const getRangeSize = (startRange: number, endRange: number) => {
@@ -12,8 +12,8 @@ const getRangeSize = (startRange: number, endRange: number) => {
 /** Подписи значений, преобразование минут в hh:mm */
 const sliderFormatter = (value: number) => {
   // Проверяем, является ли входное значение числом
-  if (typeof value !== 'number' || isNaN(value)) {
-    return '00:00';
+  if (typeof value !== "number" || isNaN(value)) {
+    return "00:00";
   }
 
   const hoursValue = value / 60;
@@ -25,14 +25,59 @@ const sliderFormatter = (value: number) => {
   const minutes = Math.round((hoursValue - hours) * 60);
 
   // Форматируем часы и минуты, чтобы всегда было 2 цифры
-  const formattedHours = hours.toString().padStart(2, '0');
-  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
 
   return `${formattedHours}:${formattedMinutes}`;
 };
 
 const calcDateTime = (timeInMinutes: number) => {
   return new Date().setHours(0, timeInMinutes);
+};
+
+const normalizeMinuteOffset = (value?: number) => {
+  if (value === undefined || value === null || isNaN(value)) {
+    return null;
+  }
+
+  const normalizedValue = value % 60;
+  return normalizedValue >= 0 ? normalizedValue : normalizedValue + 60;
+};
+
+const alignToNextAllowedStart = (
+  timeInMinutes: number,
+  minuteOffset: number
+) => {
+  const hourStart = Math.floor(timeInMinutes / 60) * 60;
+  const currentMinute = ((timeInMinutes % 60) + 60) % 60;
+
+  if (currentMinute === minuteOffset) {
+    return timeInMinutes;
+  }
+
+  if (currentMinute < minuteOffset) {
+    return hourStart + minuteOffset;
+  }
+
+  return hourStart + 60 + minuteOffset;
+};
+
+const alignToPreviousAllowedStart = (
+  timeInMinutes: number,
+  minuteOffset: number
+) => {
+  const hourStart = Math.floor(timeInMinutes / 60) * 60;
+  const currentMinute = ((timeInMinutes % 60) + 60) % 60;
+
+  if (currentMinute === minuteOffset) {
+    return timeInMinutes;
+  }
+
+  if (currentMinute > minuteOffset) {
+    return hourStart + minuteOffset;
+  }
+
+  return hourStart - 60 + minuteOffset;
 };
 
 interface TimeRangeProps<T> {
@@ -48,6 +93,8 @@ interface TimeRangeProps<T> {
 
   /** Шаг в минутах */
   step: number;
+  /** Допустимая минута старта в каждом часу */
+  startMinuteOffset?: number;
 
   onUpdate: (data: RangeValue<DateTime>) => void;
 
@@ -65,6 +112,13 @@ export const TimeRange = <T,>(props: TimeRangeProps<T>) => {
   const sliderUpdateCompleteHandler = (value: [number, number]) => {
     let startRange = value[0];
     let endRange = value[1];
+    const startMinuteOffset = normalizeMinuteOffset(props.startMinuteOffset);
+
+    startRange = Math.max(startRange, props.startTimeScale);
+
+    if (startMinuteOffset !== null) {
+      startRange = alignToNextAllowedStart(startRange, startMinuteOffset);
+    }
 
     // Если длина нового слота меньше минимального, то смещаем конечную дату
     if (getRangeSize(startRange, endRange) < props.minRangeSize) {
@@ -78,8 +132,17 @@ export const TimeRange = <T,>(props: TimeRangeProps<T>) => {
 
     // Если конечная дата больше ограничения рабочего времени, то смещаем начальную дату
     if (endRange > props.endTimeScale) {
-      startRange = props.endTimeScale - props.minRangeSize;
       endRange = props.endTimeScale;
+
+      const latestAllowedStart =
+        startMinuteOffset === null
+          ? props.endTimeScale - props.minRangeSize
+          : alignToPreviousAllowedStart(
+              props.endTimeScale - props.minRangeSize,
+              startMinuteOffset
+            );
+
+      startRange = Math.max(latestAllowedStart, props.startTimeScale);
     }
 
     setSliderValue([startRange, endRange]);
@@ -104,11 +167,11 @@ export const TimeRange = <T,>(props: TimeRangeProps<T>) => {
       <div style={{ marginBottom: 16, fontSize: 16 }}>
         {dateTime({
           input: calcDateTime(sliderValue[0]),
-        }).format('HH:mm')}{' '}
-        -{' '}
+        }).format("HH:mm")}{" "}
+        -{" "}
         {dateTime({
           input: calcDateTime(sliderValue[1]),
-        }).format('HH:mm')}
+        }).format("HH:mm")}
       </div>
       <Slider
         value={sliderValue}

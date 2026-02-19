@@ -1,6 +1,6 @@
-import { Flex } from '@gravity-ui/uikit';
-import { PlaceCardShort } from '@/components/ui/PlaceCard';
-import { GetPlacesApiResponse, PlaceResponseDto } from '@/store/api';
+import { Flex } from "@gravity-ui/uikit";
+import { PlaceCardShort } from "@/components/ui/PlaceCard";
+import { GetPlacesApiResponse, PlaceResponseDto } from "@/store/api";
 
 interface PlacesListProps {
   data: GetPlacesApiResponse;

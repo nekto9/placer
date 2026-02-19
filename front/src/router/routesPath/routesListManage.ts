@@ -1,4 +1,4 @@
-import { RoutesConst } from '../routeConstant';
+import { RoutesConst } from "../routeConstant";
 
 // /manage
 const mainManageURL = `${RoutesConst.ROOT}${RoutesConst.MANAGE}`;

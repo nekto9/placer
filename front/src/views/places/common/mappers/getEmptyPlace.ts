@@ -1,16 +1,16 @@
-import { PlaceViewModel } from '../types';
+import { PlaceViewModel } from "../types";
 
 export const getEmptyPlace = (): PlaceViewModel => {
   const resultViewData: PlaceViewModel = {
-    id: '',
-    name: '',
-    description: '',
-    isFree: 'false',
-    isIndoor: 'false',
+    id: "",
+    name: "",
+    description: "",
+    isFree: "false",
+    isIndoor: "false",
     coverFiles: [],
     sports: [],
     cityId: [],
-    cityName: '',
+    cityName: "",
     latitude: NaN,
     longitude: NaN,
   };

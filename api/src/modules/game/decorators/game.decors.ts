@@ -143,6 +143,20 @@ type GameDecor = {
     };
     responseOk: ApiResponseNoStatusOptions;
   };
+  extendReservation: {
+    operation: ApiOperationOptions;
+    params: {
+      id: ApiParamOptions;
+    };
+    responseOk: ApiResponseNoStatusOptions;
+  };
+  cancelReservation: {
+    operation: ApiOperationOptions;
+    params: {
+      id: ApiParamOptions;
+    };
+    responseOk: ApiResponseNoStatusOptions;
+  };
 };
 
 export const gameDecor: GameDecor = {
@@ -324,6 +338,32 @@ export const gameDecor: GameDecor = {
     params: {
       id: gameIdParam,
       userId: userIdParam,
+    },
+    responseOk: {
+      type: GameResponseDto,
+    },
+  },
+  extendReservation: {
+    operation: {
+      summary: 'Продление бронирования игры',
+      description:
+        'Продлевает время жизни черновика игры. По умолчанию на 15 минут.',
+    },
+    params: {
+      id: gameIdParam,
+    },
+    responseOk: {
+      type: GameResponseDto,
+    },
+  },
+  cancelReservation: {
+    operation: {
+      summary: 'Отмена бронирования игры',
+      description:
+        'Отменяет бронирование и удаляет черновик игры. Освобождает слот.',
+    },
+    params: {
+      id: gameIdParam,
     },
     responseOk: {
       type: GameResponseDto,

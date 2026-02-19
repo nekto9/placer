@@ -1,8 +1,8 @@
-import { Control, Path } from 'react-hook-form';
+import { Control, Path } from "react-hook-form";
 
 export type LocalFormUi<T, GravityUiFormControlType> = Omit<
   GravityUiFormControlType,
-  'name'
+  "name"
 > & {
   /** Поле формы */
   name: Path<T>;

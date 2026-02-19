@@ -1,21 +1,21 @@
-import { Fragment, useState } from 'react';
-import { Button, Divider, Flex, Label, Loader, Text } from '@gravity-ui/uikit';
-import { ConfirmModal } from '@/components/modal/ConfirmModal';
-import { getMemberStatusLabel } from '@/components/ui/GameCard/utils';
-import { PageBlock } from '@/components/ui/PageBlock';
+import { Fragment, useState } from "react";
+import { Button, Divider, Flex, Label, Loader, Text } from "@gravity-ui/uikit";
+import { ConfirmModal } from "@/components/modal/ConfirmModal";
+import { getMemberStatusLabel } from "@/components/ui/GameCard/utils";
+import { PageBlock } from "@/components/ui/PageBlock";
 import {
   GameUserStatus,
   useAllowJoinMutation,
   useDeclineJoinMutation,
-} from '@/store/api';
-import { GameViewModel } from '../../common/types';
+} from "@/store/api";
+import { GameViewModel } from "../../common/types";
 
 interface GameMembersProps {
   data: GameViewModel;
 }
 export const GameMembers = (props: GameMembersProps) => {
   // Окно принятия запроса (в стейте хранится id пользователя либо пустота)
-  const [allowJoinOpen, setAllowJoinOpen] = useState('');
+  const [allowJoinOpen, setAllowJoinOpen] = useState("");
   const [allowJoinAction, allowJoinState] = useAllowJoinMutation();
 
   const allowJoinHandler = (userId: string) => {
@@ -23,7 +23,7 @@ export const GameMembers = (props: GameMembersProps) => {
   };
 
   const cancelAllowJoinHandler = () => {
-    setAllowJoinOpen('');
+    setAllowJoinOpen("");
   };
 
   const confirmAllowJoinHandler = () => {
@@ -32,7 +32,7 @@ export const GameMembers = (props: GameMembersProps) => {
   };
 
   // Окно отклонения запроса (в стейте хранится id пользователя либо пустота)
-  const [declineJoinOpen, setDeclineJoinOpen] = useState('');
+  const [declineJoinOpen, setDeclineJoinOpen] = useState("");
   const [declineJoinAction, declineJoinState] = useDeclineJoinMutation();
 
   const declineJoinHandler = (userId: string) => {
@@ -40,7 +40,7 @@ export const GameMembers = (props: GameMembersProps) => {
   };
 
   const cancelDeclineJoinHandler = () => {
-    setDeclineJoinOpen('');
+    setDeclineJoinOpen("");
   };
 
   const confirmDeclineJoinHandler = () => {

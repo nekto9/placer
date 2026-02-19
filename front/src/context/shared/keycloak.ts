@@ -1,4 +1,4 @@
-import Keycloak from 'keycloak-js';
+import Keycloak from "keycloak-js";
 
 let keycloak: Keycloak | null;
 let isPending = false;
@@ -17,7 +17,7 @@ export const getKeycloakInstance = async (): Promise<Keycloak | null> => {
 
     try {
       const isAuth = await keycloakInstance?.init({
-        onLoad: 'login-required',
+        onLoad: "login-required",
       });
       if (isAuth) {
         keycloak = keycloakInstance;
@@ -31,7 +31,7 @@ export const getKeycloakInstance = async (): Promise<Keycloak | null> => {
     }
 
     if (keycloak === null) {
-      throw new Error('auth error');
+      throw new Error("auth error");
     }
   }
 

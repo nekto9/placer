@@ -1,6 +1,6 @@
-import { Flex, Label, Text } from '@gravity-ui/uikit';
-import { GameUserStatus } from '@/store/api';
-import { getMemberStatusLabel } from '../utils';
+import { Flex, Label, Text } from "@gravity-ui/uikit";
+import { GameUserStatus } from "@/store/api";
+import { getMemberStatusLabel } from "../utils";
 
 interface MemberStatusProps {
   memberStatus?: GameUserStatus;

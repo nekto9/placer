@@ -145,7 +145,12 @@ export class UserController {
     @Req()
     request: AuthenticatedRequest
   ): Promise<UserResponseDto> {
-    // TODO: Добавить проверку на права
+    /**
+     * {@inheritDoc}
+     * @todo Добавить проверку на права
+     * @author Евгений
+     * @date 2026-02
+     */
     const user = await this.userService.updateUser(
       id,
       updateUserDto,

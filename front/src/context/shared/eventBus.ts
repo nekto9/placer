@@ -1,4 +1,4 @@
-import mitt from 'mitt';
+import mitt from "mitt";
 
 export interface ApiErrorType {
   status?: number;
@@ -19,7 +19,7 @@ export interface ApiErrorEvent {
 
 /** Событие для системы уведомлений */
 export interface AppNotificationEvent {
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   message: string;
   title?: string;
   showRetry?: boolean;

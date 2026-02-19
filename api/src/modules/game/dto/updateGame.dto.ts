@@ -30,11 +30,10 @@ export class UpdateGameDto {
     type: 'string',
     format: 'uuid',
     example: '123e4567-e89b-12d3-a456-426614174001',
-    required: false,
   })
   @IsUUID(4, { message: 'ID площадки должен быть валидным UUID' })
-  @IsOptional()
-  placeId?: string;
+  @IsNotEmpty({ message: 'ID площадки обязателен для заполнения' })
+  placeId: string;
 
   @ApiProperty({
     description: 'ID вида спорта',

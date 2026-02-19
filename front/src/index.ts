@@ -1,3 +1,3 @@
-import { bootApp } from './App';
+import { bootApp } from "./App";
 
 bootApp();

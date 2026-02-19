@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
-import { useDeletePlaceMutation, useGetPlaceByIdQuery } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { convertToViewModel } from '../common/mappers/convertToViewModel';
-import { PlaceDetails } from './components/PlaceDetails';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
+import { useDeletePlaceMutation, useGetPlaceByIdQuery } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { convertToViewModel } from "../common/mappers/convertToViewModel";
+import { PlaceDetails } from "./components/PlaceDetails";
 
 /** Страница площадки */
 export const PlaceDetailsPage = () => {
@@ -38,7 +38,7 @@ export const PlaceDetailsPage = () => {
     navigate(RoutesList.Place.getPlaceScheduleTemplates(placeId));
   };
 
-  useSetPageData({ title: 'Площадка' });
+  useSetPageData({ title: "Площадка" });
 
   return (
     <>

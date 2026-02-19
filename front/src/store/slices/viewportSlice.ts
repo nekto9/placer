@@ -1,5 +1,5 @@
-import { UseViewportSizeResult } from '@gravity-ui/uikit';
-import { createSlice, PayloadAction, Reducer } from '@reduxjs/toolkit';
+import { UseViewportSizeResult } from "@gravity-ui/uikit";
+import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
 
 const initialState: {
   size?: UseViewportSizeResult;
@@ -7,7 +7,7 @@ const initialState: {
 
 /** Размеры экрана храним глобально, переопределяем в DefaultLayout */
 export const viewportSlice = createSlice({
-  name: 'appViewport',
+  name: "appViewport",
   initialState,
   selectors: { isDesktop: (state) => state.size?.width > 1024 },
   reducers: {

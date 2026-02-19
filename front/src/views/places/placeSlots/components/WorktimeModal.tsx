@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { RangeValue } from '@gravity-ui/date-components';
-import { DateTime } from '@gravity-ui/date-utils';
-import { Dialog } from '@gravity-ui/uikit';
-import { useGetScheduleByIdQuery } from '@/store/api';
-import { TimeRange } from '@/views/places/placeSlots/components/TimeRange';
-import { GridSlot } from '../types';
-
-// import { WorkTimeSelector } from './WorkTimeSelector';
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { RangeValue } from "@gravity-ui/date-components";
+import { DateTime } from "@gravity-ui/date-utils";
+import { Dialog } from "@gravity-ui/uikit";
+import { useGetScheduleByIdQuery } from "@/store/api";
+import { TimeRange } from "@/views/places/placeSlots/components/TimeRange";
+import { GridSlot } from "../types";
 
 const calcDurationMinutes = (hours: number, minutes: number) => {
   return hours * 60 + minutes;
@@ -32,7 +30,7 @@ export const WorktimeModal = (props: WorktimeModalProps) => {
 
   const { handleSubmit } = formMethods;
 
-  const dialogTitleId = 'app-data-dialog-title';
+  const dialogTitleId = "app-data-dialog-title";
 
   const [rangeValue, setRangeValue] = useState<RangeValue<DateTime>>();
 
@@ -45,8 +43,7 @@ export const WorktimeModal = (props: WorktimeModalProps) => {
   };
 
   return (
-    // isSuccess &&
-    // timeSchedule &&
+    scheduleGetState.isSuccess &&
     props.timeSlot && (
       <FormProvider {...formMethods}>
         <Dialog
@@ -77,6 +74,7 @@ export const WorktimeModal = (props: WorktimeModalProps) => {
                 scheduleGetState.data.maxDurationMinutes
               )}
               step={15}
+              startMinuteOffset={scheduleGetState.data.timeStart}
               startTimeScale={props.timeSlot.timeStart}
               endTimeScale={props.timeSlot.timeEnd}
               onUpdate={updateHandler}

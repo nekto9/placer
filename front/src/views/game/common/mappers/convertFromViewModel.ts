@@ -5,10 +5,15 @@ import {
   GameUserRole,
   GameUserStatus,
   UpdateGameDto,
-} from '@/store/api';
-import { DATE_SERV_FORMAT } from '@/tools/constants';
-import { parseEmptyNumberToUndefined } from '@/tools/parse';
-import { GameUserViewModel, GameViewModel } from '../types';
+} from "@/store/api";
+import { DATE_SERV_FORMAT } from "@/tools/constants";
+import { parseEmptyNumberToUndefined } from "@/tools/parse";
+import {
+  GameStep1Data,
+  GameStep2Data,
+  GameUserViewModel,
+  GameViewModel,
+} from "../types";
 
 export const convertToGameUserUpdateDto = (
   data: GameUserViewModel
@@ -47,4 +52,26 @@ export const convertToGameUpdateDto = (data: GameViewModel): UpdateGameDto => {
   };
 
   return dtoData;
+};
+
+/**
+ * Объединяет данные шага 1, шага 2 и оригинальные данные в полную модель игры
+ * @param originalData - оригинальные данные игры
+ * @param step1Data - данные первого шага (площадка, дата, время)
+ * @param step2Data - данные второго шага (остальные поля)
+ * @returns полная модель игры
+ */
+export const mergeStepDataToViewModel = (
+  originalData: GameViewModel,
+  step1Data: GameStep1Data,
+  step2Data: GameStep2Data
+): GameViewModel => {
+  return {
+    ...originalData,
+    ...step2Data,
+    placeId: step1Data.placeId,
+    date: step1Data.date,
+    timeStart: step1Data.timeStart,
+    timeEnd: step1Data.timeEnd,
+  };
 };

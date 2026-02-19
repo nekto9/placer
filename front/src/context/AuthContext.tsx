@@ -1,11 +1,11 @@
-import { createContext, ReactNode, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import Keycloak from 'keycloak-js';
-import { getKeycloakInstance } from '@/context/shared/keycloak';
-import { useLinkAuthUserMutation, UserResponseDto } from '@/store/api';
-import { setAuthUser } from '@/store/slices/profileSlice';
-import { AppDispatch, RootState } from '@/store/store';
-import { MIN_VALIDITY_KEYCLOAK } from '@/tools/constants';
+import { createContext, ReactNode, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Keycloak from "keycloak-js";
+import { getKeycloakInstance } from "@/context/shared/keycloak";
+import { useLinkAuthUserMutation, UserResponseDto } from "@/store/api";
+import { setAuthUser } from "@/store/slices/profileSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { MIN_VALIDITY_KEYCLOAK } from "@/tools/constants";
 
 export interface AuthContextType {
   /** Данные юзера с бэка */
@@ -60,9 +60,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    window.addEventListener('focus', updateTokenOnFocusHandler);
+    window.addEventListener("focus", updateTokenOnFocusHandler);
     return () => {
-      window.removeEventListener('focus', updateTokenOnFocusHandler);
+      window.removeEventListener("focus", updateTokenOnFocusHandler);
     };
   }, []);
 

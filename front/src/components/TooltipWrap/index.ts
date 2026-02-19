@@ -1,1 +1,1 @@
-export * from './TooltipWrap';
+export * from "./TooltipWrap";

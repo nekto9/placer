@@ -1,6 +1,6 @@
-import { Controller, useFormContext } from 'react-hook-form';
-import { TextInput, TextInputProps } from '@gravity-ui/uikit';
-import { LocalFormUi } from './types';
+import { Controller, useFormContext } from "react-hook-form";
+import { TextInput, TextInputProps } from "@gravity-ui/uikit";
+import { LocalFormUi } from "./types";
 
 type FormTextInputProps<T> = LocalFormUi<T, TextInputProps>;
 
@@ -19,7 +19,7 @@ export const FormTextInput = <T,>(props: FormTextInputProps<T>) => {
             value={field.value as string}
             id={props.name}
             errorMessage={fieldState?.error?.message}
-            validationState={fieldState?.error ? 'invalid' : undefined}
+            validationState={fieldState?.error ? "invalid" : undefined}
             onUpdate={(value: string) => {
               field.onChange(value);
               props.onUpdate?.(value);

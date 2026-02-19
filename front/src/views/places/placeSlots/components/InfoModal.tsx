@@ -1,9 +1,9 @@
-import { Button, Dialog } from '@gravity-ui/uikit';
+import { Button, Dialog } from "@gravity-ui/uikit";
 import {
   dateToStringView,
   timeConvertToFormattedString,
-} from '@/tools/dateTools';
-import { GridSlot } from '../types';
+} from "@/tools/dateTools";
+import { GridSlot } from "../types";
 
 interface InfoModalProps {
   open: boolean;
@@ -14,7 +14,7 @@ interface InfoModalProps {
 }
 
 export const InfoModal = (props: InfoModalProps) => {
-  const dialogTitleId = 'app-data-dialog-title';
+  const dialogTitleId = "app-data-dialog-title";
 
   return (
     <Dialog
@@ -31,13 +31,13 @@ export const InfoModal = (props: InfoModalProps) => {
         {props.slot ? (
           <>
             <div>
-              {dateToStringView(props.slot.date)} -{' '}
+              {dateToStringView(props.slot.date)} -{" "}
               {timeConvertToFormattedString(props.slot.timeStart)} -
               {timeConvertToFormattedString(props.slot.timeEnd)}
             </div>
             <div>
               {props.slot.timeSlotId === props.slot.gameId &&
-                'Заказ на слот, которого нет в расписании'}
+                "Заказ на слот, которого нет в расписании"}
             </div>
             <Button onClick={props.onDeleteBooking}>Удалить бронь</Button>
             <Button onClick={props.onClickAdvanced} style={{ marginLeft: 10 }}>
@@ -45,7 +45,7 @@ export const InfoModal = (props: InfoModalProps) => {
             </Button>
           </>
         ) : (
-          'Нет даных'
+          "Нет даных"
         )}
       </Dialog.Body>
       <Dialog.Footer

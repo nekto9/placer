@@ -26,7 +26,8 @@ import {
 } from '@/shared/dto/paginatedResponse.dto';
 import { AuthenticatedRequest } from '@/shared/types/request.types';
 import { gameDecor } from './decorators';
-import { CreateGameDto, GameResponseDto, UpdateGameDto } from './dto';
+import { CreateGameDto, ExtendReservationDto, UpdateGameDto } from './dto';
+import { GameResponseDto } from './dto/gameResponse.dto';
 import { GameService } from './game.service';
 
 /**
@@ -369,6 +370,45 @@ export class GameController {
       requesterSub: request.user.sub,
     });
     if (!game) throw new NotFoundException('Game or request not found');
+    return game;
+  }
+
+  /**
+   * Продление бронирования игры
+   *
+   * Продлевает время жизни черновика игры. По умолчанию на 15 минут.
+   */
+  @Patch(':id/extend-reservation')
+  @ApiOperation(gameDecor.extendReservation.operation)
+  @ApiParam(gameDecor.extendReservation.params.id)
+  @ApiOkResponse(gameDecor.extendReservation.responseOk)
+  async extendReservation(
+    @Param('id') id: string,
+    @Body() extendReservationDto: ExtendReservationDto,
+    @Req() request: AuthenticatedRequest
+  ): Promise<GameResponseDto> {
+    const game = await this.gameService.extendReservation(
+      id,
+      extendReservationDto,
+      request.user.sub
+    );
+    return game;
+  }
+
+  /**
+   * Отмена бронирования игры
+   *
+   * Отменяет бронирование и удаляет черновик игры. Освобождает слот.
+   */
+  @Delete(':id/reservation')
+  @ApiOperation(gameDecor.cancelReservation.operation)
+  @ApiParam(gameDecor.cancelReservation.params.id)
+  @ApiOkResponse(gameDecor.cancelReservation.responseOk)
+  async cancelReservation(
+    @Param('id') id: string,
+    @Req() request: AuthenticatedRequest
+  ): Promise<GameResponseDto> {
+    const game = await this.gameService.cancelReservation(id, request.user.sub);
     return game;
   }
 }

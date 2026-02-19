@@ -1,8 +1,8 @@
-import { FieldArrayWithId } from 'react-hook-form';
-import { FormRow } from '@gravity-ui/components';
-import { Plus, Xmark } from '@gravity-ui/icons';
-import { Button, Flex, Icon } from '@gravity-ui/uikit';
-import { FormTimeInput } from '@/components/formUi/FormTimeInput';
+import { FieldArrayWithId } from "react-hook-form";
+import { FormRow } from "@gravity-ui/components";
+import { Plus, Xmark } from "@gravity-ui/icons";
+import { Button, Flex, Icon } from "@gravity-ui/uikit";
+import { FormTimeInput } from "@/components/formUi/FormTimeInput";
 
 interface TimeSlotsComponentProps<T> {
   label: string;

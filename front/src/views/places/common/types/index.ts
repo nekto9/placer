@@ -1,5 +1,5 @@
-import { FileItem } from '@/components/FileUpload/types';
-import { PlaceResponseDto } from '@/store/api';
+import { FileItem } from "@/components/FileUpload/types";
+import { PlaceResponseDto } from "@/store/api";
 
 export type PlaceViewModel = {
   isIndoor: string;
@@ -9,5 +9,5 @@ export type PlaceViewModel = {
   coverFiles: FileItem[];
 } & Omit<
   PlaceResponseDto,
-  'isIndoor' | 'isFree' | 'combineSchedules' | 'city' | 'covers'
+  "isIndoor" | "isFree" | "combineSchedules" | "city" | "covers"
 >;

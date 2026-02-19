@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router';
-import { Button, Flex, User } from '@gravity-ui/uikit';
-import { PageBlock } from '@/components/ui/PageBlock';
-import { getKeycloakInstance } from '@/context/shared/keycloak';
-import { RoutesList } from '@/router/routesList';
-import { UserProfileViewModel } from '../types';
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import { Button, Flex, User } from "@gravity-ui/uikit";
+import { PageBlock } from "@/components/ui/PageBlock";
+import { getKeycloakInstance } from "@/context/shared/keycloak";
+import { RoutesList } from "@/router/routesList";
+import { UserProfileViewModel } from "../types";
 
 interface ProfileDetailsProps {
   data: UserProfileViewModel;
@@ -24,7 +24,7 @@ export const ProfileDetails = (props: ProfileDetailsProps) => {
   useEffect(() => {
     const checkRole = async () => {
       const keycloakInstance = await getKeycloakInstance();
-      const result = keycloakInstance.hasRealmRole('place-manager');
+      const result = keycloakInstance.hasRealmRole("place-manager");
       return result;
     };
 
@@ -38,7 +38,7 @@ export const ProfileDetails = (props: ProfileDetailsProps) => {
           avatar={
             props.data.avatar
               ? { imgUrl: props.data.avatar.url }
-              : { text: props.data.username, theme: 'brand' }
+              : { text: props.data.username, theme: "brand" }
           }
           name={props.data.username}
           size="xl"

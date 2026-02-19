@@ -1,5 +1,5 @@
 /** Типы статусов файла */
-export type FileStatus = 'uploaded' | 'added' | 'deleted';
+export type FileStatus = "uploaded" | "added" | "deleted";
 
 /** Базовый интерфейс файла */
 export interface BaseFile {
@@ -21,18 +21,18 @@ export interface BaseFile {
 
 /** Загруженный файл (из initialFiles) */
 export interface UploadedFile extends BaseFile {
-  status: 'uploaded';
+  status: "uploaded";
 }
 
 /** Добавленный, но не загруженный файл */
 export interface AddedFile extends BaseFile {
-  status: 'added';
+  status: "added";
   file: File;
 }
 
 /** Файл, помеченный на удаление */
 export interface DeletedFile extends BaseFile {
-  status: 'deleted';
+  status: "deleted";
 }
 
 /** Объединённый тип */

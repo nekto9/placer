@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Star, StarFill } from '@gravity-ui/icons';
-import { Button, Divider, Flex, Icon, Modal, Text } from '@gravity-ui/uikit';
-import { useNotification } from '@/components/Notify';
-import { ViewMap } from '@/components/ui/Map';
-import { PageBlock } from '@/components/ui/PageBlock';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Star, StarFill } from "@gravity-ui/icons";
+import { Button, Divider, Flex, Icon, Modal, Text } from "@gravity-ui/uikit";
+import { useNotification } from "@/components/Notify";
+import { ViewMap } from "@/components/ui/Map";
+import { PageBlock } from "@/components/ui/PageBlock";
 import {
   useAddPlaceToFavoritesMutation,
   useRemovePlaceFromFavoritesMutation,
-} from '@/store/api';
-import { isDesktop } from '@/store/slices/viewportSlice';
-import { parseBool } from '@/tools/parse';
-import { PlaceViewModel } from '../../common/types';
-import { ImageSlider } from './ImageSlider';
+} from "@/store/api";
+import { isDesktop } from "@/store/slices/viewportSlice";
+import { parseBool } from "@/tools/parse";
+import { PlaceViewModel } from "../../common/types";
+import { ImageSlider } from "./ImageSlider";
 
 interface PlaceDetailsProps {
   data: PlaceViewModel;
@@ -60,23 +60,23 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
       if (props.data.meta?.isFavorite) {
         await removeFromFavorites({ favoriteId: props.data.id }).unwrap();
         showSuccess({
-          title: 'Успешно',
+          title: "Успешно",
           message: `Площадка ${props.data.name} удалена из избранного`,
         });
       } else {
         await addToFavorites({ favoriteId: props.data.id }).unwrap();
         showSuccess({
-          title: 'Успешно',
+          title: "Успешно",
           message: `Площадка ${props.data.name} добавлена в избранное`,
         });
       }
     } catch (error) {
       console.error(error);
       showError({
-        title: 'Ошибка',
+        title: "Ошибка",
         message: props.data.meta?.isFavorite
-          ? 'Не удалось удалить площадку из избранного'
-          : 'Не удалось добавить площадку в избранное',
+          ? "Не удалось удалить площадку из избранного"
+          : "Не удалось добавить площадку в избранное",
       });
     }
   };
@@ -85,18 +85,18 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
 
   return (
     <>
-      <Flex gap={4} direction={isDesktopMode ? 'row-reverse' : 'column'}>
+      <Flex gap={4} direction={isDesktopMode ? "row-reverse" : "column"}>
         <div
           style={
-            isDesktopMode ? { flexBasis: '50%', flexShrink: 0 } : undefined
+            isDesktopMode ? { flexBasis: "50%", flexShrink: 0 } : undefined
           }
-          className={`g-s__py_2${isDesktopMode ? ' swiper--desktop' : ''}`}
+          className={`g-s__py_2${isDesktopMode ? " swiper--desktop" : ""}`}
         >
           <ImageSlider images={props.data.coverFiles?.map((el) => el.url)} />
         </div>
         <div
           style={
-            isDesktopMode ? { flexBasis: '50%', flexShrink: 0 } : undefined
+            isDesktopMode ? { flexBasis: "50%", flexShrink: 0 } : undefined
           }
         >
           <PageBlock
@@ -117,7 +117,7 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
               <Button
                 view="normal"
                 size="l"
-                component={'span'}
+                component={"span"}
                 onClick={() => props.onSchedulesClick()}
                 style={{ marginRight: 10 }}
               >
@@ -128,7 +128,7 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
                 <Button
                   view="normal"
                   size="l"
-                  component={'span'}
+                  component={"span"}
                   onClick={() => props.onScheduleTemplatesClick()}
                   style={{ marginRight: 10 }}
                 >
@@ -143,8 +143,8 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
                 onClick={handleToggleFavorite}
                 title={
                   props.data.meta?.isFavorite
-                    ? 'Удалить из избранного'
-                    : 'Добавить в избранное'
+                    ? "Удалить из избранного"
+                    : "Добавить в избранное"
                 }
               >
                 <Icon
@@ -172,13 +172,13 @@ export const PlaceDetails = (props: PlaceDetailsProps) => {
         <Text variant="caption-2" color="secondary" as="div">
           Виды спорта
         </Text>
-        {props.data.sports.map((el) => el.name).join(', ')}
+        {props.data.sports.map((el) => el.name).join(", ")}
         <Divider className="g-s__my_2" />
         <Text variant="caption-2" color="secondary" as="div">
           Дополнительно
         </Text>
-        {parseBool(props.data.isIndoor) ? 'Крытая' : 'Уличная'},{' '}
-        {parseBool(props.data.isFree) ? 'Бесплатная' : 'Платная'}
+        {parseBool(props.data.isIndoor) ? "Крытая" : "Уличная"},{" "}
+        {parseBool(props.data.isFree) ? "Бесплатная" : "Платная"}
       </PageBlock>
 
       {props.data.meta.canEdit && (

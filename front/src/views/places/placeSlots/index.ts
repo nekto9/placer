@@ -1,1 +1,1 @@
-export { PlaceSlotsPage } from './PlaceSlotsPage';
+export { PlaceSlotsPage } from "./PlaceSlotsPage";

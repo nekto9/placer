@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import { RoutesList } from '@/router/routesList';
-import { useCreateCityMutation } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { CityEditForm } from './components/CityEditForm';
-import { convertToCreateDto } from './mappers/convertToCreateDto';
-import { getEmptyCity } from './mappers/getEmptyCity';
-import { CityViewModel } from './types';
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { RoutesList } from "@/router/routesList";
+import { useCreateCityMutation } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { CityEditForm } from "./components/CityEditForm";
+import { convertToCreateDto } from "./mappers/convertToCreateDto";
+import { getEmptyCity } from "./mappers/getEmptyCity";
+import { CityViewModel } from "./types";
 
 export const CityCreatePage = () => {
   const [cityCreateAction, cityCreateState] = useCreateCityMutation();
@@ -33,7 +33,7 @@ export const CityCreatePage = () => {
     }
   }, [cityCreateState.isSuccess]);
 
-  useSetPageData({ title: 'Город' });
+  useSetPageData({ title: "Город" });
 
   return (
     <CityEditForm

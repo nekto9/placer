@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { PageLayout } from '@gravity-ui/navigation';
-import { useViewportSize } from '@gravity-ui/uikit';
-import { Header } from '@/components/ui/Header';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { PageLayout } from "@gravity-ui/navigation";
+import { useViewportSize } from "@gravity-ui/uikit";
+import { Header } from "@/components/ui/Header";
 import {
   DesktopNavigation,
   MobileNavigation,
   useNavigationData,
-} from '@/components/ui/Navigation';
-import { isDesktop, setViewportSize } from '@/store/slices/viewportSlice';
-import { AppDispatch } from '@/store/store';
-import { ProfileCheckedRoute } from './ProfileCheckedRoute';
+} from "@/components/ui/Navigation";
+import { isDesktop, setViewportSize } from "@/store/slices/viewportSlice";
+import { AppDispatch } from "@/store/store";
+import { ProfileCheckedRoute } from "./ProfileCheckedRoute";
 
 export const DefaultLayout = () => {
   const [compact, setCompact] = React.useState(false);

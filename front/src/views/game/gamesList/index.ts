@@ -1,3 +1,3 @@
-import { GamesListPage } from './GamesListPage';
+import { GamesListPage } from "./GamesListPage";
 
 export default GamesListPage;

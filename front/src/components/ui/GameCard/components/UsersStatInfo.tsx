@@ -1,5 +1,5 @@
-import { Flex, Text } from '@gravity-ui/uikit';
-import { GameResponseDto, GameUserStatus } from '@/store/api';
+import { Flex, Text } from "@gravity-ui/uikit";
+import { GameResponseDto, GameUserStatus } from "@/store/api";
 
 interface UsersStatInfoProps {
   game: GameResponseDto;

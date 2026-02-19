@@ -1,6 +1,6 @@
-import { Navigate, Outlet, useLocation } from 'react-router';
-import { useAuthContext } from '@/context/useAuthContext';
-import { RoutesList } from '@/router/routesList';
+import { Navigate, Outlet, useLocation } from "react-router";
+import { useAuthContext } from "@/context/useAuthContext";
+import { RoutesList } from "@/router/routesList";
 
 // Не пускаем во вьюхи, если не заполнен профиль
 export const ProfileCheckedRoute = () => {

@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Loading } from '@/layouts/components/Loading';
-import { RoutesList } from '@/router/routesList';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '@/store/api';
-import { convertToUpdateDto, convertToViewModel } from '../common/mappers';
-import { UserViewModel } from '../common/types';
-import { UserEditForm } from './components/UserEditForm';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "@/layouts/components/Loading";
+import { RoutesList } from "@/router/routesList";
+import { useGetUserByIdQuery, useUpdateUserMutation } from "@/store/api";
+import { convertToUpdateDto, convertToViewModel } from "../common/mappers";
+import { UserViewModel } from "../common/types";
+import { UserEditForm } from "./components/UserEditForm";
 
 export const UserEditPage = () => {
   const { userId } = useParams();

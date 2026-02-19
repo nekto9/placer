@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Loading } from '@/layouts/components';
-import { RoutesList } from '@/router/routesList';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import { Loading } from "@/layouts/components";
+import { RoutesList } from "@/router/routesList";
 import {
   useDeleteGameMutation,
   useGetGameByIdQuery,
   useRequestJoinMutation,
   useUnJoinMutation,
-} from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { convertGameToViewModel } from '../common/mappers/convertToViewModel';
-import { GameDetails } from './components/GameDetails';
+} from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { convertGameToViewModel } from "../common/mappers/convertToViewModel";
+import { GameDetails } from "./components/GameDetails";
 
 export const GameDetailsPage = () => {
   const { gameId } = useParams();
@@ -45,7 +45,7 @@ export const GameDetailsPage = () => {
     }
   }, [gameDeleteState.isSuccess]);
 
-  useSetPageData({ title: 'Игра' });
+  useSetPageData({ title: "Игра" });
 
   const isLoading =
     gameGetState.isLoading ||

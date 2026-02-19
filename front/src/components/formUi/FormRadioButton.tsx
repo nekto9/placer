@@ -1,9 +1,9 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from "react-hook-form";
 import {
   SegmentedRadioGroup,
   SegmentedRadioGroupProps,
-} from '@gravity-ui/uikit';
-import { LocalFormUi } from './types';
+} from "@gravity-ui/uikit";
+import { LocalFormUi } from "./types";
 
 type FormRadioButtonProps<T> = LocalFormUi<T, SegmentedRadioGroupProps>;
 

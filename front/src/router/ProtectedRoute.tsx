@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
-// import { Navigate } from 'react-router';
-import { getKeycloakInstance } from '@/context/shared/keycloak';
+import { useEffect, useState } from "react";
+import { getKeycloakInstance } from "@/context/shared/keycloak";
 
 interface ProtectedRouteProps {
   component: () => JSX.Element;

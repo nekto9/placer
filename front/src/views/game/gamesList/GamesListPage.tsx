@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router';
-import { Button } from '@gravity-ui/uikit';
-import { RoutesList } from '@/router/routesList';
-import { GameTimeFrame } from '@/store/api';
-import { useSetPageData } from '@/tools/hooks';
-import { PersonalGamesList } from './components/PersonalGamesList';
-import { PublicGamesList } from './components/PublicGamesList';
+import { useNavigate } from "react-router";
+import { Button } from "@gravity-ui/uikit";
+import { RoutesList } from "@/router/routesList";
+import { GameTimeFrame } from "@/store/api";
+import { useSetPageData } from "@/tools/hooks";
+import { PersonalGamesList } from "./components/PersonalGamesList";
+import { PublicGamesList } from "./components/PublicGamesList";
 
 interface GamesListPageProps {
   timeFrame?: GameTimeFrame;
@@ -20,8 +20,8 @@ export const GamesListPage = (props: GamesListPageProps) => {
       props.timeFrame === GameTimeFrame.All
         ? RoutesList.Game.getPersonalAllGamesList()
         : props.timeFrame === GameTimeFrame.Past
-          ? RoutesList.Game.getPersonalPastGamesList()
-          : RoutesList.Game.getPersonalGamesList()
+        ? RoutesList.Game.getPersonalPastGamesList()
+        : RoutesList.Game.getPersonalGamesList()
     );
   };
 
@@ -30,8 +30,8 @@ export const GamesListPage = (props: GamesListPageProps) => {
       props.timeFrame === GameTimeFrame.All
         ? RoutesList.Game.getAllGamesList()
         : props.timeFrame === GameTimeFrame.Past
-          ? RoutesList.Game.getPastGamesList()
-          : RoutesList.Game.getGamesList()
+        ? RoutesList.Game.getPastGamesList()
+        : RoutesList.Game.getGamesList()
     );
   };
 
@@ -59,7 +59,7 @@ export const GamesListPage = (props: GamesListPageProps) => {
     );
   };
 
-  useSetPageData({ title: 'Игры' });
+  useSetPageData({ title: "Игры" });
 
   return (
     <div>

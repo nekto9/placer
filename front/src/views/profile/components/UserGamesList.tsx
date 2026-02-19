@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Button, Flex, Pagination, Spin, Text } from '@gravity-ui/uikit';
-import GameCard from '@/components/ui/GameCard';
+import { useState } from "react";
+import { Button, Flex, Pagination, Spin, Text } from "@gravity-ui/uikit";
+import GameCard from "@/components/ui/GameCard";
 import {
   GameStatus,
   GameUserRole,
   GameUserStatus,
   useGetUserGamesQuery,
-} from '@/store/api';
-import { DATE_SERV_FORMAT } from '@/tools/constants';
-import { UserGamesFilters } from './UserGamesFilters';
+} from "@/store/api";
+import { DATE_SERV_FORMAT } from "@/tools/constants";
+import { UserGamesFilters } from "./UserGamesFilters";
 
 interface UserGamesListProps {
   userId: string;

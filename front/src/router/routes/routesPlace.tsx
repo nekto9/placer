@@ -1,15 +1,15 @@
-import { RouteObject } from 'react-router';
-import { RoutesList } from '@/router/routesList';
-import PlaceDetailsPage from '@/views/places/placeDetails';
-import { PlaceCreatePage, PlaceUpdatePage } from '@/views/places/placeEdit';
+import { RouteObject } from "react-router";
+import { RoutesList } from "@/router/routesList";
+import PlaceDetailsPage from "@/views/places/placeDetails";
+import { PlaceCreatePage, PlaceUpdatePage } from "@/views/places/placeEdit";
 import {
   ScheduleCreatePage,
   ScheduleTemplatesPage,
   ScheduleUpdatePage,
-} from '@/views/places/placeSchedule';
-import PlacesListPage from '@/views/places/placesList';
-import { PlaceSlotsPage } from '@/views/places/placeSlots';
-import { ProtectedRoute } from '../ProtectedRoute';
+} from "@/views/places/placeSchedule";
+import PlacesListPage from "@/views/places/placesList";
+import { PlaceSlotsPage } from "@/views/places/placeSlots";
+import { ProtectedRoute } from "../ProtectedRoute";
 
 /** Роуты для площадок */
 export const routesPlace: RouteObject[] = [
@@ -18,7 +18,7 @@ export const routesPlace: RouteObject[] = [
     element: <PlacesListPage />,
   },
   {
-    path: RoutesList.Place.getPlaceDetails(':placeId'),
+    path: RoutesList.Place.getPlaceDetails(":placeId"),
     element: <PlaceDetailsPage />,
   },
   {
@@ -26,33 +26,33 @@ export const routesPlace: RouteObject[] = [
     element: (
       <ProtectedRoute
         component={PlaceCreatePage}
-        allowedRoles={['place-manager']}
+        allowedRoles={["place-manager"]}
       />
     ),
   },
   {
-    path: RoutesList.Place.getPlaceEdit(':placeId'),
+    path: RoutesList.Place.getPlaceEdit(":placeId"),
     element: (
       <ProtectedRoute
         component={PlaceUpdatePage}
-        allowedRoles={['place-manager']}
+        allowedRoles={["place-manager"]}
       />
     ),
   },
   {
-    path: RoutesList.Place.getPlaceSchedules(':placeId'),
+    path: RoutesList.Place.getPlaceSchedules(":placeId"),
     element: <PlaceSlotsPage />,
   },
   {
-    path: RoutesList.Place.getPlaceScheduleTemplates(':placeId'),
+    path: RoutesList.Place.getPlaceScheduleTemplates(":placeId"),
     element: <ScheduleTemplatesPage />,
   },
   {
-    path: RoutesList.Place.getScheduleAdd(':placeId'),
+    path: RoutesList.Place.getScheduleAdd(":placeId"),
     element: <ScheduleCreatePage />,
   },
   {
-    path: RoutesList.Place.getScheduleEdit(':placeId', ':scheduleId'),
+    path: RoutesList.Place.getScheduleEdit(":placeId", ":scheduleId"),
     element: <ScheduleUpdatePage />,
   },
 ];

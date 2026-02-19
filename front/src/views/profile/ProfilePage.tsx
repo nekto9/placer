@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { ConfirmModal } from '@/components/modal/ConfirmModal';
-import { useNotification } from '@/components/Notify';
-import { useAuthContext } from '@/context/useAuthContext';
-import { Loading } from '@/layouts/components/Loading';
+import { useEffect, useState } from "react";
+import { ConfirmModal } from "@/components/modal/ConfirmModal";
+import { useNotification } from "@/components/Notify";
+import { useAuthContext } from "@/context/useAuthContext";
+import { Loading } from "@/layouts/components/Loading";
 import {
   useDeepLinkMutation,
   useRemoveTgLinkMutation,
   useUpdateUserMutation,
   useUploadAvatarMutation,
-} from '@/store/api';
-import { botDeepLink } from '@/tools/bot';
-import { useSetPageData } from '@/tools/hooks';
-import { ProfileDetails } from './components/ProfileDetails';
-import { ProfileEditForm } from './components/ProfileEditForm';
-import { convertToUpdateDto, convertToViewModel } from './mappers';
-import { UserProfileViewModel } from './types';
+} from "@/store/api";
+import { botDeepLink } from "@/tools/bot";
+import { useSetPageData } from "@/tools/hooks";
+import { ProfileDetails } from "./components/ProfileDetails";
+import { ProfileEditForm } from "./components/ProfileEditForm";
+import { convertToUpdateDto, convertToViewModel } from "./mappers";
+import { UserProfileViewModel } from "./types";
 
 export const ProfilePage = () => {
   const { user, logout, setUserData, isAuthenticated, isProfileComplete } =
@@ -38,11 +38,11 @@ export const ProfilePage = () => {
       }).unwrap();
       if (updatedUser) {
         setUserData(updatedUser);
-        showSuccess({ message: 'Профиль обновлен' });
+        showSuccess({ message: "Профиль обновлен" });
       }
 
       // файл для загрузки
-      if (data.avatar?.status === 'added') {
+      if (data.avatar?.status === "added") {
         await uploadAvatarAction({
           body: {
             avatar: data.avatar.file,
@@ -53,7 +53,7 @@ export const ProfilePage = () => {
         setRenderKey((p) => p + 1);
       }
     } catch (err) {
-      showError({ message: 'Ошибка сохранения профиля' });
+      showError({ message: "Ошибка сохранения профиля" });
       console.error(err);
     }
   };
@@ -67,7 +67,7 @@ export const ProfilePage = () => {
     }
   }, [userUpdateState.isSuccess]);
 
-  const [deepLinkValue, setDeepLinkValue] = useState('');
+  const [deepLinkValue, setDeepLinkValue] = useState("");
 
   /** Окно подтверждения ПРИвязки */
   const tgLinkHandler = async () => {
@@ -78,12 +78,12 @@ export const ProfilePage = () => {
   /** Кнопка подтверждения ПРИвязки */
   const confirmLinkHandler = () => {
     botDeepLink(deepLinkValue);
-    setDeepLinkValue('');
+    setDeepLinkValue("");
   };
 
   /** Кнопка отмены ПРИвязки */
   const cancelLinkHandler = () => {
-    setDeepLinkValue('');
+    setDeepLinkValue("");
   };
 
   const [unlinkConfirmOpen, setUnlinkConfirmOpen] = useState(false);
@@ -111,7 +111,7 @@ export const ProfilePage = () => {
     deepLinkState.isLoading ||
     removeTgLinkState.isLoading;
 
-  useSetPageData({ title: 'Профиль' });
+  useSetPageData({ title: "Профиль" });
 
   return isAuthenticated ? (
     isEditMode ? (

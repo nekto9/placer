@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Мокаем fetch глобально (для подавления предупреждений)
 global.fetch = jest.fn();
