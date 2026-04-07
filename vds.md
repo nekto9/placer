@@ -231,7 +231,7 @@ docker compose exec mailserver setup email passwd user@example.com NewPassword
 docker compose exec mailserver setup email list
 
 # Создать алиас (пересылку)
-docker compose exec mailserver setup email add --alias info@example.com admin@example.com
+docker compose exec mailserver setup alias add info@example.com admin@example.com
 ```
 
 ---
